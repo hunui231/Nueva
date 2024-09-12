@@ -659,7 +659,7 @@ select {
   background-repeat: unset;
   background-size: initial;
   padding-right: 0.75rem;
-  -webkit-print-color-adjust: unset;
+ -webkit-print-color-adjust: unset;
           color-adjust: unset;
 }
 
@@ -805,7 +805,11 @@ select {
     max-width: 1536px;
   }
 }
-
+/*
+.container {
+  max-width: 100%; /* O ocupa todo el ancho en pantallas pequeñas 
+  padding: 0 16px; /* Añade algo de padding para que no se pegue a los bordes
+}*/
 .sr-only {
   position: absolute;
   width: 1px;
@@ -188576,4 +188580,3 @@ select {
     transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   }
 }
-

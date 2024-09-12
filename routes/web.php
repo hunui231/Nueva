@@ -32,4 +32,13 @@ Route::middleware(['auth'])->group(function () {
     Route::get('users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
     Route::put('users/{user}', [UserController::class, 'update'])->name('users.update');
     Route::delete('users/{user}/destroy', [UserController::class, 'destroy'])->name('users.destroy');
+
+    Route::get('/logistica', [App\Http\Controllers\LogisticaController::class, 'index'])->name('logistica.index')->middleware('can:logistica.index');
+ 
+    Route::get('/calidad', [App\Http\Controllers\CalidadController::class, 'index'])->name('calidad.index')->middleware('can:calidad.index');
+    
+    Route::get('/cnc', [App\Http\Controllers\CncController::class, 'index'])->name('cnc.index')->middleware('can:cnc.index');
+
+
+
 });
