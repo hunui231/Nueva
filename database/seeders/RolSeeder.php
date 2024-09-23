@@ -38,6 +38,8 @@ class RolSeeder extends Seeder
    
          // Permiso para Calidad
          Permission::firstOrCreate(['name' => 'calidad.index'])->syncRoles([$admin, $calidad]);
+         Permission::firstOrCreate(['name' => 'calidad.update'])->syncRoles([$admin]); // Permiso para actualizar gráficos
+         
       // permiso cnc
       Permission::firstOrCreate(['name' => 'cnc.index'])->syncRoles([$admin, $cnc]);
 

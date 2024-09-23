@@ -4,7 +4,7 @@
             <div class="account-wrap">
                 <div class="account-item clearfix js-item-menu">
                     <div class="image">
-                        <img src="{!! asset('theme/images/icon/avatar-01.PNG') !!}" alt="John Doe" />
+                        <img src="{!! asset('theme/images/icon/logo2.png') !!}" alt="John Doe" />
                     </div>
                     <div class="content">
                         <a class="js-acc-btn" href="#">{{ Auth::user()->first_name }} {{ Auth::user()->last_name }}</a>
@@ -13,7 +13,7 @@
                         <div class="info clearfix">
                             <div class="image">
                                 <a href="#">
-                                    <img src="{!! asset('theme/images/icon/avatar-01.PNG') !!}" alt="John Doe" />
+                                    <img src="{!! asset('theme/images/icon/logo2.png') !!}" alt="John Doe" />
                                 </a>
                             </div>
                             <div class="content">
@@ -25,16 +25,19 @@
                         </div>
                         <div class="account-dropdown__body">
                             <div class="account-dropdown__item">
-                                <a href="#">
-                                    <i class="zmdi zmdi-assignment-account"></i>Cuenta</a>
+                                <a href="{{ route('cuenta') }}">
+                                    <i class="zmdi zmdi-account-box"></i>Cuenta
+                                </a>
                             </div>
                             <div class="account-dropdown__item">
-                                <a href="#">
-                                    <i class="zmdi zmdi-settings"></i>Configuracion</a>
+                                <a href="{{ route('configuracion') }}">
+                                    <i class="zmdi zmdi-settings"></i>Configuracion
+                                </a>
                             </div>
                             <div class="account-dropdown__item">
-                                <a href="#">
-                                    <i class="zmdi zmdi-help"></i>Ayuda</a>
+                                <a href="{{ route('tickets') }}">
+                                    <i class="zmdi zmdi-help"></i>Ayuda
+                                </a>
                             </div>
                         </div>
                         <div class="account-dropdown__footer">
@@ -50,18 +53,18 @@
     </div>
 </header>
    <style>
-    /* Estilos generales para el header */
+
 .header-button {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items:flex-end;
     padding: 10px 20px;
 }
 
 /* Estilo para los elementos dentro del header */
 .header-button .account-wrap {
     display: flex;
-    align-items: center;
+    align-items:flex-end;
 }
 
 .header-button .account-item {
@@ -69,8 +72,8 @@
     font-size: 14px; /* Tamaño de fuente para una mejor legibilidad */
 }
 
-/* Media query para pantallas más pequeñas */
-@media (max-width: 768px) {
+ /* Media query para pantallas más pequeñas */
+  @media (max-width: 768px) {
     .header-button {
         flex-direction: column; /* Cambia la disposición a columna en pantallas pequeñas */
         align-items: flex-start; /* Alinea los elementos a la izquierda */

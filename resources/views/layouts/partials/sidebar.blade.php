@@ -1,7 +1,7 @@
 <aside class="menu-sidebar fixed inset-0 lg:relative lg:w-64 bg-white shadow-md z-50 lg:z-auto lg:shadow-none lg:static transition-transform duration-300 transform lg:translate-x-0 -translate-x-full">
     <div class="logo p-4">
         <a href="#">
-            <img src="{!! asset('theme/images/icon/logo.png') !!}" alt="Cool Admin" class="w-32" />
+            <img src="{!! asset('theme/images/icon/esc.png') !!}" alt="Cool Admin" class="w-32" />
         </a>
     </div>
 
@@ -116,7 +116,6 @@
     }
 </style>
 
-<!-- Inline JavaScript -->
  <script>
     document.addEventListener('DOMContentLoaded', function () {
         const sidebar = document.querySelector('.menu-sidebar');

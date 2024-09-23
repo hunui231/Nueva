@@ -2,11 +2,9 @@
     <x-auth-card>
         <x-slot name="logo">
             <a href="/">
-                <img src="{{ asset('theme/images/icon/avatar-01.PNG') }}" class="w-20 h-20" alt="Logo">
-
+                <img src="{{ asset('theme/images/icon/logo2.png') }}" class="w-20 h-20" alt="Logo">
             </a>
         </x-slot>
-
 
         <!-- Session Status -->
         <x-auth-session-status class="mb-4" :status="session('status')" />

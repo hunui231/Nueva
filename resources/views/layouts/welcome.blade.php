@@ -9,33 +9,145 @@
 <h1>Bienvenido, has Iniciado Sesión!</h1>
 
 <br>
-
-<!-- Incluye la librería de Google Charts -->
-<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-
-<script type="text/javascript">
+ <style>
+  #kpiChart {
+    background-color: black;
+    color: white;
+    width: 100%; 
+    height: auto;
+    aspect-ratio: 3 / 2;
+    padding: 10px;
+    box-sizing: border-box;
+  }
+     @media (max-width: 600px) {
+    #kpiChart {
+      aspect-ratio: 1 / 1; /* Cambia a una proporción más cuadrada en móviles */
+      padding: 5px; /* Reduce el padding en pantallas pequeñas */
+    }
+  }
+</style>
+ <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+ <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<canvas id="kpiChart"></canvas>
+ <script>
+    const ctx = document.getElementById('kpiChart').getContext('2d');
+ 
+   
+    const fechas = ['01/09/2024', '02/09/2024', '03/09/2024', '04/09/2024', '05/09/2024'];
+    
+    
+    const produccion = [500, 450, 600, 550, 620]; 
+    const defectos = [10, 15, 5, 8, 12]; 
+    const tiempoInactividad = [1, 2, 0.5, 1.5, 1];
+    const eficiencia = [85, 80, 90, 88, 92]; 
+    
+    
+    const kpiChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: fechas,
+            datasets: [
+                {
+                    label: 'Producción (Piezas)',
+                    data: produccion,
+                    borderColor: 'rgba(0, 123, 255, 1)',
+                    backgroundColor: 'rgba(0, 123, 255, 0.2)',  
+                    borderWidth: 2,
+                    fill: true 
+                },
+                {
+                    label: 'Defectos (Piezas)',
+                    data: defectos,
+                    borderColor: 'rgba(255, 99, 132, 1)',  
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    borderWidth: 1,
+                    fill: true  
+                },
+                {
+                    label: 'Tiempo Inactividad (Horas)',
+                    data: tiempoInactividad,
+                    borderColor: 'rgba(255, 206, 86, 1)', 
+                    backgroundColor: 'rgba(255, 206, 86, 0.2)', 
+                    borderWidth: 2,
+                    fill: true  
+                },
+                {
+                    label: 'Eficiencia (%)',
+                    data: eficiencia,
+                    borderColor: 'rgba(75, 192, 192, 1)', 
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)', 
+                    borderWidth: 2,
+                    fill: true 
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Indicadores Clave de Rendimiento (KPI) -  Metalmecánica',
+                    color: 'white'
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(tooltipItem) {
+                            const kpiNames = [
+                                'Producción',
+                                'Defectos',
+                                'Tiempo Inactividad',
+                                'Eficiencia'
+                            ];
+                            const values = [
+                                produccion[tooltipItem.dataIndex],
+                                defectos[tooltipItem.dataIndex],
+                                tiempoInactividad[tooltipItem.dataIndex],
+                                eficiencia[tooltipItem.dataIndex]
+                            ];
+                            return `${kpiNames[tooltipItem.datasetIndex]}: ${values[tooltipItem.dataIndex]}`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Valor',
+                        color: 'white'
+                    },
+                    ticks: {
+                        color: 'white' // Color de los números del eje Y
+                    },
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.2)'  // Líneas del grid
+                    }
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Fecha',
+                        color: 'white'
+                    },
+                    ticks: {
+                        color: 'white'  // Color de los números del eje X
+                    },
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.2)'  // Líneas del grid
+                    }
+                }
+            }
+        }
+    });
+</script>
+ <script type="text/javascript">
 
   google.charts.load('current', {'packages':['corechart']});
   google.charts.setOnLoadCallback(drawCharts);
 
   function drawCharts() {
-    var dataLine = google.visualization.arrayToDataTable([
-      ['Año', 'Producción', 'Control de Piezas'],
-      ['2021',  1000,      400],
-      ['2022',  1170,      460],
-      ['2023',  660,       1120],
-      ['2024',  1030,      540]
-    ]);
-
-    var optionsLine = {
-      title: 'CONPLASA PROMEDIO',
-      curveType: 'function',
-      legend: { position: 'bottom' }
-    };
-
-    var chartLine = new google.visualization.LineChart(document.getElementById('curve_chart'));
-    chartLine.draw(dataLine, optionsLine);
-
+   
     var dataPie1 = google.visualization.arrayToDataTable([
       ['Tareas', 'Horas por Día'],
       ['Taller', 11],
@@ -64,7 +176,7 @@
       ['Gasket', 7]
     ]);
 
-    
+     
 
     
     var optionsPie2 = {
@@ -77,12 +189,8 @@
   }
 </script>
 
-<!-- Contenedor para el gráfico de línea -->
-<div id="curve_chart" style="width: 100%; max-width: 900px; height: 500px;"></div>
-
 <br>
 
-<!-- Contenedores para los gráficos de pastel uno al lado del otro -->
 <div class="flex flex-col sm:flex-row sm:gap-4">
   <div id="piechart_3d_1" style="width: 100%; max-width: 500px; height: 500px;"></div>
   <div id="piechart_3d_2" style="width: 100%; max-width: 500px; height: 500px;"></div>

@@ -9,12 +9,10 @@
 <h1>Bienvenido!,  Este es tu Apartado CNC: </h1>
 
 <div style="max-width: 600px;">
-    <!-- Primer gráfico -->
     <div style="max-height: 300px; max-width: 300px;">
       <canvas id="myChart1"></canvas>
     </div>
   
-    <!-- Segundo gráfico -->
     <div style="max-height: 300px; max-width: 300px;">
       <canvas id="myChart2"></canvas>
     </div>
@@ -23,15 +21,15 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   
   <script>
-      // Gráfico de distribución de tiempo en operaciones de CNC
-      const ctx4 = document.getElementById('myChart1');
+
+    const ctx4 = document.getElementById('myChart1');
       new Chart(ctx4, {
         type: 'doughnut',
         data: {
           labels: ['Tiempo de Corte', 'Tiempo de Configuración', 'Tiempo de Inactividad', 'Tiempo de Mantenimiento', 'Tiempo de Ajustes'],
           datasets: [{
             label: 'Distribución de Tiempo',
-            data: [50, 20, 15, 10, 5], // Porcentaje de tiempo en cada actividad
+            data: [50, 20, 15, 10, 5], 
             backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'], // Colores para cada actividad
             borderWidth: 1
           }]
@@ -84,37 +82,94 @@
   });
   </script>
 
-<br>
-  <html>
-    <head>
-      <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-      <script type="text/javascript">
-        google.charts.load('current', {'packages':['corechart']});
-        google.charts.setOnLoadCallback(drawChart);
+  <br>
+  <br>
+  <canvas id="kpiChart" style="max-height: 400px; max-width: 600px;"></canvas>
+  <script>
+      const ctx = document.getElementById('kpiChart').getContext('2d');
+
+
+      const fechas = ['01/09/2024', '02/09/2024', '03/09/2024', '04/09/2024', '05/09/2024'];
+      const datos = [80, 15, 80, 100, 97];
+      const metas = [90, 90, 90, 90, 90];
+
+      const kpiChart = new Chart(ctx, {
+          type: 'line',
+          data: {
+              labels: fechas,
+              datasets: [
+                  {
+                      label: 'KPI',
+                      data: datos,
+                      borderColor: 'rgba(0, 123, 255, 1)',  // Color de la línea azul
+                      backgroundColor: 'rgba(0, 123, 255, 0.2)',  // Área debajo de la línea
+                      borderWidth: 2,
+                      fill: true  // Rellenar área bajo la línea
+                  },
+                  {
+                      label: 'Meta',
+                      data: metas,
+                      borderColor: 'rgba(255, 99, 132, 1)',  // Color de la línea roja
+                      backgroundColor: 'rgba(255, 99, 132, 0.2)',  // Área debajo de la línea
+                      borderWidth: 1,
+                      borderDash: [5, 5], // Línea punteada
+                      fill: true  // Rellenar área bajo la línea
+                  }
+              ]
+          },
+          options: {
+              responsive: true,
+              plugins: {
+                  title: {
+                      display: true,
+                      text: 'Cumplimiento  al Plan de Produccion Maquinados Forjas',
+                      color: 'white'
+                  },
+                  tooltip: {
+                      callbacks: {
+                          label: function(tooltipItem) {
+                              const calificaciones = ['No cumplido', 'Cumplido', 'No cumplido', 'Excedido', 'Cumplido'];
+                              return `Fecha: ${fechas[tooltipItem.dataIndex]}, KPI: ${tooltipItem.raw}, Calificación: ${calificaciones[tooltipItem.dataIndex]}`;
+                          }
+                      }
+                  }
+              },
+              scales: {
+                  y: {
+                      beginAtZero: true,
+                      title: {
+                          display: true,
+                          text: 'Valor',
+                          color: 'white'
+                      },
+                      ticks: {
+                          color: 'white' // Color de los números del eje Y
+                      },
+                      grid: {
+                          color: 'rgba(255, 255, 255, 0.2)'  // Líneas del grid
+                      }
+                  },
+                  x: {
+                      title: {
+                          display: true,
+                          text: 'Fecha',
+                          color: 'white'
+                      },
+                      ticks: {
+                          color: 'white'  // Color de los números del eje X
+                      },
+                      grid: {
+                          color: 'rgba(255, 255, 255, 0.2)'  // Líneas del grid
+                      }
+                  }
+              }
+          }
+      });
+  </script>
   
-        function drawChart() {
-          var data = google.visualization.arrayToDataTable([
-            ['Año', 'Ventas', 'Problemas'],
-            ['2022',  1000,      400],
-            ['2023',  1170,      460],
-            ['2024',  660,       1120],
-            ['2025',  1030,      540]
-          ]);
-  
-          var options = {
-            title: 'Promedio CNC',
-            hAxis: {title: 'Año',  titleTextStyle: {color: '#333'}},
-            vAxis: {minValue: 0}
-          };
-  
-          var chart = new google.visualization.AreaChart(document.getElementById('chart_div'));
-          chart.draw(data, options);
-        }
-      </script>
-    </head>
-    <body>
-      <div id="chart_div" style="width: 100%; height: 300px;"></div>
-    </body>
-  </html>
-  
+    <style>
+       #kpiChart{
+        background-color: black;
+       }
+    </style>
 @endsection

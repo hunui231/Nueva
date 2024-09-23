@@ -36,9 +36,23 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/logistica', [App\Http\Controllers\LogisticaController::class, 'index'])->name('logistica.index')->middleware('can:logistica.index');
  
     Route::get('/calidad', [App\Http\Controllers\CalidadController::class, 'index'])->name('calidad.index')->middleware('can:calidad.index');
-    
+    Route::post('/calidad/update', [App\Http\Controllers\CalidadController::class, 'update'])->name('calidad.update');
+    Route::post('/calidad/grafico2/update', [App\Http\Controllers\CalidadController::class, 'updateGrafico2'])->name('calidad.grafico2.update');
+
     Route::get('/cnc', [App\Http\Controllers\CncController::class, 'index'])->name('cnc.index')->middleware('can:cnc.index');
 
+    Route::get('/tickets', function () {
+        return view('tickets');
+    })->name('tickets');
+
+    Route::get('/cuenta', function () {
+        return view('cuenta');
+    })->name('cuenta');
+
+    Route::get('/configuracion', function () {
+        return view('configuracion');
+    })->name('configuracion');
+ 
 
 
 });

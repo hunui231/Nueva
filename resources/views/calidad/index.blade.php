@@ -1,90 +1,142 @@
 @extends('layouts.dashboard')
 
 @section('page')
-    @php $currentPage = 'users' @endphp
+    @php $currentPage = 'calidad' @endphp
 @endsection
 
 @section('content')
 
-<h1>Bienvenido!,  Este es tu Apartado Calidad: </h1>
+<h1>Bienvenido!, Este es tu Apartado Calidad: </h1>
 
 <br>
 
 
-<div style=" max-width: 600px;">
-    <!-- Primer gráfico -->
-    <div style="max-height: 300px; max-width: 300px;">
-      <canvas id="myChart1"></canvas>
-    </div>
-  
-    <!-- Segundo gráfico -->
-    <div style="max-height: 280px; max-width: 280px;">
-      <canvas id="myChart2"></canvas>
-    </div>
-  </div>
-  
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  
-  <script>
-      // Gráfico de defectos por tipo de causa
-      const ctx1 = document.getElementById('myChart1');
-      new Chart(ctx1, {
-        type: 'doughnut',
-        data: {
-          labels: ['Fallas de Material', 'Errores en el Proceso', 'Fallas Humanas', 'Problemas en el Diseño', 'Otras Causas'],
-          datasets: [{
-            label: 'Porcentaje de Defectos',
-            data: [35, 25, 20, 15, 5], // Porcentajes de defectos por tipo de causa
-            backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'], // Colores opcionales para cada segmento
+@if(session('success'))
+    <div>{{ session('success') }}</div>
+@endif
+
+@can('calidad.update')
+ <form action="{{ route('calidad.update') }}" method="POST">
+    @csrf
+    <label for="dato">Dato (%):</label>
+    <input type="number" name="dato" id="dato" value="{{ $calidad->dato ?? 0 }}" required>
+    
+    <label for="meta">Meta (%):</label>
+    <input type="number" name="meta" id="meta" value="{{ $calidad->meta ?? 100 }}" required>
+
+    <button type="submit" class="btn btn-secondary">Actualizar Gráfico</button>
+</form>
+@endcan
+<div style="max-width: 600px; margin: 0 auto;">
+    <canvas id="myDoughnutChart"></canvas>
+</div>
+ 
+ <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+ <script>
+    const ctx = document.getElementById('myDoughnutChart').getContext('2d');
+
+    // Definir los datos
+    const data = {
+        labels: ['Aprobada', 'No Aprobada'],
+        datasets: [{
+            label: 'Resultado',
+            data: [{{ $calidad->dato ?? 0 }}, {{ 100 - ($calidad->dato ?? 0) }}],
+            backgroundColor: ['#4CAF50', '#F44336'],
             borderWidth: 1
-          }]
-        },
+        }]
+    };
+
+    const myDoughnutChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: data,
         options: {
-          responsive: true,
-          plugins: {
-            legend: {
-              position: 'top',
-            },
-            tooltip: {
-              callbacks: {
-                label: function(tooltipItem) {
-                  return tooltipItem.label + ': ' + tooltipItem.raw + '%'; 
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const label = context.label || '';
+                            const value = context.raw || 0;
+                            return label + ': ' + value + '%';
+                        }
+                    }
+                },
+                title: {
+                    display: true,
+                    text: 'KPI Semana 2 SEP',
                 }
-              }
             }
-          }
         }
-      });
-    // Gráfico de efectividad de las acciones correctivas
-  const ctx3 = document.getElementById('myChart2');
-  new Chart(ctx3, {
-    type: 'doughnut',
-    data: {
-      labels: ['Capacitación del Personal', 'Mejoras en el Proceso', 'Actualización de Equipos', 'Revisión de Proveedores'],
-      datasets: [{
-        label: 'Impacto de Acciones Correctivas',
-        data: [40, 30, 20, 10], // Porcentaje de impacto de cada acción correctiva
-        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0'], 
-        borderWidth: 1
-      }]
-    },
-    options: {
-      responsive: true,
-      plugins: {
-        legend: {
-          position: 'top',
-        },
-        tooltip: {
-          callbacks: {
-            label: function(tooltipItem) {
-              return tooltipItem.label + ': ' + tooltipItem.raw + '%'; 
+    });
+</script>
+
+<br>
+<br>
+
+@if(session('success2'))
+    <div>{{ session('success2') }}</div>
+@endif
+@can('calidad.update')
+<form action="{{ route('calidad.grafico2.update') }}" method="POST">
+    @csrf
+    <label for="dato">Dato (%):</label>
+    <input type="number" name="dato" id="dato" value="{{ $calidadGrafico2->dato ?? 0 }}" required>
+    
+    <label for="meta">Meta (%):</label>
+    <input type="number" name="meta" id="meta" value="{{ $calidadGrafico2->meta ?? 100 }}" required>
+
+    <button type="submit" class="btn btn-secondary">Actualizar Gráfico</button>
+</form>
+@endcan
+<div style="max-width: 600px; margin: 0 auto;">
+    <canvas id="myDoughnutChart2"></canvas>
+</div>
+
+ <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+ 
+ <script>
+    // Cambia el nombre de la variable ctx para evitar conflictos
+    const ctxGrafico2 = document.getElementById('myDoughnutChart2').getContext('2d');
+
+    // Verificar si hay datos
+    const dato = {{ $calidadGrafico2->dato ?? 0 }};
+    const noAprobada = 100 - dato;
+
+    // Definir los datos
+    const dataGrafico2 = {
+        labels: ['Aprobada', 'No Aprobada'],
+        datasets: [{
+            label: 'Resultado',
+            data: [dato, noAprobada],
+            backgroundColor: ['#4CAF50', '#F44336'],
+            borderWidth: 1
+        }]
+    };
+
+    const myDoughnutChart2 = new Chart(ctxGrafico2, {
+        type: 'doughnut',
+        data: dataGrafico2,
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const label = context.label || '';
+                            const value = context.raw || 0;
+                            return label + ': ' + value + '%';
+                        }
+                    }
+                },
+                title: {
+                    display: true,
+                    text: 'KPI Semana 3 SEP',
+                }
             }
-          }
         }
-      }
-    }
-  });
-  </script>
-
-
+    });
+</script>
 @endsection
