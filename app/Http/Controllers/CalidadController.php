@@ -61,7 +61,10 @@ class CalidadController extends Controller
     
         return redirect()->route('calidad.index')->with('success2', 'Gráfico 2 actualizado correctamente');
     }
-        
+
+    
+    
+
 }
 
 

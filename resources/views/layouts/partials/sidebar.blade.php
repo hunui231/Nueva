@@ -34,7 +34,7 @@
                 @can('calidad.index')
                 <li @if($currentPage == 'calidad') class="active" @endif>
                     <a href="{{ route('calidad.index') }}" class="flex items-center p-2 hover:bg-gray-200">
-                        <i class="fas fa-chart-bar mr-2"></i>Calidad
+                        <i class="fas fa-chart-bar mr-2"></i>Metrología
                     </a>
                 </li>
                 @endcan
@@ -43,6 +43,14 @@
                 <li @if($currentPage == 'cnc') class="active" @endif>
                     <a href="{{ route('cnc.index') }}" class="flex items-center p-2 hover:bg-gray-200">
                         <i class="fas fa-chart-line mr-2"></i>CNC
+                    </a>
+                </li>
+                @endcan
+                
+                @can('taller.index')
+                <li @if($currentPage == 'taller') class="active" @endif>
+                    <a href="{{ route('taller.index') }}" class="flex items-center p-2 hover:bg-gray-200">
+                        <i class="fa fa-cogs" aria-hidden="true"></i>Taller
                     </a>
                 </li>
                 @endcan
@@ -58,20 +66,18 @@
 
 <!-- Inline CSS -->
  <style>
-    /* Estilos generales */
     .menu-sidebar {
         background-color: white; /* Puedes ajustar según sea necesario */
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Ajusta el estilo del shadow */
         z-index: 50; /* Asegura que esté por encima del contenido */
     }
 
-    /* Ajustes para dispositivos móviles */
     @media (max-width: 1024px) {
         .menu-sidebar {
             position: fixed;
             inset: 0;
             transition: transform 0.3s;
-            transform: translateX(-100%); /* Ocultar la barra lateral por defecto en móviles */
+            transform: translateX(-100%); 
         }
 
         .menu-sidebar.open {

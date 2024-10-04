@@ -31,7 +31,7 @@
 <body class="animsition">
     <div class="page-wrapper">
         @yield('page')
-
+   
        
         <!-- END MENU SIDEBAR-->
         @include('layouts.partials.sidebar')

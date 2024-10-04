@@ -1,16 +1,10 @@
 @extends('layouts.dashboard')
 
 @section('page')
-    @php $currentPage = 'users' @endphp
+    @php $currentPage = 'users'; @endphp
 @endsection
 
 @section('content')
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> Tickets</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -126,12 +120,16 @@
             }
         }
     </style>
-</head>
-<body>
-    <div class="container">
-        <h1>Tickets</h1>
 
-        <form id="ticketForm">
+     <div class="container">
+        <center>
+        <h1>Tickets</h1>
+        <h5>Esta Seccion Esta Unicamente Destinada Para Problemas con la Aplicacion</h5>
+        </center>
+        
+        <br>
+        <form id="ticketForm" action="{{ route('tickets.create') }}" method="POST">
+            @csrf <!-- Token CSRF para la seguridad -->
             <label for="usuario">Usuario:</label>
             <input type="text" id="usuario" name="usuario" required>
             
@@ -143,9 +141,10 @@
             
             <label for="descripcion">Descripción del problema:</label>
             <textarea id="descripcion" name="descripcion" rows="4" required></textarea>
-        
+            
             <button type="submit">Crear Ticket</button>
         </form>
+        @can('calidad.update')
 
         <table id="ticketTable">
             <thead>
@@ -154,78 +153,83 @@
                     <th>Área</th>
                     <th>Correo</th>
                     <th>Descripción</th>
-                    <th>Estado</th>{}
+                    <th>Estado</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
-                <!-- Aquí se insertarán los tickets -->
+                @foreach ($tickets as $ticket)
+                    <tr>
+                        <td>{{ $ticket->usuario }}</td>
+                        <td>{{ $ticket->area }}</td>
+                        <td>{{ $ticket->correo }}</td>
+                        <td>{{ $ticket->descripcion }}</td>
+                        <td class="status {{ strtolower($ticket->estado) }}">{{ $ticket->estado }}</td>
+                        <td class="action-buttons">
+                            <button onclick="changeStatus({{ $ticket->id }})">Listo</button>
+                            <button class="delete" onclick="deleteTicket({{ $ticket->id }})">Eliminar</button>
+                        </td>
+                    </tr>
+                @endforeach
             </tbody>
         </table>
+        @endcan
     </div>
-
     <script>
-        const tickets = [];
+        let tickets = [];
 
-        document.getElementById('ticketForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const usuario = document.getElementById('usuario').value;
-            const area = document.getElementById('area').value;
-            const correo = document.getElementById('correo').value;
-            const descripcion = document.getElementById('descripcion').value;
-            
-            const ticket = {
-                id: tickets.length + 1,
-                usuario: usuario,
-                area: area,
-                correo: correo,
-                descripcion: descripcion,
-                estado: 'Pendiente'
-            };
-            
-            tickets.push(ticket);
-            renderTickets();
-            
-            this.reset();
-        });
-
-        function renderTickets() {
-            const tbody = document.querySelector('#ticketTable tbody');
-            tbody.innerHTML = '';
-            
-            tickets.forEach(ticket => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${ticket.usuario}</td>
-                    <td>${ticket.area}</td>
-                    <td>${ticket.correo}</td>
-                    <td>${ticket.descripcion}</td>
-                    <td class="status ${ticket.estado.toLowerCase()}" data-label="Estado">${ticket.estado}</td>
-                    <td class="action-buttons" data-label="Acciones">
-                        <button onclick="changeStatus(${ticket.id})">Listo</button>
-                        <button class="delete" onclick="deleteTicket(${ticket.id})">Eliminar</button>
-                    </td>
-                `;
-                tbody.appendChild(row);
+     document.getElementById('ticketForm').addEventListener('submit', function(e) {
+                e.preventDefault(); // Prevenir el envío normal del formulario
+                
+                const formData = new FormData(this); // Recoger los datos del formulario
+                
+                fetch(this.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.id) {
+                        // Si el ticket fue creado exitosamente, agregarlo a la tabla
+                        const ticket = {
+                            id: data.id,
+                            usuario: data.usuario,
+                            area: data.area,
+                            correo: data.correo,
+                            descripcion: data.descripcion,
+                            estado: 'Pendiente'
+                        };
+                        tickets.push(ticket);
+                        renderTickets(); // Llamar a la función para renderizar los tickets en la tabla
+                        this.reset(); // Reiniciar el formulario
+                    }
+                })
+                .catch(error => console.error('Error:', error));
             });
-        }
-
-        function changeStatus(id) {
-            const ticket = tickets.find(t => t.id === id);
-            if (ticket) {
-                ticket.estado = 'Resuelto';
-                renderTickets();
+        
+            function renderTickets() {
+                const tbody = document.querySelector('#ticketTable tbody');
+                tbody.innerHTML = '';
+                
+                tickets.forEach(ticket => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${ticket.usuario}</td>
+                        <td>${ticket.area}</td>
+                        <td>${ticket.correo}</td>
+                        <td>${ticket.descripcion}</td>
+                        <td class="status ${ticket.estado.toLowerCase()}">${ticket.estado}</td>
+                        <td class="action-buttons">
+                            <button onclick="changeStatus(${ticket.id})">Listo</button>
+                            <button class="delete" onclick="deleteTicket(${ticket.id})">Eliminar</button>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
             }
-        }
-
-        function deleteTicket(id) {
-            const index = tickets.findIndex(t => t.id === id);
-            if (index > -1) {
-                tickets.splice(index, 1);
-                renderTickets();
-            }
-        }
+            renderTickets();w
     </script>
-</body>
-</html>
 @endsection

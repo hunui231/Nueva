@@ -2,6 +2,9 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\TallerController;
+use App\Http\Controllers\TicketController;
+use App\Models\Ticket;
 
 /*
 |--------------------------------------------------------------------------
@@ -34,16 +37,25 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('users/{user}/destroy', [UserController::class, 'destroy'])->name('users.destroy');
 
     Route::get('/logistica', [App\Http\Controllers\LogisticaController::class, 'index'])->name('logistica.index')->middleware('can:logistica.index');
- 
+    Route::post('/logistica/update', [App\Http\Controllers\LogisticaController::class, 'update'])->name('logistica.update');
+    Route::post('/logistica/update-dona2', [App\Http\Controllers\LogisticaController::class, 'updateDona2'])->name('logistica.updateDona2');
+
+
+
     Route::get('/calidad', [App\Http\Controllers\CalidadController::class, 'index'])->name('calidad.index')->middleware('can:calidad.index');
     Route::post('/calidad/update', [App\Http\Controllers\CalidadController::class, 'update'])->name('calidad.update');
     Route::post('/calidad/grafico2/update', [App\Http\Controllers\CalidadController::class, 'updateGrafico2'])->name('calidad.grafico2.update');
 
     Route::get('/cnc', [App\Http\Controllers\CncController::class, 'index'])->name('cnc.index')->middleware('can:cnc.index');
+    Route::post('/cnc/update', [App\Http\Controllers\CncController::class, 'update'])->name('cnc.update');
+    Route::post('/cnc/updateGrafico2',[App\Http\Controllers\CncController::class, 'updateGrafico2'])->name('cnc.grafico2.update');
 
     Route::get('/tickets', function () {
-        return view('tickets');
+        $tickets = Ticket::all(); // Obtener todos los tickets
+        return view('tickets', compact('tickets')); // Pasar los tickets a la vista
     })->name('tickets');
+  
+    Route::post('/tickets', [App\Http\Controllers\TicketController::class, 'create'])->name('tickets.create');
 
     Route::get('/cuenta', function () {
         return view('cuenta');
@@ -52,7 +64,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/configuracion', function () {
         return view('configuracion');
     })->name('configuracion');
- 
 
+    Route::get('/taller', [App\Http\Controllers\TallerController::class, 'index'])->name('taller.index');
+ 
 
 });

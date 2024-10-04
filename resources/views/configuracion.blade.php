@@ -5,7 +5,63 @@
 @endsection
 
 @section('content')
+ <style>
+   /* General */
+   .container {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+}
 
+h2 {
+    color: #343a40;
+    margin-bottom: 20px;
+    font-family: 'Arial', sans-serif;
+}
+
+.card {
+    border: none;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    background-color: #ffffff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+    background-color: #062fe6;
+    color: white;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    font-weight: bold;
+}
+
+.card-body {
+    padding: 20px;
+    font-family: 'Arial', sans-serif;
+    color: #495057;
+}
+
+h4 {
+    margin-top: 20px;
+    color: #062fe6;
+}
+
+p {
+    line-height: 1.5;
+}
+
+a {
+    color: #062fe6;
+    text-decoration: underline;
+}
+
+a:hover {
+    text-decoration: none;
+    color: #062fe6;
+}
+</style>
 <div class="container">
     <h2>Configuraciones de la Cuenta</h2>
 

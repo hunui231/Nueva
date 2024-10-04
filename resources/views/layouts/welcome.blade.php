@@ -5,195 +5,528 @@
 @endsection
 
 @section('content')
-
 <h1>Bienvenido, has Iniciado Sesión!</h1>
 
-<br>
  <style>
-  #kpiChart {
-    background-color: black;
-    color: white;
-    width: 100%; 
-    height: auto;
-    aspect-ratio: 3 / 2;
-    padding: 10px;
-    box-sizing: border-box;
-  }
-     @media (max-width: 600px) {
-    #kpiChart {
-      aspect-ratio: 1 / 1; /* Cambia a una proporción más cuadrada en móviles */
-      padding: 5px; /* Reduce el padding en pantallas pequeñas */
+    .chart-row {
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        width: 100%;
+        max-width: 700px;
+        margin: 0 auto;
     }
-  }
+    .chart-container {
+        width: 48%;
+        margin-bottom: 20px; 
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .chart-title {
+        font-family: 'Arial', sans-serif;
+        font-size: 2.5em;
+        text-align: center;
+        color: #fff;
+        background: linear-gradient(135deg, #3498db, #ff0b0b);
+        padding: 15px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        width: fit-content;
+        letter-spacing: 2px;
+        margin-bottom: 10px;
+    }
+    .indicators {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        margin-top: 10px;
+    }
+    .indicator {
+        background-color: #f0f0f0;
+        padding: 5px;
+        margin: 5px;
+        border-radius: 5px;
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    .indicator canvas {
+        width: 50px;
+        height: 50px;
+    }
+    .indicator-text {
+        margin-right: 10px;
+        text-align: left;
+    }
+
+    .maspudo{
+        font-size: 24px;
+font-weight: bold;
+text-align: center;
+padding: 10px;
+color: white;
+background-color: #4A90E2; 
+border-radius: 8px;
+box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+transition: transform 0.3s; 
+    }
+
+    /* Ajustes responsivos */
+    @media (max-width: 768px) {
+        .chart-container {
+            width: 100%; 
+        }
+        .indicators {
+            flex-direction: column;
+            align-items: center;
+        }
+        .indicator {
+            width: 100%;
+            max-width: 300px;
+        }
+        
+    }
 </style>
- <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
- <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<canvas id="kpiChart"></canvas>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<div class="chart-row">
+    <!-- Gráfico 1 -->
+    <div class="chart-container">
+        <h2 class="chart-title">Operación MM</h2>
+        <canvas id="mainChart1"></canvas>
+        <div class="indicators">
+            <div class="indicator">
+                <canvas id="miniChart1"></canvas>
+                <div class="indicator-text">Falta</div>
+            </div>
+            <div class="indicator">
+                <canvas id="miniChart2"></canvas>
+                <div class="indicator-text">Bien</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gráfico 2 -->
+    <div class="chart-container">
+        <h2 class="chart-title">RHH</h2>
+        <canvas id="mainChart2"></canvas>
+        <div class="indicators">
+            <div class="indicator">
+                <canvas id="miniChart3"></canvas>
+                <div class="indicator-text">Falta</div>
+            </div>
+            <div class="indicator">
+                <canvas id="miniChart4"></canvas>
+                <div class="indicator-text">Bien</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="chart-row">
+
+    <div class="chart-container">
+        <h2 class="chart-title">Logistica</h2>
+        <canvas id="mainChart3"></canvas>
+        <div class="indicators">
+            <div class="indicator">
+                <canvas id="miniChart5"></canvas>
+                <div class="indicator-text">Falta</div>
+            </div>
+            <div class="indicator">
+                <canvas id="miniChart6"></canvas>
+                <div class="indicator-text">Bien</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gráfico 4 -->
+    <div class="chart-container">
+        <h2 class="chart-title">CNC</h2>
+        <canvas id="mainChart4"></canvas>
+        <div class="indicators">
+            <div class="indicator">
+                <canvas id="miniChart7"></canvas>
+                <div class="indicator-text">Falta</div>
+            </div>
+            <div class="indicator">
+                <canvas id="miniChart8"></canvas>
+                <div class="indicator-text">Bien</div>
+            </div>
+        </div>
+    </div>
+</div>
+
  <script>
-    const ctx = document.getElementById('kpiChart').getContext('2d');
- 
-   
-    const fechas = ['01/09/2024', '02/09/2024', '03/09/2024', '04/09/2024', '05/09/2024'];
-    
-    
-    const produccion = [500, 450, 600, 550, 620]; 
-    const defectos = [10, 15, 5, 8, 12]; 
-    const tiempoInactividad = [1, 2, 0.5, 1.5, 1];
-    const eficiencia = [85, 80, 90, 88, 92]; 
-    
-    
-    const kpiChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: fechas,
-            datasets: [
-                {
-                    label: 'Producción (Piezas)',
-                    data: produccion,
-                    borderColor: 'rgba(0, 123, 255, 1)',
-                    backgroundColor: 'rgba(0, 123, 255, 0.2)',  
-                    borderWidth: 2,
-                    fill: true 
-                },
-                {
-                    label: 'Defectos (Piezas)',
-                    data: defectos,
-                    borderColor: 'rgba(255, 99, 132, 1)',  
-                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                    borderWidth: 1,
-                    fill: true  
-                },
-                {
-                    label: 'Tiempo Inactividad (Horas)',
-                    data: tiempoInactividad,
-                    borderColor: 'rgba(255, 206, 86, 1)', 
-                    backgroundColor: 'rgba(255, 206, 86, 0.2)', 
-                    borderWidth: 2,
-                    fill: true  
-                },
-                {
-                    label: 'Eficiencia (%)',
-                    data: eficiencia,
-                    borderColor: 'rgba(75, 192, 192, 1)', 
-                    backgroundColor: 'rgba(75, 192, 192, 0.2)', 
-                    borderWidth: 2,
-                    fill: true 
-                }
-            ]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                title: {
-                    display: true,
-                    text: 'Indicadores Clave de Rendimiento (KPI) -  Metalmecánica',
-                    color: 'white'
-                },
-                tooltip: {
-                    callbacks: {
-                        label: function(tooltipItem) {
-                            const kpiNames = [
-                                'Producción',
-                                'Defectos',
-                                'Tiempo Inactividad',
-                                'Eficiencia'
-                            ];
-                            const values = [
-                                produccion[tooltipItem.dataIndex],
-                                defectos[tooltipItem.dataIndex],
-                                tiempoInactividad[tooltipItem.dataIndex],
-                                eficiencia[tooltipItem.dataIndex]
-                            ];
-                            return `${kpiNames[tooltipItem.datasetIndex]}: ${values[tooltipItem.dataIndex]}`;
-                        }
-                    }
-                }
+    function createMainChart(canvasId, data, colors) {
+        var ctx = document.getElementById(canvasId).getContext('2d');
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Meta', 'Dato'],
+                datasets: [{
+                    data: data,
+                    backgroundColor: colors
+                }]
             },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    title: {
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
                         display: true,
-                        text: 'Valor',
-                        color: 'white'
-                    },
-                    ticks: {
-                        color: 'white' // Color de los números del eje Y
-                    },
-                    grid: {
-                        color: 'rgba(255, 255, 255, 0.2)'  // Líneas del grid
-                    }
-                },
-                x: {
-                    title: {
-                        display: true,
-                        text: 'Fecha',
-                        color: 'white'
-                    },
-                    ticks: {
-                        color: 'white'  // Color de los números del eje X
-                    },
-                    grid: {
-                        color: 'rgba(255, 255, 255, 0.2)'  // Líneas del grid
+                        position: 'top',
                     }
                 }
             }
-        }
-    });
-</script>
- <script type="text/javascript">
+        });
+    }
 
-  google.charts.load('current', {'packages':['corechart']});
-  google.charts.setOnLoadCallback(drawCharts);
+    createMainChart('mainChart1', [20, 80], ['#F44336', '#4CAF50']);
+    createMainChart('mainChart2', [30, 70], ['#F44336', '#4CAF50']);
+    createMainChart('mainChart3', [50, 50], ['#F44336', '#4CAF50']);
+    createMainChart('mainChart4', [60, 40], ['#F44336', '#4CAF50']);
 
-  function drawCharts() {
-   
-    var dataPie1 = google.visualization.arrayToDataTable([
-      ['Tareas', 'Horas por Día'],
-      ['Taller', 11],
-      ['CNC', 2],
-      ['Almacén', 2],
-      ['Compras', 2],
-      ['Gasket', 7]
-    ]);
+    function createMiniChart(canvasId, data, colors) {
+        var ctx = document.getElementById(canvasId).getContext('2d');
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                datasets: [{
+                    data: data,
+                    backgroundColor: colors
+                }]
+            },
+            options: {
+                responsive: false,
+                cutout: '70%',
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+    }
 
-    var optionsPie1 = {
-      title: 'ACTIVIDADES POR ÁREA',
-      is3D: true,
-    };
-
-    
-
-    var chartPie1 = new google.visualization.PieChart(document.getElementById('piechart_3d_1'));
-    chartPie1.draw(dataPie1, optionsPie1);
-
-    var dataPie2 = google.visualization.arrayToDataTable([
-      ['Tareas', 'Horas por Día'],
-      ['Taller', 11],
-      ['CNC', 2],
-      ['Almacén', 2],
-      ['Compras', 2],
-      ['Gasket', 7]
-    ]);
-
-     
-
-    
-    var optionsPie2 = {
-      title: 'PRODUCCIÓN',
-      is3D: true,
-    };
-
-    var chartPie2 = new google.visualization.PieChart(document.getElementById('piechart_3d_2'));
-    chartPie2.draw(dataPie2, optionsPie2);
-  }
+    createMiniChart('miniChart1', [20, 80], ['red', '#e6e6e6']);
+    createMiniChart('miniChart2', [80, 20], ['#66ff66', '#e6e6e6']);
+    createMiniChart('miniChart3', [30, 70], ['red', '#e6e6e6']);
+    createMiniChart('miniChart4', [70, 30], ['#66ff66', '#e6e6e6']);
+    createMiniChart('miniChart5', [50, 50], ['red', '#e6e6e6']);
+    createMiniChart('miniChart6', [50, 50], ['#66ff66', '#e6e6e6']);
+    createMiniChart('miniChart7', [60, 40], ['red', '#e6e6e6']);
+    createMiniChart('miniChart8', [40, 60], ['#66ff66', '#e6e6e6']);
 </script>
 
 <br>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.css" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.css" rel="stylesheet" />
+ <style>
+    body {
+        overflow-x: hidden;
+    }
+    #calendar {
+        max-width: 100%;
+        margin: 20px auto;
+    }
+    @media (max-width: 768px) {
+        h2, h3 {
+            font-size: 1.5rem;
+        }
+    }
+</style>
 
-<div class="flex flex-col sm:flex-row sm:gap-4">
-  <div id="piechart_3d_1" style="width: 100%; max-width: 500px; height: 500px;"></div>
-  <div id="piechart_3d_2" style="width: 100%; max-width: 500px; height: 500px;"></div>
+<div class="container-fluid">
+
+
+<div class="row mt-4">
+    <div class="col-md-6">
+        <h3 class="maspudo">Indicadores Clave Metal Mecanica</h3>
+        <canvas id="salesChart"></canvas>
+    </div>
+    <div class="col-md-6">
+        <h3 class="maspudo"> KPIs Produccion Metal Mecanica</h3>
+        <canvas id="incomeChart"></canvas>
+    </div>
 </div>
 
+<div class="row mt-4">
+    <div class="col-12">
+        <h3 class="maspudo">Calendario</h3>
+        <div id="calendar" style="max-width: 800px; max-height: 500px;"></div>
+    </div>
+</div>
+</div>
+
+ <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+ <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+ <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.js"></script>
+ <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+ <script>
+document.addEventListener('DOMContentLoaded', function() {
+    var calendarEl = document.getElementById('calendar');
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+        locale: 'es', // Configuración del idioma a español
+        initialView: 'dayGridMonth',
+        headerToolbar: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'dayGridMonth,timeGridWeek,timeGridDay'
+        },
+        events: [
+            {
+                title: 'Evento 1',
+                start: '2024-10-05'
+            },
+            {
+                title: 'Evento 2',
+                start: '2024-10-07',
+                end: '2024-10-10'
+            }
+        ]
+    });
+    calendar.render();
+});
+
+// Inicialización de los gráficos
+const salesCtx = document.getElementById('salesChart').getContext('2d');
+const salesChart = new Chart(salesCtx, {
+    type: 'bar',
+    data: {
+        labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo'],
+        datasets: [{
+            label: 'Scrap',
+            data: [1200, 1900, 3000, 5000, 2000],
+            backgroundColor: 'rgba(54, 162, 235, 0.5)',
+            borderColor: 'rgba(54, 162, 235, 1)',
+            borderWidth: 1
+        }]
+    },
+    options: {
+        responsive: true,
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+});
+
+const incomeCtx = document.getElementById('incomeChart').getContext('2d');
+const incomeChart = new Chart(incomeCtx, {
+    type: 'line',
+    data: {
+        labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo'],
+        datasets: [{
+            label: 'Produccion',
+            data: [1000, 1500, 2500, 4000, 3000],
+            fill: false,
+            borderColor: 'rgba(75, 192, 192, 1)',
+            tension: 0.1
+        }]
+    },
+    options: {
+        responsive: true
+    }
+});
+</script>
+
+
+<br>
+<br>
+ <style>
+.container {
+    width: 90%;
+    max-width: 1000px;
+    margin: 0 auto;
+    text-align: center;
+    border: 2px solid #000;
+    padding: 20px;
+    background-color: #e8f3ff;
+    box-sizing: border-box;
+}
+.title {
+    font-size: 24px;
+    background-color: #00376b;
+    color: white;
+    padding: 10px;
+    margin-bottom: 20px;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+th, td {
+    border: 1px solid black;
+    padding: 10px;
+    text-align: center;
+    font-size: 14px;
+}
+th {
+    background-color: #00529b;
+    color: white;
+}
+tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+.sign {
+    margin-top: 20px;
+    text-align: left;
+}
+.footer {
+    text-align: right;
+    margin-top: 20px;
+}
+/* Media Queries para hacer responsive */
+@media screen and (max-width: 600px) {
+    .container {
+        width: 100%;
+        padding: 10px;
+    }
+    .title {
+        font-size: 20px;
+    }
+    th, td {
+        font-size: 12px;
+        padding: 8px;
+    }
+    h2 {
+        font-size: 18px;
+    }
+    .footer {
+        font-size: 12px;
+    }
+}
+</style>
+
+<div class="container">
+<div class="title">SISTEMA DE GESTIÓN DE CALIDAD</div>
+<h2>OBJETIVOS DE CALIDAD</h2>
+<table>
+<thead>
+    <tr>
+        <th></th>
+        <th>Objetivo</th>
+        <th>Área</th>
+        <th>Detalle</th>
+    </tr>
+</thead>
+<tbody>
+    <tr>
+        <td>1</td>
+        <td>Reducir el Porcentaje de Defectivo</td>
+        <td>Plásticos</td>
+        <td>Scrap Plásticos &lt; 2.5%</td>
+    </tr>
+    <tr>
+        <td></td>
+        <td></td>
+        <td>Metal Mecánica</td>
+        <td>
+            Scrap Donaldson &lt; 2%<br>
+            Scrap Taller &lt; 3%<br>
+            Scrap Forjas &lt; 5%
+        </td>
+    </tr>
+    <tr>
+        <td>2</td>
+        <td>Cumplimiento al Plan de Producción</td>
+        <td>Plásticos</td>
+        <td>&gt; 90%</td>
+    </tr>
+    <tr>
+        <td></td>
+        <td></td>
+        <td>Metal Mecánica</td>
+        <td>
+            Ensamble Donaldson &gt; 95%<br>
+            Taller &gt; 95%<br>
+            Maquinados en serie Forjas &gt; 98%
+        </td>
+    </tr>
+    <tr>
+        <td>3</td>
+        <td>Entregas a Tiempo al Cliente</td>
+        <td>Plásticos, Metal Mecánica</td>
+        <td>100%</td>
+    </tr>
+    <tr>
+        <td>4</td>
+        <td>Evitar Reclamos de Cliente</td>
+        <td>Plásticos, Metal Mecánica</td>
+        <td>0</td>
+    </tr>
+</tbody>
+</table>
+
+<div class="sign">
+<strong>CONPLASA</strong><br>
+Ing. Ricardo Daniel Solís Quiróz
+</div>
+
+<div class="footer">
+Rev. 06<br>
+Fecha: 18.Enero.24
+</div>
+</div>
+ 
+
 @endsection
+
+ <style>
+    .container {
+        width: 90%;
+        max-width: 800px;
+        margin: 0 auto;
+        text-align: center;
+        border: 2px solid #00376b; /* Cambiado a color de título */
+        border-radius: 10px; /* Bordes redondeados */
+        padding: 20px;
+        background-color: #e8f3ff;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Sombra sutil */
+        box-sizing: border-box;
+    }
+    .title {
+        font-size: 28px; /* Aumentar el tamaño de la fuente */
+        background-color: #00376b;
+        color: white;
+        padding: 15px;
+        margin-bottom: 20px;
+        border-radius: 5px; /* Bordes redondeados */
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Sombra sutil */
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px; /* Espacio entre la tabla y el título */
+    }
+    th, td {
+        border: 1px solid #ddd; /* Cambiar a un color más claro */
+        padding: 10px;
+        text-align: center;
+        font-size: 16px; /* Aumentar el tamaño de la fuente */
+    }
+    th {
+        background-color: #00529b;
+        color: white;
+        font-weight: bold; /* Negrita en los encabezados */
+    }
+    tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+    .sign {
+        margin-top: 30px; /* Aumentar margen superior */
+        text-align: left;
+        font-weight: bold; /* Negrita */
+    }
+    .footer {
+        text-align: right;
+        margin-top: 30px; /* Aumentar margen superior */
+        color: #555; /* Color más suave para el pie de página */
+    }
+    </style>
+    
