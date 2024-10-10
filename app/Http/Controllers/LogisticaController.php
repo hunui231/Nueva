@@ -12,7 +12,7 @@ class LogisticaController extends Controller
 
     public function index()
     {
-        // Obtener los datos de logística
+       
         $logisticas = Logistica::all();
         $tlogistica2 = Tlogistica2::first();
         $tlogistica3 = Tlogistica3::first();
@@ -22,15 +22,15 @@ class LogisticaController extends Controller
 
     public function update(Request $request)
     {
-        // Validar los datos del formulario
+        
         $request->validate([
             'dato' => 'required|numeric|min:0|max:100',
             'meta' => 'required|numeric|min:0|max:100',
         ]);
 
-        // Actualizar o crear el registro en la base de datos
+      
         Tlogistica2::updateOrCreate(
-            ['id' => 1], // Suponiendo que solo hay un registro que se va a actualizar
+            ['id' => 1], 
             $request->only(['dato', 'meta'])
         );
 
@@ -46,7 +46,7 @@ class LogisticaController extends Controller
           ]);
   
           Tlogistica3::updateOrCreate(
-              ['id' => 1], // Suponiendo que solo hay un registro que se va a actualizar
+              ['id' => 1],
               [
                   'dato' => $request->input('dato_dona2'),
                   'meta' => $request->input('meta_dona2'),
@@ -55,5 +55,4 @@ class LogisticaController extends Controller
   
           return redirect()->route('logistica.index')->with('success', 'Segundo gráfico actualizado correctamente.');
       }
-
 }

@@ -6,7 +6,6 @@
 
 @section('content')
  <style>
-   /* General */
    .container {
     background-color: #f8f9fa;
     border-radius: 8px;
@@ -91,7 +90,7 @@ a:hover {
     <div class="mt-4">
         <h4>¿Necesitas hacer cambios en tu cuenta?</h4>
         <p>Si necesitas realizar cambios en tu cuenta, por favor contacta al administrador del sistema 
-            <a href="mailto:admin@tuempresa.com?subject=Solicitud%20de%20cambio%20en%20cuenta&body=Hola%20Admin,%20me%20gustaría%20solicitar%20algunos%20cambios%20en%20mi%20cuenta.">aquí</a>.
+            <a href="mailto:a.sistemas2@conplasa.com.mx?subject=Solicitud%20de%20cambio%20en%20cuenta&body=Hola%20Admin,%20me%20gustaría%20solicitar%20algunos%20cambios%20en%20mi%20cuenta.">aquí</a>.
         </p>
     </div>
     

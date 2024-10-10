@@ -35,19 +35,20 @@ class RolSeeder extends Seeder
 
 
         //  Logística
-        Permission::firstOrCreate(['name' => 'logistica.index'])->syncRoles([$admin, $logistica]);
-        Permission::firstOrCreate(['name' => 'logistica.update'])->syncRoles([$admin]);//permiso de actualizar
+        Permission::firstOrCreate(['name' => 'logistica.index'])->syncRoles([$admin, $logistica,  $manager]);
+        Permission::firstOrCreate(['name' => 'logistica.update'])->syncRoles([$admin]);//permiso de actualizar graficos
 
          // Permiso para Calidad
-         Permission::firstOrCreate(['name' => 'calidad.index'])->syncRoles([$admin, $calidad]);
+         Permission::firstOrCreate(['name' => 'calidad.index'])->syncRoles([$admin, $calidad,  $manager]);
          Permission::firstOrCreate(['name' => 'calidad.update'])->syncRoles([$admin]); // Permiso para actualizar gráficos
          
       // permiso cnc
-      Permission::firstOrCreate(['name' => 'cnc.index'])->syncRoles([$admin, $cnc]);
+      Permission::firstOrCreate(['name' => 'cnc.index'])->syncRoles([$admin, $cnc, $manager]);
       Permission::firstOrCreate(['name' => 'cnc.update'])->syncRoles([$admin]);
       
-      
-      Permission::firstOrCreate(['name' => 'taller.index'])->syncRoles([$admin, $taller]);
+            // Permiso Taller
+      Permission::firstOrCreate(['name' => 'taller.index'])->syncRoles([$admin, $taller, $manager]);
     }
 }
+
 

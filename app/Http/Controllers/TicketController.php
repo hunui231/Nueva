@@ -10,7 +10,7 @@ class TicketController extends Controller
     
     public function create(Request $request)
     {
-        // Validar los datos recibidos
+        
         $request->validate([
             'usuario' => 'required|string|max:255',
             'area' => 'required|string|max:255',
@@ -18,7 +18,7 @@ class TicketController extends Controller
             'descripcion' => 'required|string',
         ]);
 
-        // Crear un nuevo ticket
+       
         $ticket = Ticket::create([
             'usuario' => $request->usuario,
             'area' => $request->area,
@@ -26,6 +26,6 @@ class TicketController extends Controller
             'descripcion' => $request->descripcion,
         ]);
 
-        return response()->json($ticket, 201); // Responder con el ticket creado
+        return response()->json($ticket, 201); 
     }
 }

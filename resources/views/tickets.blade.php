@@ -27,6 +27,7 @@
             border-radius: 8px;
             background-color: #f9f9f9;
         }
+
         label {
             display: block;
             margin-bottom: 8px;
@@ -40,15 +41,12 @@
         }
         button {
             padding: 10px 15px;
-            background-color: #007bff;
             color: white;
             border: none;
             border-radius: 4px;
             cursor: pointer;
         }
-        button:hover {
-            background-color: #0056b3;
-        }
+       
         table {
             width: 100%;
             border-collapse: collapse;
@@ -142,7 +140,7 @@
             <label for="descripcion">Descripción del problema:</label>
             <textarea id="descripcion" name="descripcion" rows="4" required></textarea>
             
-            <button type="submit">Crear Ticket</button>
+            <button type="submit" style="background-color:#007bff">Crear Ticket</button>
         </form>
         @can('calidad.update')
 

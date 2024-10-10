@@ -5,7 +5,43 @@
 @endsection
 
 @section('content')
-<h1>Bienvenido!, Este es tu Apartado Logistica.</h1>
+
+ <style>
+   
+.titulo-container {
+    text-align: center;
+    background-color: #4A90E2; 
+    padding: 15px; 
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); 
+}
+
+.titulo {
+    font-size: 1.3em; 
+    color: #f7f7f7; 
+    margin: 0;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3); 
+}
+
+.subtitulo {
+    font-size: 1em; 
+    color: #f8fbfd; 
+    margin-top: 5px; 
+    font-style: italic; 
+}
+.lus{
+    font-size: 24px;
+    font-weight: bold;
+    text-align: center;
+    padding: 10px;
+    color: white;
+    background-color: #4A90E2; 
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+    transition: transform 0.3s;
+}
+</style>
+<h1 class="lus">Bienvenido!, Este es tu Apartado Logistica</h1>
 
 <br>
 @if(session('success'))
@@ -27,9 +63,12 @@
 </form>
 @endcan
 <br>
+
 <center>
-    <h4> Indicador Logistica Semana 1 OCTUBRE:</h4>
-    <h5>30/09/2024- 04/10/2024</h5>
+    <div class="titulo-container">
+        <h4 class="titulo">Indicador Logística Semana 1 OCTUBRE:</h4>
+        <h5 class="subtitulo">30/09/2024 - 04/10/2024</h5>
+    </div>
     </center>
 <div style="max-width: 300px; margin: 0 auto;">
     <canvas id="myDoughnutChart"></canvas>
@@ -82,8 +121,10 @@
        
 <br>
 <center>
-    <h4> Indicador Logistica Semana 1 OCTUBRE:</h4>
-    <h5>30/09/2024- 04/10/2024</h5>
+    <div class="titulo-container">
+    <h4 class="titulo"> Indicador Logistica Semana 2 OCTUBRE:</h4>
+    <h5 class="subtitulo">14/10/2024- 18/10/2024</h5>
+    </div>
 </center>
 <div style="max-width: 300px; margin: 0 auto;">
     <canvas id="myDoughnutChart2"></canvas>
@@ -119,9 +160,17 @@
 
 <br>
 <br>
-<h3>Tus graficos:</h3>
-<h4>Este Mes:</h4>
+<h3 style="font-size: 24px;
+font-weight: bold;
+text-align: center;
+padding: 10px;
+color: white;
+background-color: #030303;
+border-radius: 8px; 
+box-shadow: 0 4px 8px rgba(26, 24, 24, 0.2); 
+transition: transform 0.3s;">Tus graficos:</h3>
 
+ <br>
 
     <div style="max-height: 700px; max-width: 700px; background-color:black;">
       <canvas id="myChart1"></canvas>
@@ -150,7 +199,6 @@
     }
   });
 
-  // Crear el gráfico
   const ctb = document.getElementById('myChart1').getContext('2d');
   new Chart(ctb, {
     type: 'line',
@@ -210,7 +258,7 @@
   });
 </script>
 
-
+ 
 <br>
 <br>
 

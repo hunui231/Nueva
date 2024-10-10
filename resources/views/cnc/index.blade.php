@@ -5,12 +5,44 @@
 @endsection
 
 @section('content')
+ <style>
+    .titulo-container {
+        text-align: center;
+        background-color: #4A90E2; 
+        padding: 15px; 
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); 
+    }
+    
+    .titulo {
+        font-size: 1.3em; 
+        color: #f7f7f7; 
+        margin: 0;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3); 
+    }
+    
+    .subtitulo {
+        font-size: 1em; 
+        color: #f8fbfd; 
+        margin-top: 5px; 
+        font-style: italic; 
+    }
+    .lu{
+        font-size: 24px;
+        font-weight: bold;
+        text-align: center;
+        padding: 10px;
+        color: white;
+        background-color: #4A90E2; 
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+        transition: transform 0.3s;
+    }
+</style>
 
-<h1 class="text-center mb-4">Bienvenido!,  Este es tu Apartado CNC: </h1>
-
+<h1  class="lu">Bienvenido!,  Este es tu Apartado CNC</h1>
 
 <br>
-
 @if(session('success'))
     <div class="alert alert-success">{{ session('success') }}</div>
 @endif
@@ -32,8 +64,10 @@
 
 <br>
 <center>
-    <h4> Indicador CNC Semana 3 SEP:</h4>
-    <h5>16/09/2024 - 20/09/2024</h5>
+    <div class="titulo-container">
+        <h4 class="titulo"> Indicador Logistica Semana 1 OCTUBRE:</h4>
+        <h5 class="subtitulo">30/09/2024- 04/10/2024</h5>
+        </div>
 </center>
 <div style="max-width: 600px; margin: 0 auto;">
     <canvas id="myDoughnutChart"></canvas>
@@ -102,8 +136,10 @@
 </form>
 @endcan
 <center>
-    <h4> Indicador CNC Semana 3 SEP:</h4>
-    <h5>16/09/2024 - 20/09/2024</h5>
+    <div class="titulo-container">
+        <h4 class="titulo"> Indicador Logistica Semana 2 OCTUBRE:</h4>
+        <h5 class="subtitulo">07/09/2024- 11/10/2024</h5>
+        </div>
 </center>
 
 <div style="max-width: 600px; margin: 0 auto;">

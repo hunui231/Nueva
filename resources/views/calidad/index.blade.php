@@ -6,7 +6,43 @@
 
 @section('content')
 
-<h1 class="text-center mb-4">Bienvenido!, Este es tu Apartado Calidad: </h1>
+ <style>
+    .titulo-container {
+        text-align: center;
+        background-color: #4A90E2; 
+        padding: 15px; 
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); 
+    }
+    
+    .titulo {
+        font-size: 1.3em; 
+        color: #f7f7f7; 
+        margin: 0;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3); 
+    }
+    
+    .subtitulo {
+        font-size: 1em; 
+        color: #f8fbfd; 
+        margin-top: 5px; 
+        font-style: italic; 
+    }
+    .lul{
+        font-size: 24px;
+        font-weight: bold;
+        text-align: center;
+        padding: 10px;
+        color: white;
+        background-color: #4A90E2; 
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+        transition: transform 0.3s;
+    } 
+
+</style>
+
+<h1 class="lul" >Bienvenido!, Este es tu Apartado Calidad</h1>
 
 <br>
 
@@ -29,8 +65,10 @@
 </form>
 @endcan
 <center>
-    <h4> Indicador Logistica Semana 1 OCTUBRE:</h4>
-    <h5>30/09/2024- 04/10/2024</h5>
+    <div class="titulo-container">
+        <h4 class="titulo"> Indicador Logistica Semana 1 OCTUBRE:</h4>
+        <h5 class="subtitulo">30/09/2024- 04/10/2024</h5>
+        </div>
     </center>
 <div style="max-width: 600px; margin: 0 auto;">
     <canvas id="myDoughnutChart"></canvas>
@@ -70,7 +108,7 @@
                 },
                 title: {
                     display: true,
-                    text: 'KPI',
+                   
                 }
             }
         }
@@ -98,8 +136,13 @@
     <button type="submit" class="btn btn-primary">Actualizar Gráfico</button>
 </form>
 @endcan
-
-
+<br>
+<center>
+<div class="titulo-container">
+    <h4 class="titulo"> Indicador Logistica Semana 2 OCTUBRE:</h4>
+    <h5 class="subtitulo">07/10/2024- 11/10/2024</h5>
+    </div>
+</center>
 
 <div style="max-width: 600px; margin: 0 auto;">
     <canvas id="myDoughnutChart2"></canvas>
@@ -143,7 +186,6 @@
                 },
                 title: {
                     display: true,
-                    text: 'KPI',
                 }
             }
         }
@@ -152,33 +194,33 @@
 
 <br>
     <style>
-     /* Contenedor principal para el gráfico */
+     
     .graph-container {
-        width: 100%; /* Cambiado a 100% para mayor flexibilidad */
-        max-width: 800px; /* Mantiene el tamaño máximo */
-        margin: 0 auto; /* Centra el contenedor */
-        padding: 20px; /* Añade un poco de espacio interno */
-     /* Sombra para resaltar el gráfico */        
+        width: 100%; 
+        max-width: 800px; 
+        margin: 0 auto;
+        padding: 20px; 
+           
     }
 
-    /* Estilos para el gráfico */
+  
     #kpiGraph {
         font-family: Arial, sans-serif;
-        color: #ffffff; /* Cambia el color del texto a blanco para mejor contraste */
-        background-color: #000000; /* Mantiene el fondo del gráfico en negro */
-        border-radius: 8px; /* Bordes redondeados para el gráfico */
-        padding: 20px; /* Espacio interno en el gráfico */
+        color: #ffffff; 
+        background-color: #000000; 
+        border-radius: 8px; 
+        padding: 20px; 
     }
 
-    /* Responsividad para dispositivos móviles */
+   
     @media (max-width: 600px) {
         .graph-container {
-            width: 90%; /* Aumenta el ancho en pantallas más pequeñas */
-            padding: 10px; /* Reduce el padding en pantallas pequeñas */
+            width: 90%; 
+            padding: 10px; 
         }
 
         #kpiGraph {
-            max-height: 400px; /* Ajusta la altura máxima en dispositivos pequeños */
+            max-height: 400px;
         }
     }
     </style>
@@ -189,7 +231,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        // Datos de ejemplo (actualizados)
         const mesesEtiquetas = ['feb-23', 'mar-23', 'abr-23', 'may-23', 'jun-23', 'jul-23', 'ago-23', 'sep-23', 'oct-23', 'nov-23', 'dic-23', 'ene-24', 'feb-24', 'mar-24', 'abr-24', 'may-24', 'jun-24', 'jul-24', 'ago-24', 'sep-24'];
         const rendimientoDatos = {
             labels: mesesEtiquetas,
@@ -200,7 +241,7 @@
                     backgroundColor: 'rgba(255, 0, 0, 0.5)',
                     borderColor: 'rgba(255, 0, 0, 1)',
                     borderWidth: 1,
-                    fill: true,  // Esto permite el área de fondo
+                    fill: true, 
                     yAxisID: 'y'
                 },
                 {
@@ -210,12 +251,11 @@
                     borderWidth: 2,
                     fill: false,
                     type: 'line',
-                    tension: 0.1  // Línea curva suave
+                    tension: 0.1  
                 }
             ]
         };
 
-        // Configuración del gráfico
         const configuracionGrafico = {
             type: 'line',
             data: rendimientoDatos,
@@ -254,7 +294,6 @@
             }
         };
 
-        // Renderizar el gráfico
         const contextoGrafico = document.getElementById('kpiGraph').getContext('2d');
         const graficoKPI = new Chart(contextoGrafico, configuracionGrafico);
     </script>

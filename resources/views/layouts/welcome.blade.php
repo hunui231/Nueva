@@ -5,7 +5,7 @@
 @endsection
 
 @section('content')
-<h1>Bienvenido, has Iniciado Sesión!</h1>
+<h1 class="maspudo">Bienvenido, has Iniciado Sesión!</h1>
 
  <style>
     .chart-row {
@@ -63,17 +63,16 @@
 
     .maspudo{
         font-size: 24px;
-font-weight: bold;
-text-align: center;
-padding: 10px;
-color: white;
-background-color: #4A90E2; 
-border-radius: 8px;
-box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
-transition: transform 0.3s; 
+        font-weight: bold;
+        text-align: center;
+        padding: 10px;
+        color: white;
+        background-color: #4A90E2; 
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+        transition: transform 0.3s; 
     }
 
-    /* Ajustes responsivos */
     @media (max-width: 768px) {
         .chart-container {
             width: 100%; 
@@ -86,14 +85,13 @@ transition: transform 0.3s;
             width: 100%;
             max-width: 300px;
         }
-        
     }
 </style>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <div class="chart-row">
-    <!-- Gráfico 1 -->
+
     <div class="chart-container">
         <h2 class="chart-title">Operación MM</h2>
         <canvas id="mainChart1"></canvas>
@@ -109,9 +107,8 @@ transition: transform 0.3s;
         </div>
     </div>
 
-    <!-- Gráfico 2 -->
     <div class="chart-container">
-        <h2 class="chart-title">RHH</h2>
+        <h2 class="chart-title">CALIDAD</h2>
         <canvas id="mainChart2"></canvas>
         <div class="indicators">
             <div class="indicator">
@@ -127,7 +124,6 @@ transition: transform 0.3s;
 </div>
 
 <div class="chart-row">
-
     <div class="chart-container">
         <h2 class="chart-title">Logistica</h2>
         <canvas id="mainChart3"></canvas>
@@ -143,7 +139,7 @@ transition: transform 0.3s;
         </div>
     </div>
 
-    <!-- Gráfico 4 -->
+
     <div class="chart-container">
         <h2 class="chart-title">CNC</h2>
         <canvas id="mainChart4"></canvas>
@@ -270,7 +266,7 @@ transition: transform 0.3s;
 document.addEventListener('DOMContentLoaded', function() {
     var calendarEl = document.getElementById('calendar');
     var calendar = new FullCalendar.Calendar(calendarEl, {
-        locale: 'es', // Configuración del idioma a español
+        locale: 'es', 
         initialView: 'dayGridMonth',
         headerToolbar: {
             left: 'prev,next today',
@@ -279,32 +275,62 @@ document.addEventListener('DOMContentLoaded', function() {
         },
         events: [
             {
-                title: 'Evento 1',
-                start: '2024-10-05'
+                title: 'Reunion',
+                start: '2024-10-22'
             },
             {
-                title: 'Evento 2',
-                start: '2024-10-07',
-                end: '2024-10-10'
+                title: 'Entrega Piezas Forjas',
+                start: '2024-10-09',
+                end: '2024-10-12'
             }
         ]
     });
     calendar.render();
 });
 
-// Inicialización de los gráficos
+
 const salesCtx = document.getElementById('salesChart').getContext('2d');
 const salesChart = new Chart(salesCtx, {
     type: 'bar',
     data: {
-        labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo'],
-        datasets: [{
-            label: 'Scrap',
-            data: [1200, 1900, 3000, 5000, 2000],
-            backgroundColor: 'rgba(54, 162, 235, 0.5)',
-            borderColor: 'rgba(54, 162, 235, 1)',
-            borderWidth: 1
-        }]
+        labels: ['Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre'],
+        datasets: [
+            {
+                label: 'Scrap',
+                data: [1200, 1900, 3000, 5000, 2000],
+                backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            },
+            {
+                label: 'Producción',
+                data: [8000, 9000, 8500, 9500, 9200],
+                backgroundColor: 'rgba(75, 192, 192, 0.5)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            },
+            {
+                label: 'Eficiencia',
+                data: [85, 88, 90, 87, 89],
+                backgroundColor: 'rgba(153, 102, 255, 0.5)',
+                borderColor: 'rgba(153, 102, 255, 1)',
+                borderWidth: 1
+            },
+            {
+                label: 'Calidad',
+                data: [95, 94, 96, 97, 95],
+                backgroundColor: 'rgba(255, 159, 64, 0.5)',
+                borderColor: 'rgba(255, 159, 64, 1)',
+                borderWidth: 1
+            },
+            {
+                label: 'Costo de Producción',
+                data: [5000, 5500, 5300, 5800, 5700],
+                backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                borderColor: 'rgba(255, 99, 132, 1)',
+                borderWidth: 1
+            }
+        ]
     },
     options: {
         responsive: true,
@@ -315,6 +341,7 @@ const salesChart = new Chart(salesCtx, {
         }
     }
 });
+
 
 const incomeCtx = document.getElementById('incomeChart').getContext('2d');
 const incomeChart = new Chart(incomeCtx, {
@@ -381,7 +408,7 @@ tr:nth-child(even) {
     text-align: right;
     margin-top: 20px;
 }
-/* Media Queries para hacer responsive */
+
 @media screen and (max-width: 600px) {
     .container {
         width: 100%;

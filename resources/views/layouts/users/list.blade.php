@@ -8,15 +8,15 @@
 
 <div class="row">
     <div class="col-lg-12">
-        <h2 class="title-1 m-b-25" style="     font-size: 24px;
-font-weight: bold;
-text-align: center;
-padding: 10px;
-color: white;
-background-color: #332a2a; /* Color de fondo */
-border-radius: 8px; /* Bordes redondeados */
-box-shadow: 0 4px 8px rgba(26, 24, 24, 0.2); /* Sombra */
-transition: transform 0.3s;">Lista de Usuarios</h2>
+        <h2 class="title-1 m-b-25" style="font-size: 24px;
+        font-weight: bold;
+        text-align: center;
+        padding: 10px;
+        color: white;
+        background-color: #0a0a0a; 
+        border-radius: 8px; 
+        box-shadow: 0 4px 8px rgba(24, 23, 23, 0.829);
+        transition: transform 0.3s;">Lista de Usuarios</h2>
         <div class="table-responsive table--no-card m-b-40">
             <table class="table table-borderless table-striped table-earning">
                 <thead>

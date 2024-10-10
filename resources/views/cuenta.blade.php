@@ -24,7 +24,6 @@
         letter-spacing: 1px;
     }
 
-    /* Card */
     .card {
         border: none;
         border-radius: 10px;
