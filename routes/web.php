@@ -41,7 +41,6 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/logistica/update-dona2', [App\Http\Controllers\LogisticaController::class, 'updateDona2'])->name('logistica.updateDona2');
 
 
-
     Route::get('/calidad', [App\Http\Controllers\CalidadController::class, 'index'])->name('calidad.index')->middleware('can:calidad.index');
     Route::post('/calidad/update', [App\Http\Controllers\CalidadController::class, 'update'])->name('calidad.update');
     Route::post('/calidad/grafico2/update', [App\Http\Controllers\CalidadController::class, 'updateGrafico2'])->name('calidad.grafico2.update');

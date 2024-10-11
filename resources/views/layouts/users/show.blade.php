@@ -13,7 +13,7 @@
                 <dl class="row">
                     <dt class="col-sm-3">First name</dt>
                     <dd class="col-sm-9">{{ $user->first_name }}</dd>
-
+                    
                     <dt class="col-sm-3">Last name</dt>
                     <dd class="col-sm-9">{{ $user->last_name }}</dd>
 

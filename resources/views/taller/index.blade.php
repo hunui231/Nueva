@@ -6,7 +6,7 @@
 
 @section('content')
 
-<h2  class="maspudo">Bienvenido!,  Este es tu Apartado Taller: </h2>
+<h2 class="maspudo">Bienvenido!,  Este es tu Apartado Taller: </h2>
 
 <br>
  
@@ -61,7 +61,6 @@
  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
  <script>
-  
     const contextoGrafico = document.getElementById('graficoScrapTaller').getContext('2d');
     
     

@@ -61,7 +61,6 @@
     <button type="submit" class="btn btn-primary">Actualizar Gráfico</button>
 </form>
 @endcan
-
 <br>
 <center>
     <div class="titulo-container">
@@ -69,15 +68,15 @@
         <h5 class="subtitulo">30/09/2024- 04/10/2024</h5>
         </div>
 </center>
-<div style="max-width: 600px; margin: 0 auto;">
+ <div style="max-width: 600px; margin: 0 auto;">
     <canvas id="myDoughnutChart"></canvas>
-</div>
+ </div>
  
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+ <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<script>
+ <script>
     const ctx = document.getElementById('myDoughnutChart').getContext('2d');
-
+  
     const data = {
         labels: ['Aprobada', 'No Aprobada'],
         datasets: [{
@@ -87,7 +86,6 @@
             borderWidth: 1
         }]
     };
-
     const myDoughnutChart = new Chart(ctx, {
         type: 'doughnut',
         data: data,
@@ -106,14 +104,12 @@
                 },
                 title: {
                     display: true,
-                    text: 'KPI',
                 }
             }
         }
     });
 </script>
 
-<br><br>
 
 @if(session('success2'))
     <div>{{ session('success2') }}</div>
@@ -146,9 +142,9 @@
     <canvas id="myDoughnutChart2"></canvas>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+ <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<script>
+ <script>
     const ctxGrafico2 = document.getElementById('myDoughnutChart2').getContext('2d');
     const dato = {{ $cncGrafico2->dato ?? 0 }};
     const noAprobada = 100 - dato;
@@ -181,7 +177,6 @@
                 },
                 title: {
                     display: true,
-                    text: 'KPI',
                 }
             }
         }

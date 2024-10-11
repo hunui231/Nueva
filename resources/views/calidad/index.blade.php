@@ -42,7 +42,7 @@
 
 </style>
 
-<h1 class="lul" >Bienvenido!, Este es tu Apartado Calidad</h1>
+<h1 class="lul">Bienvenido!, Este es tu Apartado Calidad</h1>
 
 <br>
 

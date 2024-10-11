@@ -7,7 +7,7 @@
 @section('content')
 
  <style>
-    /* General */
+    
     .container {
         background-color: #f8f9fa;
         border-radius: 8px;
@@ -57,7 +57,6 @@
         color: #062fe6;
     }
 
-    /* Actividad Reciente */
     h4 {
         font-size: 1.5rem;
         margin-top: 30px;
@@ -70,7 +69,7 @@
         color: #666;
     }
 
-    /* Botones (si agregas en el futuro) */
+   
     .btn-primary {
         background-color: #007bff;
         border: none;

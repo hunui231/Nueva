@@ -5,6 +5,7 @@
 @endsection
 
 @section('content')
+
 <div class="row">
     <div class="col-lg-6 offset-lg-3">
         <div class="card">
@@ -17,7 +18,7 @@
                         <label for="first_name">First name</label>
                         <input type="text" class="form-control" name="first_name" id="first_name" placeholder="Enter first name"  value="{{ old('first_name', $user->first_name) }}">
                     </div>
-
+                    
                     @error('first_name')
                         <div class="alert alert-danger">{{ $message }}</div>
                     @enderror

@@ -59,7 +59,7 @@
     <!-- Bootstrap JS-->
     <script src="{!! asset('theme/vendor/bootstrap-4.1/popper.min.js') !!}"></script>
     <script src="{!! asset('theme/vendor/bootstrap-4.1/bootstrap.min.js') !!}"></script>
-    <!-- Vendor JS       -->
+    <!--Vendor JS-->
     <script src="{!! asset('theme/vendor/slick/slick.min.js') !!}"></script>
     <script src="{!! asset('theme/vendor/wow/wow.min.js') !!}"></script>
     <script src="{!! asset('theme/vendor/animsition/animsition.min.js') !!}"></script>

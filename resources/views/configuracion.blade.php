@@ -64,7 +64,6 @@ a:hover {
 <div class="container">
     <h2>Configuraciones de la Cuenta</h2>
 
-    <!-- Mostrar preferencias del usuario -->
     <div class="card">
         <div class="card-header">
             Preferencias de Notificaciones
@@ -86,7 +85,6 @@ a:hover {
           <p>Uso Permitido: La aplicación solo debe utilizarse para propósitos relacionados con el seguimiento de indicadores de la empresa.</p>
     </div>
 
-    <!-- Contacto para modificaciones -->
     <div class="mt-4">
         <h4>¿Necesitas hacer cambios en tu cuenta?</h4>
         <p>Si necesitas realizar cambios en tu cuenta, por favor contacta al administrador del sistema 
@@ -94,6 +92,4 @@ a:hover {
         </p>
     </div>
     
-
-
 @endsection
