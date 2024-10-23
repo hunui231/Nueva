@@ -83,7 +83,6 @@
         background-color: #0056b3;
     }
 
-    /* Responsividad */
     @media (max-width: 768px) {
         h2 {
             font-size: 1.5rem;

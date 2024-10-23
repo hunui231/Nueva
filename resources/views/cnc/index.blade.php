@@ -182,4 +182,137 @@
         }
     });
 </script>
+
+<style>
+    #lineChart1{
+        background-color: black;
+        max-width: 800px;
+        max-height: 400px;
+    }
+    #lineChart2{
+        background-color: black;
+        max-width: 800px;
+        max-height: 400px;
+    }
+    #lineChart3{
+        background-color: black;
+        max-width: 800px;
+        max-height: 400px;
+    }
+</style>
+    <!-- Gráfico de Precisión de Mecanizado -->
+    <div>
+        <canvas id="lineChart1"></canvas>
+    </div>
+<br>
+    <!-- Gráfico de Tiempo de Ciclo -->
+    <div>
+        <canvas id="lineChart2"></canvas>
+    </div>
+<br>
+    <!-- Gráfico de Desgaste de Herramienta -->
+    <div>
+        <canvas id="lineChart3"></canvas>
+    </div>
+
+    <script>
+        // Gráfico de Precisión de Mecanizado
+        var ctx1 = document.getElementById('lineChart1').getContext('2d');
+        var lineChart1 = new Chart(ctx1, {
+            type: 'line',
+            data: {
+                labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio'],
+                datasets: [{
+                    label: 'Precisión de Mecanizado (mm)',
+                    data: [0.02, 0.03, 0.04, 0.02, 0.03, 0.025],  // Ejemplo de precisión en mm
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 2,
+                    fill: false
+                },
+                {
+                    label: 'Meta de Precisión (0.03 mm)',
+                    data: [0.03, 0.03, 0.03, 0.03, 0.03, 0.03],  // Línea de meta
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 2,
+                    borderDash: [5, 5],  // Línea discontinua para meta
+                    fill: false
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        suggestedMax: 0.05  // Ajustamos el máximo para la escala
+                    }
+                }
+            }
+        });
+
+        // Gráfico de Tiempo de Ciclo
+        var ctx2 = document.getElementById('lineChart2').getContext('2d');
+        var lineChart2 = new Chart(ctx2, {
+            type: 'line',
+            data: {
+                labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio'],
+                datasets: [{
+                    label: 'Tiempo de Ciclo (minutos)',
+                    data: [5, 4.5, 6, 5.2, 4.8, 5.1],  // Ejemplo de tiempos en minutos
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 2,
+                    fill: false
+                },
+                {
+                    label: 'Meta de Tiempo de Ciclo (5 minutos)',
+                    data: [5, 5, 5, 5, 5, 5],  // Línea de meta
+                    borderColor: 'rgba(255, 206, 86, 1)',
+                    borderWidth: 2,
+                    borderDash: [5, 5],  // Línea discontinua para meta
+                    fill: false
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        suggestedMax: 7  // Ajustamos el máximo de la escala
+                    }
+                }
+            }
+        });
+
+        // Gráfico de Desgaste de Herramienta
+        var ctx3 = document.getElementById('lineChart3').getContext('2d');
+        var lineChart3 = new Chart(ctx3, {
+            type: 'line',
+            data: {
+                labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio'],
+                datasets: [{
+                    label: 'Desgaste de Herramienta (%)',
+                    data: [10, 12, 15, 13, 18, 16],  // Ejemplo de desgaste en %
+                    borderColor: 'rgba(153, 102, 255, 1)',
+                    borderWidth: 2,
+                    fill: false
+                },
+                {
+                    label: 'Meta de Desgaste (15%)',
+                    data: [15, 15, 15, 15, 15, 15],  // Línea de meta
+                    borderColor: 'rgba(255, 159, 64, 1)',
+                    borderWidth: 2,
+                    borderDash: [5, 5],  // Línea discontinua para meta
+                    fill: false
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        suggestedMax: 20  // Ajustamos el máximo de la escala
+                    }
+                }
+            }
+        });
+    </script>
 @endsection

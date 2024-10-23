@@ -88,8 +88,8 @@
     }
 </style>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
+ <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+ 
 <div class="chart-row">
 
     <div class="chart-container">
@@ -108,7 +108,9 @@
     </div>
 
     <div class="chart-container">
-        <h2 class="chart-title">CALIDAD</h2>
+        <h2 class="chart-title" onclick="window.location.href='{{ route('calidad.index') }}'">
+            CALIDAD
+        </h2>
         <canvas id="mainChart2"></canvas>
         <div class="indicators">
             <div class="indicator">
@@ -125,7 +127,9 @@
 
 <div class="chart-row">
     <div class="chart-container">
-        <h2 class="chart-title">Logistica</h2>
+        <h2 class="chart-title" onclick="window.location.href='{{ route('logistica.index') }}'">
+            Logistica
+        </h2>
         <canvas id="mainChart3"></canvas>
         <div class="indicators">
             <div class="indicator">
@@ -138,10 +142,10 @@
             </div>
         </div>
     </div>
-
-
     <div class="chart-container">
-        <h2 class="chart-title">CNC</h2>
+        <h2 class="chart-title" onclick="window.location.href='{{ route('cnc.index') }}'">
+            CNC
+        </h2>
         <canvas id="mainChart4"></canvas>
         <div class="indicators">
             <div class="indicator">
@@ -208,13 +212,13 @@
     }
 
     createMiniChart('miniChart1', [20, 80], ['red', '#e6e6e6']);
-    createMiniChart('miniChart2', [80, 20], ['#66ff66', '#e6e6e6']);
+    createMiniChart('miniChart2', [20, 80], ['#e6e6e6', '#66ff66']);
     createMiniChart('miniChart3', [30, 70], ['red', '#e6e6e6']);
-    createMiniChart('miniChart4', [70, 30], ['#66ff66', '#e6e6e6']);
+    createMiniChart('miniChart4', [30, 70], ['#e6e6e6', '#66ff66']);
     createMiniChart('miniChart5', [50, 50], ['red', '#e6e6e6']);
-    createMiniChart('miniChart6', [50, 50], ['#66ff66', '#e6e6e6']);
+    createMiniChart('miniChart6', [50, 50], ['#e6e6e6', '#66ff66']);
     createMiniChart('miniChart7', [60, 40], ['red', '#e6e6e6']);
-    createMiniChart('miniChart8', [40, 60], ['#66ff66', '#e6e6e6']);
+    createMiniChart('miniChart8', [60, 40], ['#e6e6e6', '#66ff66']);
 </script>
 
 <br>
@@ -237,8 +241,6 @@
 </style>
 
 <div class="container-fluid">
-
-
 <div class="row mt-4">
     <div class="col-md-6">
         <h3 class="maspudo">Indicadores Clave Metal Mecanica</h3>

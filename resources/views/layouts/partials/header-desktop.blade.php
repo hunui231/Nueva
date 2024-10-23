@@ -6,6 +6,7 @@
                     <div class="image">
                         <img src="{!! asset('theme/images/icon/logo2.png') !!}" alt="John Doe" />
                     </div>
+                
                     <div class="content">
                         <a class="js-acc-btn" href="#">{{ Auth::user()->first_name }} {{ Auth::user()->last_name }}</a>
                     </div>
@@ -16,6 +17,7 @@
                                     <img src="{!! asset('theme/images/icon/logo2.png') !!}" alt="John Doe" />
                                 </a>
                             </div>
+
                             <div class="content">
                                 <h5 class="name">
                                     <a href="#">{{ Auth::user()->first_name }} {{ Auth::user()->last_name }}</a>
@@ -32,6 +34,11 @@
                             <div class="account-dropdown__item">
                                 <a href="{{ route('configuracion') }}">
                                     <i class="zmdi zmdi-settings"></i>Configuracion
+                                </a>
+                            </div>
+                            <div class="account-dropdown__item">
+                                <a href="{{ route('notificaciones') }}">
+                                    <i class="zmdi zmdi-notifications-active"></i>Notificaciones
                                 </a>
                             </div>
                             <div class="account-dropdown__item">
@@ -61,7 +68,6 @@
     padding: 10px 20px;
 }
 
-/* Estilo para los elementos dentro del header */
 .header-button .account-wrap {
     display: flex;
     align-items:flex-end;

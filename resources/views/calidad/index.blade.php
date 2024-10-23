@@ -69,7 +69,7 @@
         <h4 class="titulo"> Indicador Logistica Semana 1 OCTUBRE:</h4>
         <h5 class="subtitulo">30/09/2024- 04/10/2024</h5>
         </div>
-    </center>
+</center>
 <div style="max-width: 600px; margin: 0 auto;">
     <canvas id="myDoughnutChart"></canvas>
 </div>
@@ -193,108 +193,137 @@
 </script>
 
 <br>
+
     <style>
-     
-    .graph-container {
-        width: 100%; 
-        max-width: 800px; 
-        margin: 0 auto;
-        padding: 20px; 
-           
-    }
-
-  
-    #kpiGraph {
-        font-family: Arial, sans-serif;
-        color: #ffffff; 
-        background-color: #000000; 
-        border-radius: 8px; 
-        padding: 20px; 
-    }
-
-   
-    @media (max-width: 600px) {
-        .graph-container {
-            width: 90%; 
-            padding: 10px; 
-        }
-
-        #kpiGraph {
+        #lineChart1{
+            background-color: black;
+            max-width: 800px;
             max-height: 400px;
         }
-    }
+        #lineChart2{
+            background-color: black;
+            max-width: 800px;
+            max-height: 400px;
+        }
+        #lineChart3{
+            background-color: black;
+            max-width: 800px;
+            max-height: 400px;
+        }
     </style>
-
-    <div class="graph-container">
-        <canvas id="kpiGraph"></canvas>
+<center>
+    <div>
+        <canvas id="lineChart1"></canvas>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <br>
+
+    <div>
+        <canvas id="lineChart2"></canvas>
+    </div>
+</center>
     <script>
-        const mesesEtiquetas = ['feb-23', 'mar-23', 'abr-23', 'may-23', 'jun-23', 'jul-23', 'ago-23', 'sep-23', 'oct-23', 'nov-23', 'dic-23', 'ene-24', 'feb-24', 'mar-24', 'abr-24', 'may-24', 'jun-24', 'jul-24', 'ago-24', 'sep-24'];
-        const rendimientoDatos = {
-            labels: mesesEtiquetas,
-            datasets: [
-                {
-                    label: 'Evaluación de Desempeño',
-                    data: [80, 85, 90, 92, 95, 98, 99, 98, 97, 98, 98.5, 99, 99.2, 99.5, 99.8, 99.9, 100, 98.9, 99.5, 100],
-                    backgroundColor: 'rgba(255, 0, 0, 0.5)',
-                    borderColor: 'rgba(255, 0, 0, 1)',
-                    borderWidth: 1,
-                    fill: true, 
-                    yAxisID: 'y'
+        var ctx1 = document.getElementById('lineChart1').getContext('2d');
+        var lineChart1 = new Chart(ctx1, {
+            type: 'line',
+            data: {
+                labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio'],
+                datasets: [{
+                    label: 'Porcentaje de Piezas Defectuosas',
+                    data: [5, 6, 4, 7, 5, 3], // Ejemplo de defectos en %
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 2,
+                    fill: false
                 },
                 {
-                    label: 'Meta (100%)',
-                    data: Array(mesesEtiquetas.length).fill(100),
-                    borderColor: 'rgba(0, 0, 255, 1)',
+                    label: 'Meta de Defectos (5%)',
+                    data: [5, 5, 5, 5, 5, 5],  // Línea de meta
+                    borderColor: 'rgba(75, 192, 192, 1)',
                     borderWidth: 2,
-                    fill: false,
-                    type: 'line',
-                    tension: 0.1  
-                }
-            ]
-        };
-
-        const configuracionGrafico = {
-            type: 'line',
-            data: rendimientoDatos,
+                    borderDash: [5, 5],  // Línea discontinua para meta
+                    fill: false
+                }]
+            },
             options: {
                 responsive: true,
-                plugins: {
-                    legend: {
-                        position: 'top',
-                    },
-                    title: {
-                        display: true,
-                        text: 'Cumplimiento Mensual Maquinado'
-                    }
-                },
                 scales: {
-                    x: {
-                        title: {
-                            display: true,
-                            text: 'Meses'
-                        }
-                    },
                     y: {
-                        title: {
-                            display: true,
-                            text: 'Porcentaje'
-                        },
-                        min: 75,
-                        max: 105,
-                        ticks: {
-                            callback: function(valor) {
-                                return valor + '%';
-                            }
-                        }
+                        beginAtZero: true,
+                        suggestedMax: 10  // Ajustamos el máximo para la escala
                     }
                 }
             }
-        };
+        });
 
-        const contextoGrafico = document.getElementById('kpiGraph').getContext('2d');
-        const graficoKPI = new Chart(contextoGrafico, configuracionGrafico);
+        var ctx2 = document.getElementById('lineChart2').getContext('2d');
+        var lineChart2 = new Chart(ctx2, {
+            type: 'line',
+            data: {
+                labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio'],
+                datasets: [{
+                    label: 'Medidas Promedio de Tolerancia (mm)',
+                    data: [0.05, 0.04, 0.06, 0.05, 0.03, 0.04], // Ejemplo de medidas en milímetros
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 2,
+                    fill: false
+                },
+                {
+                    label: 'Meta de Tolerancia (0.05 mm)',
+                    data: [0.05, 0.05, 0.05, 0.05, 0.05, 0.05],  // Línea de meta
+                    borderColor: 'rgba(255, 206, 86, 1)',
+                    borderWidth: 2,
+                    borderDash: [5, 5],  // Línea discontinua para meta
+                    fill: false
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        suggestedMax: 0.1  // Ajustamos el máximo de la escala para medidas
+                    }
+                }
+            }
+        });
+    </script>
+
+    <br>
+    <div>
+        <canvas id="lineChart3"></canvas>
+    </div>
+
+    <script>
+        var ctx3 = document.getElementById('lineChart3').getContext('2d');
+        var lineChart3 = new Chart(ctx3, {
+            type: 'line',
+            data: {
+                labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio'],
+                datasets: [{
+                    label: 'Índice de Satisfacción del Cliente (%)',
+                    data: [88, 92, 85, 90, 95, 93], // Ejemplo de índice de satisfacción
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 2,
+                    fill: false
+                },
+                {
+                    label: 'Meta de Satisfacción (90%)',
+                    data: [90, 90, 90, 90, 90, 90],  // Línea de meta
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 2,
+                    borderDash: [5, 5],  // Línea discontinua para meta
+                    fill: false
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        suggestedMax: 100  // Ajustamos el máximo de la escala
+                    }
+                }
+            }
+        });
     </script>
 @endsection

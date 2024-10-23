@@ -66,5 +66,8 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/taller', [App\Http\Controllers\TallerController::class, 'index'])->name('taller.index');
  
+    Route::get('/notificaciones', function () {
+        return view('notificaciones');
+    })->name('notificaciones');
 
 });

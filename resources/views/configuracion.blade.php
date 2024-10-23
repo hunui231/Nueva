@@ -13,7 +13,6 @@
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     margin-top: 20px;
 }
-
 h2 {
     color: #343a40;
     margin-bottom: 20px;
@@ -66,7 +65,7 @@ a:hover {
 
     <div class="card">
         <div class="card-header">
-            Preferencias de Notificaciones
+            Preferencias de Configuracion
         </div>
         <div class="card-body">
             <p><strong>Tema de la Cuenta:</strong> {{ Auth::user()->theme == 'light' ? 'Oscuro' : 'Claro' }}</p>

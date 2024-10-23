@@ -33,7 +33,7 @@
             margin-bottom: 8px;
         }
         input, textarea {
-            width: calc(100% - 16px); /* Ajuste para padding */
+            width: calc(100% - 16px);
             padding: 8px;
             margin-bottom: 10px;
             border: 1px solid #ccc;
@@ -52,6 +52,7 @@
             border-collapse: collapse;
             margin-bottom: 20px;
         }
+
         table, th, td {
             border: 1px solid #ddd;
         }
@@ -127,7 +128,7 @@
         
         <br>
         <form id="ticketForm" action="{{ route('tickets.create') }}" method="POST">
-            @csrf <!-- Token CSRF para la seguridad -->
+            @csrf 
             <label for="usuario">Usuario:</label>
             <input type="text" id="usuario" name="usuario" required>
             
