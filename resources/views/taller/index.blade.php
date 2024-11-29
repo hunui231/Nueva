@@ -6,7 +6,7 @@
 
 @section('content')
 
-<h2 class="maspudo">Bienvenido!,  Este es tu Apartado Taller: </h2>
+<h2 class="maspudo">Bienvenido!,  Apartado de Taller: </h2>
 
 <br>
  
@@ -133,6 +133,10 @@
     .chart-container {
         width: 80%;
         max-width: 800px;
+    }
+    .lias{
+        background-color: #0a0a0a;
+        
     }
 </style>
 

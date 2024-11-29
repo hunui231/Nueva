@@ -9,7 +9,6 @@
         <div class="mb-4 text-sm text-gray-600">
             {{ __('¿Olvidaste tu contraseña? No hay problema. Escriba su dirección de correo electrónico y se le notificara al administrador del sistema.') }}
         </div>
-
         <!-- Session Status -->
         <x-auth-session-status class="mb-4" :status="session('status')" />
 
@@ -34,3 +33,6 @@
         </form>
     </x-auth-card>
 </x-guest-layout>
+
+
+

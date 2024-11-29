@@ -66,8 +66,8 @@
 
 <center>
     <div class="titulo-container">
-        <h4 class="titulo">Indicador Logística Semana 1 OCTUBRE:</h4>
-        <h5 class="subtitulo">30/09/2024 - 04/10/2024</h5>
+        <h4 class="titulo">Indicador Logística Semana 1 NOVIEMBRE:</h4>
+        <h5 class="subtitulo">04/11/2024 - 08/11/2024</h5>
     </div>
     </center>
 <div style="max-width: 300px; margin: 0 auto;">
@@ -122,8 +122,8 @@
 <br>
 <center>
     <div class="titulo-container">
-    <h4 class="titulo"> Indicador Logistica Semana 2 OCTUBRE:</h4>
-    <h5 class="subtitulo">14/10/2024- 18/10/2024</h5>
+    <h4 class="titulo"> Indicador Logistica Semana 2 NOVIEMBRE:</h4>
+    <h5 class="subtitulo">11/11/2024- 15/11/2024</h5>
     </div>
 </center>
 <div style="max-width: 300px; margin: 0 auto;">

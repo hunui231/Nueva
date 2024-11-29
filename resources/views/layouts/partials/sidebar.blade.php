@@ -57,19 +57,17 @@
             </ul>
         </nav>
     </div>
+    <h6>Derechos Reservados @Conplasa2024°</h6>
 </aside>
 
-<!-- Button to toggle sidebar visibility on mobile -->
-<button id="sidebarToggle" class="lg:hidden fixed top-0 left-0 p-4 z-50 bg-gray-800 text-white">
+ <button id="sidebarToggle" class="lg:hidden fixed top-0 left-0 p-4 z-50 bg-gray-800 text-white">
     <i class="fas fa-bars"></i>
-</button>
-
-<!-- Inline CSS -->
+ </button>
  <style>
     .menu-sidebar {
-        background-color: white; /* Puedes ajustar según sea necesario */
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Ajusta el estilo del shadow */
-        z-index: 50; /* Asegura que esté por encima del contenido */
+        background-color: white; 
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+        z-index: 50; 
     }
 
     @media (max-width: 1024px) {
@@ -81,7 +79,7 @@
         }
 
         .menu-sidebar.open {
-            transform: translateX(0); /* Mostrar la barra lateral cuando está abierta */
+            transform: translateX(0); 
         }
 
         #sidebarToggle {
@@ -89,36 +87,35 @@
             top: 0;
             left: 0;
             padding: 1rem;
-            background-color: #2d3748; /* Ajusta el color del botón según sea necesario */
+            background-color: #2d3748; 
             color: white;
-            z-index: 50; /* Asegura que el botón esté por encima del contenido */
+            z-index: 50;
         }
     }
 
-    /* Estilos para el menú */
     .navbar-sidebar {
         margin-top: 1rem;
     }
 
     .navbar__list li {
-        border-bottom: 1px solid #e2e8f0; /* Ajusta el color del border según sea necesario */
+        border-bottom: 1px solid #e2e8f0; 
     }
 
     .navbar__list li a {
         display: flex;
         align-items: center;
         padding: 0.5rem 1rem;
-        color: #4a5568; /* Ajusta el color del texto según sea necesario */
+        color: #4a5568;
         text-decoration: none;
     }
 
     .navbar__list li a:hover {
-        background-color: #edf2f7; /* Ajusta el color de fondo al pasar el ratón */
+        background-color: #edf2f7; 
     }
 
     .navbar__list li.active a {
-        background-color: #edf2f7; /* Color de fondo para el elemento activo */
-        color: #2b6cb0; /* Ajusta el color del texto para el elemento activo */
+        background-color: #edf2f7;
+        color: #2b6cb0; 
     }
 </style>
 

@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\TallerController;
 use App\Http\Controllers\TicketController;
+use App\Http\Controllers\ActivityController;
 use App\Models\Ticket;
 
 /*
@@ -70,4 +71,9 @@ Route::middleware(['auth'])->group(function () {
         return view('notificaciones');
     })->name('notificaciones');
 
+    
+
+    Route::get('/cuenta', [ActivityController::class, 'index'])->name('cuenta');
+
+    
 });

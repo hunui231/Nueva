@@ -49,7 +49,7 @@
             border-radius: 5px;
             transition: background-color 0.3s, color 0.3s;
         }
-        
+         
         a:hover {
             background-color: #ffed4a;
             color: #333;
@@ -78,9 +78,9 @@
                     <a href="{{ url('/dashboard') }}">Ir al Panel</a>
                 @else
                     <a href="{{ route('login') }}">Iniciar Sesión</a>
-                    @if (Route::has('register'))
-                        <a href="{{ route('register') }}" style="margin-left: 10px;">Registrarme</a>
-                    @endif
+                    @if (Route::has('register') && false) {{-- Cambiar `false` a `true` si quieres mostrar el registro --}}
+                <a href="{{ route('register') }}" style="margin-left: 10px;">Registrarme</a>
+            @endif
                 @endauth
             </div>
         @endif

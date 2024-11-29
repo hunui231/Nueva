@@ -24,6 +24,7 @@ class TicketController extends Controller
             'area' => $request->area,
             'correo' => $request->correo,
             'descripcion' => $request->descripcion,
+            
         ]);
 
         return response()->json($ticket, 201); 

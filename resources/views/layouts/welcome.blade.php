@@ -278,10 +278,10 @@ document.addEventListener('DOMContentLoaded', function() {
         events: [
             {
                 title: 'Reunion',
-                start: '2024-10-22'
+                start: '2024-10-31'
             },
             {
-                title: 'Entrega Piezas Forjas',
+                title: 'Entregas',
                 start: '2024-10-09',
                 end: '2024-10-12'
             }
