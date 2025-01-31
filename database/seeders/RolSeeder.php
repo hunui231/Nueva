@@ -23,6 +23,12 @@ class RolSeeder extends Seeder
         $calidad = Role::firstOrCreate(['name' => 'calidad']);
         $cnc = Role::firstOrCreate(['name' => 'cnc']);
         $taller = Role::firstOrCreate(['name' => 'taller']);
+        $Administracion = Role::firstOrCreate(['name' => 'Administracion']);
+        $Ventas = Role::firstOrCreate(['name' => 'Ventas']);
+        $CoordinacionProyectos = Role::firstOrCreate(['name' => 'CoordinacionProyectos']);
+        $Mantenimiento = Role::firstOrCreate(['name' => 'Mantenimiento']);
+        $Produccion = Role::firstOrCreate(['name' => 'Produccion']);
+        $RH = Role::firstOrCreate(['name' => 'RH']);
 
 
         // Crear permisos y asignarlos a los roles

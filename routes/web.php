@@ -4,6 +4,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\TallerController;
 use App\Http\Controllers\TicketController;
+use App\Http\Controllers\ActivityController;
+use App\Http\Controllers\ForgotPasswordController;
+use Illuminate\Support\Facades\Mail;
 use App\Models\Ticket;
 
 /*
@@ -21,7 +24,14 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+
 require __DIR__.'/auth.php';
+
+Route::get('forgot-password', [ForgotPasswordController::class, 'mostrarFormulario'])
+    ->middleware('guest') 
+    ->name('password.request');
+Route::post('/enviar-correo', [App\Http\Controllers\ForgotPasswordController::class, 'enviarCorreo'])->name('enviar.correo');
+
 
 Route::middleware(['auth'])->group(function () {    
    
@@ -69,5 +79,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/notificaciones', function () {
         return view('notificaciones');
     })->name('notificaciones');
+
+    
+
+    Route::get('/cuenta', [ActivityController::class, 'index'])->name('cuenta');
 
 });

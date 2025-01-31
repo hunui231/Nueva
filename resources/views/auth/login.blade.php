@@ -54,3 +54,6 @@
         </form>
     </x-auth-card>
 </x-guest-layout>
+<footer class="text-center py-3">
+    <p>© 2017 Conplasa. Todos los derechos reservados.</p>
+</footer>

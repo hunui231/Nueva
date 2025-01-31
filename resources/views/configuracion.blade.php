@@ -75,9 +75,9 @@ a:hover {
     <!-- Políticas de cuenta o privacidad -->
     <div class="mt-4">
         <h4>Políticas de Privacidad y Uso</h4>
-        <p>Propósito: La aplicación es para que coordinadores y el CEO accedan a indicadores clave de desempeño.</p>
+        <p>Propósito: La aplicación es para que coordinadores y el Director General accedan a indicadores clave de desempeño.</p>
 
-         <p> Acceso: Solo los administradores de la app y el CEO tienen acceso autorizado a toda información.</p>
+         <p> Acceso: Solo los administradores de la app y el Director General tienen acceso autorizado a toda información.</p>
             
             <p>Privacidad y Seguridad: Los datos son confidenciales.Los usuarios deben proteger sus credenciales y no compartir la información con terceros.</p>
             

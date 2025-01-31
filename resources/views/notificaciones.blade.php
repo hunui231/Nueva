@@ -3,7 +3,7 @@
 @section('page')
     @php $currentPage = 'notificaciones' @endphp
 @endsection
-
+ 
 @section('content')
 
  <style>

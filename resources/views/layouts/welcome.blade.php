@@ -5,9 +5,89 @@
 @endsection
 
 @section('content')
-<h1 class="maspudo">Bienvenido, has Iniciado Sesión!</h1>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.css" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.css" rel="stylesheet" />
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+ <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+ <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.js"></script>
+ <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
 
+<h1 class="maspudo">Bienvenido, has Iniciado Sesión!</h1>
+<h2 class="maspudo">CONEXIONES INYECCION</h2>
  <style>
+       * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        overflow-x: hidden; /* Evitar scroll horizontal */
+    }
+        .dashboard {
+            background: white;
+            padding: 20px;
+            width: 300px;
+            border-radius: 10px;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+        .title {
+            font-size: 20px;
+            font-weight: bold;
+            border-bottom: 2px solid red;
+            margin-bottom: 15px;
+        }
+        .indicator {
+            display: flex;
+            align-items: center;
+            margin: 5px 0;
+        }
+        .circle {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: bold;
+            color: white;
+            margin-right: 10px;
+        }
+        .gray { background: #444; }
+        .green { background: green; }
+        .red { background: red; }
+        .chart-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            margin-top: 10px;
+        }
+        .chart-container canvas {
+            width: 100px;
+            height: 100px;
+        }
+        .chart-text {
+            position: absolute;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .nav-buttons {
+            text-align: right;
+            margin-top: 10px;
+        }
+        .nav-buttons a {
+            text-decoration: none;
+            font-size: 30px;
+            font-weight: bold;
+            color: rgb(255, 16, 16);
+            padding: 5px;
+        }
     .chart-row {
         display: flex;
         justify-content: space-between;
@@ -15,50 +95,6 @@
         width: 100%;
         max-width: 700px;
         margin: 0 auto;
-    }
-    .chart-container {
-        width: 48%;
-        margin-bottom: 20px; 
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-    .chart-title {
-        font-family: 'Arial', sans-serif;
-        font-size: 2.5em;
-        text-align: center;
-        color: #fff;
-        background: linear-gradient(135deg, #3498db, #ff0b0b);
-        padding: 15px;
-        border-radius: 10px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        width: fit-content;
-        letter-spacing: 2px;
-        margin-bottom: 10px;
-    }
-    .indicators {
-        display: flex;
-        justify-content: space-between;
-        width: 100%;
-        margin-top: 10px;
-    }
-    .indicator {
-        background-color: #f0f0f0;
-        padding: 5px;
-        margin: 5px;
-        border-radius: 5px;
-        flex: 1;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-    }
-    .indicator canvas {
-        width: 50px;
-        height: 50px;
-    }
-    .indicator-text {
-        margin-right: 10px;
-        text-align: left;
     }
 
     .maspudo{
@@ -72,163 +108,194 @@
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
         transition: transform 0.3s; 
     }
-
-    @media (max-width: 768px) {
-        .chart-container {
-            width: 100%; 
-        }
-        .indicators {
-            flex-direction: column;
-            align-items: center;
-        }
-        .indicator {
-            width: 100%;
-            max-width: 300px;
-        }
+    .maspudo2{
+        font-size: 24px;
+        font-weight: bold;
+        text-align: center;
+        padding: 10px;
+        color: white;
+        background-color:rgb(243, 14, 14); 
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+        transition: transform 0.3s; 
     }
 </style>
-
- <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
- 
-<div class="chart-row">
-
-    <div class="chart-container">
-        <h2 class="chart-title">Operación MM</h2>
-        <canvas id="mainChart1"></canvas>
-        <div class="indicators">
-            <div class="indicator">
-                <canvas id="miniChart1"></canvas>
-                <div class="indicator-text">Falta</div>
-            </div>
-            <div class="indicator">
-                <canvas id="miniChart2"></canvas>
-                <div class="indicator-text">Bien</div>
-            </div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+ <div class="chart-row">
+    <div class="dashboard">
+        <div class="title-cpa">Administración</div>
+        <div class="indicator"><div class="circle gray">5</div> INDICADORES</div>
+        <div class="indicator"><div class="circle green">4</div> CUMPLEN</div>
+        <div class="indicator"><div class="circle red">1</div> NO CUMPLEN</div>
+        <div class="chart-container">
+            <canvas id="chart1"></canvas>
+            <div class="chart-text">80%</div>
+        </div>
+        <div class="nav-buttons">
+            <a href="index2.html">&gt;&gt;&gt;</a>
         </div>
     </div>
-
-    <div class="chart-container">
-        <h2 class="chart-title" onclick="window.location.href='{{ route('calidad.index') }}'">
-            CALIDAD
-        </h2>
-        <canvas id="mainChart2"></canvas>
-        <div class="indicators">
-            <div class="indicator">
-                <canvas id="miniChart3"></canvas>
-                <div class="indicator-text">Falta</div>
-            </div>
-            <div class="indicator">
-                <canvas id="miniChart4"></canvas>
-                <div class="indicator-text">Bien</div>
-            </div>
+    <br>
+    <div class="dashboard">
+        <div class="title-cpa">Ventas</div>
+        <div class="indicator"><div class="circle gray">6</div> INDICADORES</div>
+        <div class="indicator"><div class="circle green">1</div> CUMPLEN</div>
+        <div class="indicator"><div class="circle red">5</div> NO CUMPLEN</div>
+        <div class="chart-container">
+            <canvas id="chart2"></canvas>
+            <div class="chart-text">17%</div>
+        </div>
+        <div class="nav-buttons">
+            <a href="index2.html">&gt;&gt;&gt;</a>
         </div>
     </div>
 </div>
+<br>
 
 <div class="chart-row">
-    <div class="chart-container">
-        <h2 class="chart-title" onclick="window.location.href='{{ route('logistica.index') }}'">
-            Logistica
-        </h2>
-        <canvas id="mainChart3"></canvas>
-        <div class="indicators">
-            <div class="indicator">
-                <canvas id="miniChart5"></canvas>
-                <div class="indicator-text">Falta</div>
-            </div>
-            <div class="indicator">
-                <canvas id="miniChart6"></canvas>
-                <div class="indicator-text">Bien</div>
-            </div>
+    <div class="dashboard">
+        <div class="title-cpa">Produccion</div>
+        <div class="indicator"><div class="circle gray">4</div> INDICADORES</div>
+        <div class="indicator"><div class="circle green">3</div> CUMPLEN</div>
+        <div class="indicator"><div class="circle red">1</div> NO CUMPLEN</div>
+        <div class="chart-container">
+            <canvas id="chart3"></canvas>
+            <div class="chart-text">75%</div>
+        </div>
+        <div class="nav-buttons">
+            <a href="index2.html">&gt;&gt;&gt;</a>
         </div>
     </div>
-    <div class="chart-container">
-        <h2 class="chart-title" onclick="window.location.href='{{ route('cnc.index') }}'">
-            CNC
-        </h2>
-        <canvas id="mainChart4"></canvas>
-        <div class="indicators">
-            <div class="indicator">
-                <canvas id="miniChart7"></canvas>
-                <div class="indicator-text">Falta</div>
-            </div>
-            <div class="indicator">
-                <canvas id="miniChart8"></canvas>
-                <div class="indicator-text">Bien</div>
-            </div>
+    <br>
+    <div class="dashboard">
+        <div class="title-cpa">RRHH</div>
+        <div class="indicator"><div class="circle gray">7</div> INDICADORES</div>
+        <div class="indicator"><div class="circle green">6</div> CUMPLEN</div>
+        <div class="indicator"><div class="circle red">1</div> NO CUMPLEN</div>
+        <div class="chart-container">
+            <canvas id="chart4"></canvas>
+            <div class="chart-text">86%</div>
+        </div>
+        <div class="nav-buttons">
+            <a href="index2.html">&gt;&gt;&gt;</a>
         </div>
     </div>
 </div>
-
- <script>
-    function createMainChart(canvasId, data, colors) {
-        var ctx = document.getElementById(canvasId).getContext('2d');
-        new Chart(ctx, {
-            type: 'doughnut',
-            data: {
-                labels: ['Meta', 'Dato'],
-                datasets: [{
-                    data: data,
-                    backgroundColor: colors
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        display: true,
-                        position: 'top',
-                    }
+    <script>
+        function renderChart(canvasId, percentage) {
+            const ctx = document.getElementById(canvasId).getContext('2d');
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    datasets: [{
+                        data: [percentage, 100 - percentage],
+                        backgroundColor: ['green', 'white'],
+                    }]
+                },
+                options: {
+                    responsive: false,
+                    cutout: '70%',
+                    plugins: { legend: { display: false } }
                 }
-            }
-        });
-    }
+            });
+        }
 
-    createMainChart('mainChart1', [20, 80], ['#F44336', '#4CAF50']);
-    createMainChart('mainChart2', [30, 70], ['#F44336', '#4CAF50']);
-    createMainChart('mainChart3', [50, 50], ['#F44336', '#4CAF50']);
-    createMainChart('mainChart4', [60, 40], ['#F44336', '#4CAF50']);
-
-    function createMiniChart(canvasId, data, colors) {
-        var ctx = document.getElementById(canvasId).getContext('2d');
-        new Chart(ctx, {
-            type: 'doughnut',
-            data: {
-                datasets: [{
-                    data: data,
-                    backgroundColor: colors
-                }]
-            },
-            options: {
-                responsive: false,
-                cutout: '70%',
-                plugins: {
-                    legend: {
-                        display: false
-                    }
-                }
-            }
-        });
-    }
-
-    createMiniChart('miniChart1', [20, 80], ['red', '#e6e6e6']);
-    createMiniChart('miniChart2', [20, 80], ['#e6e6e6', '#66ff66']);
-    createMiniChart('miniChart3', [30, 70], ['red', '#e6e6e6']);
-    createMiniChart('miniChart4', [30, 70], ['#e6e6e6', '#66ff66']);
-    createMiniChart('miniChart5', [50, 50], ['red', '#e6e6e6']);
-    createMiniChart('miniChart6', [50, 50], ['#e6e6e6', '#66ff66']);
-    createMiniChart('miniChart7', [60, 40], ['red', '#e6e6e6']);
-    createMiniChart('miniChart8', [60, 40], ['#e6e6e6', '#66ff66']);
-</script>
+        renderChart('chart1', 80);
+        renderChart('chart2', 83);
+        renderChart('chart3', 75);
+        renderChart('chart4', 86);
+    </script>
 
 <br>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.css" rel="stylesheet" />
-<link href="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.css" rel="stylesheet" />
+<h1 class="maspudo2">Grupo industrial Conplasa</h1>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+ <div class="chart-row">
+    <div class="dashboard">
+        <div class="title-gic">Operacion MM</div>
+        <div class="indicator"><div class="circle gray">5</div> INDICADORES</div>
+        <div class="indicator"><div class="circle green">4</div> CUMPLEN</div>
+        <div class="indicator"><div class="circle red">1</div> NO CUMPLEN</div>
+        <div class="chart-container">
+            <canvas id="chart5"></canvas>
+            <div class="chart-text">80%</div>
+        </div>
+        <div class="nav-buttons">
+            <a href="index2.html">&gt;&gt;&gt;</a>
+        </div>
+    </div>
+    <br>
+    <div class="dashboard">
+        <div class="title-gic">Administracion</div>
+        <div class="indicator"><div class="circle gray">6</div> INDICADORES</div>
+        <div class="indicator"><div class="circle green">5</div> CUMPLEN</div>
+        <div class="indicator"><div class="circle red">1</div> NO CUMPLEN</div>
+        <div class="chart-container">
+            <canvas id="chart6"></canvas>
+            <div class="chart-text">83%</div>
+        </div>
+        <div class="nav-buttons">
+            <a href="index2.html">&gt;&gt;&gt;</a>
+        </div>
+    </div>
+</div>
+<br>
+
+<div class="chart-row">
+    <div class="dashboard">
+        <div class="title-gic">Produccion(Log.)</div>
+        <div class="indicator"><div class="circle gray">4</div> INDICADORES</div>
+        <div class="indicator"><div class="circle green">3</div> CUMPLEN</div>
+        <div class="indicator"><div class="circle red">1</div> NO CUMPLEN</div>
+        <div class="chart-container">
+            <canvas id="chart7"></canvas>
+            <div class="chart-text">75%</div>
+        </div>
+        <div class="nav-buttons">
+            <a href="index2.html">&gt;&gt;&gt;</a>
+        </div>
+    </div>
+    <br>
+    <div class="dashboard">
+        <div class="title-gic">RRHH</div>
+        <div class="indicator"><div class="circle gray">7</div> INDICADORES</div>
+        <div class="indicator"><div class="circle green">7</div> CUMPLEN</div>
+        <div class="indicator"><div class="circle red">0</div> NO CUMPLEN</div>
+        <div class="chart-container">
+            <canvas id="chart8"></canvas>
+            <div class="chart-text">100%</div>
+        </div>
+        <div class="nav-buttons">
+            <a href="index2.html">&gt;&gt;&gt;</a>
+        </div>
+    </div>
+</div>
+    <script>
+        function renderChart(canvasId, percentage) {
+            const ctx = document.getElementById(canvasId).getContext('2d');
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    datasets: [{
+                        data: [percentage, 100 - percentage],
+                        backgroundColor: ['green', 'white'],
+                    }]
+                },
+                options: {
+                    responsive: false,
+                    cutout: '70%',
+                    plugins: { legend: { display: false } }
+                }
+            });
+        }
+
+        renderChart('chart5', 80);
+        renderChart('chart6', 83);
+        renderChart('chart7', 75);
+        renderChart('chart8', 100);
+    </script>
+
  <style>
-    body {
-        overflow-x: hidden;
-    }
+  
     #calendar {
         max-width: 100%;
         margin: 20px auto;
@@ -242,28 +309,12 @@
 
 <div class="container-fluid">
 <div class="row mt-4">
-    <div class="col-md-6">
-        <h3 class="maspudo">Indicadores Clave Metal Mecanica</h3>
-        <canvas id="salesChart"></canvas>
-    </div>
-    <div class="col-md-6">
-        <h3 class="maspudo"> KPIs Produccion Metal Mecanica</h3>
-        <canvas id="incomeChart"></canvas>
-    </div>
-</div>
-
-<div class="row mt-4">
     <div class="col-12">
         <h3 class="maspudo">Calendario</h3>
         <div id="calendar" style="max-width: 800px; max-height: 500px;"></div>
     </div>
 </div>
-</div>
-
- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
- <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.js"></script>
- <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+</div>                                           
  <script>
 document.addEventListener('DOMContentLoaded', function() {
     var calendarEl = document.getElementById('calendar');
@@ -278,10 +329,10 @@ document.addEventListener('DOMContentLoaded', function() {
         events: [
             {
                 title: 'Reunion',
-                start: '2024-10-22'
+                start: '2024-10-31'
             },
             {
-                title: 'Entrega Piezas Forjas',
+                title: 'Entregas',
                 start: '2024-10-09',
                 end: '2024-10-12'
             }
@@ -378,7 +429,7 @@ const incomeChart = new Chart(incomeCtx, {
     background-color: #e8f3ff;
     box-sizing: border-box;
 }
-.title {
+.title-table {
     font-size: 24px;
     background-color: #00376b;
     color: white;
@@ -416,7 +467,7 @@ tr:nth-child(even) {
         width: 100%;
         padding: 10px;
     }
-    .title {
+    .title-table {
         font-size: 20px;
     }
     th, td {
@@ -433,7 +484,7 @@ tr:nth-child(even) {
 </style>
 
 <div class="container">
-<div class="title">SISTEMA DE GESTIÓN DE CALIDAD</div>
+<div class="title-table">SISTEMA DE GESTIÓN DE CALIDAD</div>
 <h2>OBJETIVOS DE CALIDAD</h2>
 <table>
 <thead>
@@ -519,9 +570,18 @@ Fecha: 18.Enero.24
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Sombra sutil */
         box-sizing: border-box;
     }
-    .title {
+    .title-Gic {
         font-size: 28px; /* Aumentar el tamaño de la fuente */
-        background-color: #00376b;
+        background-color:rgb(236, 30, 30);
+        color: white;
+        padding: 15px;
+        margin-bottom: 20px;
+        border-radius: 5px; /* Bordes redondeados */
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Sombra sutil */
+    }
+    .title-cpa {
+        font-size: 28px; /* Aumentar el tamaño de la fuente */
+        background-color:rgb(42, 110, 238);
         color: white;
         padding: 15px;
         margin-bottom: 20px;

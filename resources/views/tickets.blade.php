@@ -142,7 +142,9 @@
             <textarea id="descripcion" name="descripcion" rows="4" required></textarea>
             
             <button type="submit" style="background-color:#007bff">Crear Ticket</button>
+            
         </form>
+   
         @can('calidad.update')
 
         <table id="ticketTable">
@@ -191,24 +193,34 @@
                 })
                 .then(response => response.json())
                 .then(data => {
-                    if (data.id) {
-                        // Si el ticket fue creado exitosamente, agregarlo a la tabla
-                        const ticket = {
-                            id: data.id,
-                            usuario: data.usuario,
-                            area: data.area,
-                            correo: data.correo,
-                            descripcion: data.descripcion,
-                            estado: 'Pendiente'
-                        };
-                        tickets.push(ticket);
-                        renderTickets(); // Llamar a la función para renderizar los tickets en la tabla
-                        this.reset(); // Reiniciar el formulario
-                    }
-                })
-                .catch(error => console.error('Error:', error));
-            });
-        
+        if (data.id) {
+            // Si el ticket fue creado exitosamente, agregarlo a la tabla
+            const ticket = {
+                id: data.id,
+                usuario: data.usuario,
+                area: data.area,
+                correo: data.correo,
+                descripcion: data.descripcion,
+                estado: 'Pendiente'
+            };
+            tickets.push(ticket);
+            renderTickets(); // Llamar a la función para renderizar los tickets en la tabla
+            this.reset(); // Reiniciar el formulario
+
+            // Mostrar el mensaje de éxito
+            const successMessage = document.getElementById('successMessage');
+            successMessage.style.display = 'block';
+            
+            // Ocultar el mensaje después de 3 segundos
+            setTimeout(() => {
+                successMessage.style.display = 'none';
+            }, 3000);
+        }
+    })
+    .catch(error => console.error('Error:', error));
+});
+@can('calidad.update')
+
             function renderTickets() {
                 const tbody = document.querySelector('#ticketTable tbody');
                 tbody.innerHTML = '';
@@ -229,6 +241,11 @@
                     tbody.appendChild(row);
                 });
             }
-            renderTickets();w
+            renderTickets();
+ @endcan
+
     </script>
+     <div id="successMessage" style="display: none; color: green; text-align: center; margin-top: 20px;">
+    Ticket enviado correctamente.
+    </div>
 @endsection
