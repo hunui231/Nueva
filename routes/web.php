@@ -207,3 +207,8 @@ Route::middleware(['auth'])->group(function () {
      Route::get('/proveedores-gic', [ProveedorGICController::class, 'index']);
      Route::post('/proveedores-gic/store', [ProveedorGICController::class, 'store']);
      Route::get('/proveedores-gic/get-data', [ProveedorGICController::class, 'getData']);
+    
+
+    Route::get('/cuenta', [ActivityController::class, 'index'])->name('cuenta');
+
+    

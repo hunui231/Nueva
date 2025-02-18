@@ -5,8 +5,17 @@
 @endsection
 
 @section('content')
+<<<<<<< HEAD
 <style>
     
+=======
+
+<h2 class="maspudo">Bienvenido!,  Apartado de Taller: </h2>
+
+<br>
+ 
+ <style>
+>>>>>>> 2e9bd5332d1d7d651d8fece620534bd5b9c8cf17
     .um{
         font-family: 'Roboto', sans-serif;
         color: #FFFFFF; 
@@ -49,7 +58,84 @@
     
     </style>
 
+<<<<<<< HEAD
 <h2 class="maspudo">Operacion MM</h2>
+=======
+  <style>
+    #scrapChart{
+        font-family: Arial, sans-serif;
+        background-color: #0a0a0a;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+    }
+        
+    .chart-container {
+        width: 80%;
+        max-width: 800px;
+    }
+    .lias{
+        background-color: #0a0a0a;
+        
+    }
+</style>
+
+
+ <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+ <script>
+    const ctxb = document.getElementById('scrapChart').getContext('2d');
+    const scrapChart = new Chart(ctxb, {
+        type: 'line',
+        data: {
+            labels: ['ene-23', 'feb-23', 'mar-23', 'abr-23', 'may-23', 'jun-23', 'jul-23', 'ago-23', 'sep-23', 'oct-23', 'nov-23', 'dic-23', 'ene-24', 'feb-24', 'mar-24', 'abr-24', 'may-24', 'jun-24', 'jul-24',  'ago-24',  'sep-24',  'oct-24'],
+            datasets: [
+                {
+                    label: 'SCRAP Forjas',
+                    data: [6.0, 6.0, 6.5, 5.5, 5.8, 6.2, 7.5, 6.0, 5.5, 5.7, 5.0, 4.8, 4.5, 4.6, 4.9, 5.1, 5.6, 6.0, 5.97,5.6, 6.0, 5.97],
+                    borderColor: 'blue',
+                    fill: false,
+                    tension: 0.1,
+                    borderWidth: 2,
+                    pointBackgroundColor: 'blue',
+                },
+                {
+                    label: 'Meta',
+                    data: [10.0, 10.0, 10.0, 7.5, 7.5, 7.5, 7.5, 7.5, 7.5, 7.5, 7.5, 7.5, 7.5, 7.5, 7.5, 7.5, 7.5, 7.5, 7.5, 7.5, 7.5, 7.5],
+                    borderColor: 'red',
+                    fill: false,
+                    tension: 0.1,
+                    borderWidth: 2,
+                    pointBackgroundColor: 'red',
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'SCRAP Forjas'
+                },
+                legend: {
+                    position: 'top'
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: '% SCRAP'
+                    }
+                }
+            }
+        }
+    });
+</script>
+>>>>>>> 2e9bd5332d1d7d651d8fece620534bd5b9c8cf17
 
 <br>
 <h2>SCRAP Donaldson</h2>

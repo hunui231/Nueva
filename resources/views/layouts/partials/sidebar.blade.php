@@ -85,6 +85,7 @@
             </ul>
         </nav>
     </div>
+    <h6>Derechos Reservados @Conplasa2024°</h6>
 </aside>
 
  <button id="sidebarToggle" class="lg:hidden fixed top-0 left-0 p-4 z-50 bg-gray-800 text-white">
