@@ -216,6 +216,7 @@ class UserSeeder extends Seeder
                 'remember_token' => Str::random(10),
             ]
         )->assignRole('Administracion');
+         
         User::firstOrCreate(
             ['email' => 'rh@conplasa.com.mx'], 
             [
@@ -228,6 +229,16 @@ class UserSeeder extends Seeder
             ]
         )->assignRole('RH');
 
-       
+        User::firstOrCreate(
+            ['email' => 'v.renteria@conplasa.com.mx'], 
+            [
+                'first_name' => 'Victor Daniel',
+                'last_name' => 'Renteria',
+                'email_verified_at' => now(),
+                'password' => bcrypt('VRENTERIA2'),
+                'phone_number' => '55 2060908',
+                'remember_token' => Str::random(10),
+            ]
+        )->assignRole('Gerencia');
     }
 }

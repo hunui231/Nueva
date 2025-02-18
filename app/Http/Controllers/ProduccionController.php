@@ -2,18 +2,12 @@
 
 namespace App\Http\Controllers;
 
-
 use Illuminate\Http\Request;
 
-class LogisticaController extends Controller
+class ProduccionController extends Controller
 {
-
     public function index()
     {
-       
-
-        return view('logistica.index');
+        return view('produccion.index');
     }
-
-   
 }

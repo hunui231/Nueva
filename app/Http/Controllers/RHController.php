@@ -2,18 +2,13 @@
 
 namespace App\Http\Controllers;
 
-
 use Illuminate\Http\Request;
 
-class LogisticaController extends Controller
+class RHController extends Controller
 {
 
     public function index()
     {
-       
-
-        return view('logistica.index');
+        return view('rh.index');
     }
-
-   
 }

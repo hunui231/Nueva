@@ -22,11 +22,53 @@
                     </a>
                 </li>
                 @endcan
+                @can('administracion.index')
+                <li @if($currentPage == 'Administracion') class="active" @endif>
+                    <a href="{{ route('administracion.index') }}" class="flex items-center p-2 hover:bg-gray-200">
+                        <i class="fas fa-solid fa-chart-line mr-2"></i>Administracion
+                 </a>
+                </li>
+                @endcan
+                @can('Ventas.index')
+                <li @if($currentPage == 'Ventas') class="active" @endif>
+                    <a href="{{ route('Ventas.index') }}" class="flex items-center p-2 hover:bg-gray-200">
+                        <i class=" fas fa-solid fa-handshake mr-2"></i>Ventas
+                 </a>
+                </li>
+                @endcan
+                @can('produccion.index')
+                <li @if($currentPage == 'produccion') class="active" @endif>
+                    <a href="{{ route('produccion.index') }}" class="flex items-center p-2 hover:bg-gray-200">
+                        <i class=" fas fa-solid fa-chart-bar mr-2"></i>Produccion
+                 </a>
+                </li>
+                @endcan
+                @can('rh.index')
+                <li @if($currentPage == 'rh') class="active" @endif>
+                    <a href="{{ route('rh.index') }}" class="flex items-center p-2 hover:bg-gray-200">
+                        <i class=" fas fa-solid fa-user mr-2"></i>Recursos Humanos
+                 </a>
+                </li>
+                @endcan
+                @can('taller.index')
+                <li @if($currentPage == 'taller') class="active" @endif>
+                    <a href="{{ route('taller.index') }}" class="flex items-center p-2 hover:bg-gray-200">
+                        <i class="fa fa-cogs" aria-hidden="true"></i>Operacion MM
+                    </a>
+                </li>
+                @endcan
+                @can('administraciongic.index')
+                <li @if($currentPage == 'administraciongic') class="active" @endif>
+                    <a href="{{ route('administraciongic.index') }}" class="flex items-center p-2 hover:bg-gray-200">
+                        <i class="fa fa-solid fa-chart-line mr-2" aria-hidden="true"></i>Administracion GIC
+                    </a>
+                </li>
+                @endcan
 
                 @can('logistica.index')
                 <li @if($currentPage == 'logistica') class="active" @endif>
                     <a href="{{ route('logistica.index') }}" class="flex items-center p-2 hover:bg-gray-200">
-                        <i class="fas fa-truck mr-2"></i>Logística
+                        <i class="fas fa-truck mr-2"></i>Produccion (Log)
                     </a>
                 </li>
                 @endcan
@@ -39,25 +81,10 @@
                 </li>
                 @endcan
 
-                @can('cnc.index')
-                <li @if($currentPage == 'cnc') class="active" @endif>
-                    <a href="{{ route('cnc.index') }}" class="flex items-center p-2 hover:bg-gray-200">
-                        <i class="fas fa-chart-line mr-2"></i>CNC
-                    </a>
-                </li>
-                @endcan
-                
-                @can('taller.index')
-                <li @if($currentPage == 'taller') class="active" @endif>
-                    <a href="{{ route('taller.index') }}" class="flex items-center p-2 hover:bg-gray-200">
-                        <i class="fa fa-cogs" aria-hidden="true"></i>Taller
-                    </a>
-                </li>
-                @endcan
+              
             </ul>
         </nav>
     </div>
-    <h6>Derechos Reservados @Conplasa2024°</h6>
 </aside>
 
  <button id="sidebarToggle" class="lg:hidden fixed top-0 left-0 p-4 z-50 bg-gray-800 text-white">

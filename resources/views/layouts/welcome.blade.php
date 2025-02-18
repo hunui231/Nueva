@@ -66,7 +66,7 @@
             justify-content: center;
             align-items: center;
             position: relative;
-            margin-top: 10px;
+            margin-top: 5px;
         }
         .chart-container canvas {
             width: 100px;
@@ -79,14 +79,14 @@
         }
         .nav-buttons {
             text-align: right;
-            margin-top: 10px;
+            margin-top: 5px;
         }
         .nav-buttons a {
             text-decoration: none;
             font-size: 30px;
             font-weight: bold;
             color: rgb(255, 16, 16);
-            padding: 5px;
+            padding: 1px;
         }
     .chart-row {
         display: flex;
@@ -132,22 +132,25 @@
             <div class="chart-text">80%</div>
         </div>
         <div class="nav-buttons">
-            <a href="index2.html">&gt;&gt;&gt;</a>
-        </div>
+    @can('administracion.index')
+        <a href="{{ route('administracion.index') }}">&gt;&gt;&gt;</a>
+    @endcan
+</div>
     </div>
-    <br>
     <div class="dashboard">
         <div class="title-cpa">Ventas</div>
-        <div class="indicator"><div class="circle gray">6</div> INDICADORES</div>
-        <div class="indicator"><div class="circle green">1</div> CUMPLEN</div>
+        <div class="indicator"><div class="circle gray">6</div>INDICADORES</div>
+        <div class="indicator"><div class="circle green">1</div>CUMPLEN</div>
         <div class="indicator"><div class="circle red">5</div> NO CUMPLEN</div>
         <div class="chart-container">
             <canvas id="chart2"></canvas>
             <div class="chart-text">17%</div>
         </div>
         <div class="nav-buttons">
-            <a href="index2.html">&gt;&gt;&gt;</a>
-        </div>
+    @can('Ventas.index')
+        <a href="{{ route('Ventas.index') }}">&gt;&gt;&gt;</a>
+    @endcan
+</div>
     </div>
 </div>
 <br>
@@ -163,8 +166,10 @@
             <div class="chart-text">75%</div>
         </div>
         <div class="nav-buttons">
-            <a href="index2.html">&gt;&gt;&gt;</a>
-        </div>
+    @can('produccion.index')
+        <a href="{{ route('produccion.index') }}">&gt;&gt;&gt;</a>
+    @endcan
+</div>
     </div>
     <br>
     <div class="dashboard">
@@ -177,8 +182,10 @@
             <div class="chart-text">86%</div>
         </div>
         <div class="nav-buttons">
-            <a href="index2.html">&gt;&gt;&gt;</a>
-        </div>
+    @can('rh.index')
+        <a href="{{ route('rh.index') }}">&gt;&gt;&gt;</a>
+    @endcan
+</div>
     </div>
 </div>
     <script>
@@ -220,8 +227,10 @@
             <div class="chart-text">80%</div>
         </div>
         <div class="nav-buttons">
-            <a href="index2.html">&gt;&gt;&gt;</a>
-        </div>
+    @can('taller.index')
+        <a href="{{ route('taller.index') }}">&gt;&gt;&gt;</a>
+    @endcan
+</div>
     </div>
     <br>
     <div class="dashboard">
@@ -234,8 +243,10 @@
             <div class="chart-text">83%</div>
         </div>
         <div class="nav-buttons">
-            <a href="index2.html">&gt;&gt;&gt;</a>
-        </div>
+    @can('administraciongic.index')
+        <a href="{{ route('administraciongic.index') }}">&gt;&gt;&gt;</a>
+    @endcan
+</div>
     </div>
 </div>
 <br>
@@ -251,8 +262,10 @@
             <div class="chart-text">75%</div>
         </div>
         <div class="nav-buttons">
-            <a href="index2.html">&gt;&gt;&gt;</a>
-        </div>
+    @can('logistica.index')
+        <a href="{{ route('logistica.index') }}">&gt;&gt;&gt;</a>
+    @endcan
+</div>
     </div>
     <br>
     <div class="dashboard">
@@ -265,8 +278,10 @@
             <div class="chart-text">100%</div>
         </div>
         <div class="nav-buttons">
-            <a href="index2.html">&gt;&gt;&gt;</a>
-        </div>
+    @can('rh.index')
+        <a href="{{ route('rh.index') }}">&gt;&gt;&gt;</a>
+    @endcan
+</div>
     </div>
 </div>
     <script>
@@ -306,7 +321,9 @@
         }
     }
 </style>
+<div>
 
+<div>
 <div class="container-fluid">
 <div class="row mt-4">
     <div class="col-12">
