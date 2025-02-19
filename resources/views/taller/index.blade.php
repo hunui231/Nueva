@@ -5,31 +5,9 @@
 @endsection
 
 @section('content')
-<<<<<<< HEAD
-<style>
-    
-=======
 
-<h2 class="maspudo">Bienvenido!,  Apartado de Taller: </h2>
-
-<br>
- 
  <style>
->>>>>>> 2e9bd5332d1d7d651d8fece620534bd5b9c8cf17
-    .um{
-        font-family: 'Roboto', sans-serif;
-        color: #FFFFFF; 
-        text-align: center; 
-        font-weight: 500; 
-        font-size: 1em; 
-        text-transform: uppercase; 
-        background: linear-gradient(90deg, #0a0a0a, #434948); 
-        padding: 20px; 
-        border-radius: 10px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-        margin: 20px 0; 
-        transition: transform 0.3s;
-    }
+    
     .maspudo{
         font-size: 24px;
         font-weight: bold;
@@ -58,30 +36,7 @@
     
     </style>
 
-<<<<<<< HEAD
 <h2 class="maspudo">Operacion MM</h2>
-=======
-  <style>
-    #scrapChart{
-        font-family: Arial, sans-serif;
-        background-color: #0a0a0a;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        margin: 0;
-    }
-        
-    .chart-container {
-        width: 80%;
-        max-width: 800px;
-    }
-    .lias{
-        background-color: #0a0a0a;
-        
-    }
-</style>
-
 
  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -135,7 +90,6 @@
         }
     });
 </script>
->>>>>>> 2e9bd5332d1d7d651d8fece620534bd5b9c8cf17
 
 <br>
 <h2>SCRAP Donaldson</h2>
@@ -447,61 +401,61 @@
     axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
     // Datos iniciales del gráfico
-    const ctxb = document.getElementById('scrapChart2').getContext('2d');
-    const scrapChartForjas = new Chart(ctxb, {
-        type: 'line',
-        data: {
-            labels: ["ene-23", "feb-23", "mar-23", "abr-23", "may-23", "jun-23", "jul-23", "ago-23", "sep-23", "oct-23", "nov-23", "dic-23", "ene-24", "feb-24", "mar-24", "abr-24", "may-24", "jun-24", "jul-24", "ago-24", "sep-24", "oct-24", "nov-24", "dic-24"],
-            datasets: [
-                {
-                    label: "SCRAP %",
-                    data: Array(24).fill(null), // Inicializar con valores nulos
-                    borderColor: '#007bff',
-                    fill: false,
-                    tension: 0.1,
-                    borderWidth: 2,
-                    pointRadius: 4,
-                    pointBackgroundColor: '#007bff',
-                },
-                {
-                    label: "Límite",
-                    data: Array(24).fill(7.5), // Línea roja fija en 7.5%
-                    borderColor: 'red',
-                    fill: false,
-                    tension: 0.1,
-                    borderWidth: 2,
-                    pointBackgroundColor: 'red',
-                }
-            ]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                title: {
-                    display: false,  // Ocultar el título
-                },
-                legend: {
-                    display: false, // Ocultar la leyenda
-                },
-                tooltip: {
-                    callbacks: {
-                        label: function (context) {
-                            return context.dataset.label + ': ' + context.raw.toFixed(2) + '%';
-                        }
-                    }
-                }
+    const ctxbforjas = document.getElementById('scrapChart2').getContext('2d');
+    const scrapChartForjas = new Chart(ctxbforjas, { // Cambia ctxb por ctxbforjas
+    type: 'line',
+    data: {
+        labels: ["ene-23", "feb-23", "mar-23", "abr-23", "may-23", "jun-23", "jul-23", "ago-23", "sep-23", "oct-23", "nov-23", "dic-23", "ene-24", "feb-24", "mar-24", "abr-24", "may-24", "jun-24", "jul-24", "ago-24", "sep-24", "oct-24", "nov-24", "dic-24"],
+        datasets: [
+            {
+                label: "SCRAP %",
+                data: Array(24).fill(null), // Inicializar con valores nulos
+                borderColor: '#007bff',
+                fill: false,
+                tension: 0.1,
+                borderWidth: 2,
+                pointRadius: 4,
+                pointBackgroundColor: '#007bff',
             },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    title: {
-                        display: true,
-                        text: '% SCRAP'
+            {
+                label: "Límite",
+                data: Array(24).fill(7.5), // Línea roja fija en 7.5%
+                borderColor: 'red',
+                fill: false,
+                tension: 0.1,
+                borderWidth: 2,
+                pointBackgroundColor: 'red',
+            }
+        ]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            title: {
+                display: false,  // Ocultar el título
+            },
+            legend: {
+                display: false, // Ocultar la leyenda
+            },
+            tooltip: {
+                callbacks: {
+                    label: function (context) {
+                        return context.dataset.label + ': ' + context.raw.toFixed(2) + '%';
                     }
                 }
             }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                title: {
+                    display: true,
+                    text: '% SCRAP'
+                }
+            }
         }
-    });
+    }
+});
 
     // Generar las opciones de meses en el formulario
     const monthSelectScrapForjas = document.getElementById('monthScrapForjas');

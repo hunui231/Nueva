@@ -37,6 +37,7 @@
 
 <!-- Formulario para CI -->
 <h2>Ingresar Datos - CI</h2>
+@can('administracion.index')
 <form id="dataFormCI">
   <label for="weekCI">Semana:</label>
   <select id="weekCI" name="weekCI">
@@ -60,11 +61,18 @@
 
   <button type="submit" class="button">Actualizar Gráfico CI</button>
 </form>
+@endcan
 <hr>
 <h1>Cobranza 2024 GIC - 2025 GIC</h1>
 <canvas id="cobranzaChartGIC"></canvas>
+
+<div style="text-align: center; margin-top: 10px;">
+  <button id="prevChart" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">◀ Anterior</button>
+  <button id="nextChart" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">Siguiente ▶</button>
+</div>
 <!-- Formulario para GIC -->
 <h2>Ingresar Datos - GIC</h2>
+@can('administracion.index')
 <form id="dataFormGIC">
   <label for="weekGIC">Semana:</label>
   <select id="weekGIC" name="weekGIC">
@@ -88,6 +96,7 @@
 
   <button type="submit" class=" button">Actualizar Gráfico GIC</button>
 </form>
+@endcan
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
@@ -415,6 +424,11 @@ function updateChartVisibility() {
 <h2>Evaluación de Desempeño de Proveedores CI</h2>
 <canvas id="kpiChart2"></canvas>
 
+<div style="text-align: center; margin-top: 10px;">
+  <button id="prevChart" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">◀ Anterior</button>
+  <button id="nextChart" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">Siguiente ▶</button>
+</div>
+
 <!-- Formulario para ingresar datos -->
 <h2>Ingresar Datos Provedores IC</h2>
 <form id="dataFormKPI2">
@@ -554,9 +568,14 @@ function updateChartVisibility() {
   // Cargar los datos iniciales al cargar la página
   fetchData();
 </script>
-
+<br><br>
 <h2>Cumplimiento de compras a tiempo IC</h2>
 <canvas id="comprasChartIC"></canvas>
+
+<div style="text-align: center; margin-top: 10px;">
+  <button id="prevChart" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">◀ Anterior</button>
+  <button id="nextChart" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">Siguiente ▶</button>
+</div>
 
 <!-- Formulario para ingresar datos -->
 <h2>Ingresar Datos - Compras IC</h2>

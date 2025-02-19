@@ -9,7 +9,6 @@
         <div class="mb-4 text-sm text-gray-600">
             {{ __('¿Olvidaste tu contraseña? No hay problema. Escriba su dirección de correo electrónico y se le notificará al administrador del sistema.') }}
         </div>
-<<<<<<< HEAD
 
         <!-- Mensaje de Estado (Éxito) -->
         @if (session('status'))
@@ -17,10 +16,8 @@
                 {{ session('status') }}
             </div>
         @endif
-=======
         <!-- Session Status -->
         <x-auth-session-status class="mb-4" :status="session('status')" />
->>>>>>> 2e9bd5332d1d7d651d8fece620534bd5b9c8cf17
 
         <!-- Mensaje de Error -->
         @if (session('error'))

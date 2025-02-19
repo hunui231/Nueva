@@ -89,14 +89,16 @@
             padding: 1px;
         }
     .chart-row {
+        justify-content: center; 
         display: flex;
-        justify-content: space-between;
+        gap: 20px; 
         flex-wrap: wrap;
         width: 100%;
         max-width: 700px;
         margin: 0 auto;
-    }
 
+    }
+  
     .maspudo{
         font-size: 24px;
         font-weight: bold;
@@ -346,7 +348,7 @@ document.addEventListener('DOMContentLoaded', function() {
         events: [
             {
                 title: 'Reunion',
-                start: '2024-10-31'
+                start: '2025-02-19'
             },
             {
                 title: 'Entregas',

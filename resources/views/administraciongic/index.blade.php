@@ -5,9 +5,25 @@
 @endsection
 
 @section('content')
+<style>
+  button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.button:hover {
+    background-color: #45a049;
+}
+</style>
 <h2>Evaluación de Desempeño de Proveedores GIC</h2>
 <canvas id="kpiChartGIC"></canvas>
-
+<meta name="csrf-token" content="{{ csrf_token() }}">
 <!-- Formulario para ingresar datos -->
 <h2>Ingresar Datos Proveedores GIC</h2>
 <form id="dataFormKPI_GIC">
@@ -159,10 +175,10 @@
 
 
 <br><br>
+<meta name="csrf-token" content="{{ csrf_token() }}">
 
-<h2>Cumplimiento de compras a tiempo GIC</h2>
+<h2>Cumplimiento de Compras a Tiempo GIC</h2>
 <canvas id="comprasChartGIC"></canvas>
-
 <!-- Formulario para ingresar datos -->
 <h2>Ingresar Datos - Compras GIC</h2>
 <form id="dataFormCompras_GIC">
@@ -183,21 +199,19 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
+  // Configurar el token CSRF en Axios
+  axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
   // Contexto y datos iniciales del gráfico de compras GIC
   const ctxCompras_GIC = document.getElementById('comprasChartGIC').getContext('2d');
 
   const dataLabelsCompras_GIC = [
-    'ene-23', 'feb-23', 'mar-23', 'abr-23', 'may-23', 'jun-23', 'ago-23', 'sep-23', 'sep-23', 'oct-23', 'nov-23', 'dic-23',
+    'ene-23', 'feb-23', 'mar-23', 'abr-23', 'may-23', 'jun-23', 'jul-23', 'ago-23', 'sep-23', 'oct-23', 'nov-23', 'dic-23',
     'ene-24', 'feb-24', 'mar-24', 'abr-24', 'may-24', 'jun-24', 'jul-24', 'ago-24', 'sep-24', 'oct-24', 'nov-24', 'dic-24'
   ];
 
-  let performanceDataCompras_GIC = [
-    86, 86, 79, 82, 86, 84, 92, 80, 81, 86, 86, 84, 96, 88, 94, 94, 91, 89, 89, 94, 89, 85, 86, 88.75
-  ];
-
-  let areaDataCompras_GIC = [
-    70, 70, 70, 70, 70, 80, 80, 80, 80, 80, 80, 80, 80, 85, 85, 85, 85, 85, 85, 85, 85, 85, 85, 85
-  ];
+  let performanceDataCompras_GIC = Array(24).fill(null); // Inicializar con valores nulos
+  let areaDataCompras_GIC = Array(24).fill(null); // Inicializar con valores nulos
 
   // Configuración del gráfico de compras GIC
   const comprasChartGIC = new Chart(ctxCompras_GIC, {
@@ -215,7 +229,7 @@
         {
           label: 'Área de cumplimiento',
           data: areaDataCompras_GIC,
-          backgroundColor: 'rgba(255, 0, 0, 0.97)',
+          backgroundColor: 'rgba(255, 0, 0, 0.96)', // Fondo rojo semitransparente
           borderWidth: 0,
           fill: true,
         },
@@ -271,27 +285,31 @@
     }
 
     // Enviar los datos al servidor
-    axios.post('', {
+    axios.post('/compras-gic/store', {
       mes: month,
       desempeno: performance,
       area_cumplimiento: area,
     })
     .then(response => {
-      // Actualizar los datos del gráfico
-      const index = dataLabelsCompras_GIC.indexOf(month);
-      performanceDataCompras_GIC[index] = performance;
-      areaDataCompras_GIC[index] = area;
+      if (response.data.success) {
+        // Actualizar los datos del gráfico
+        const index = dataLabelsCompras_GIC.indexOf(month);
+        performanceDataCompras_GIC[index] = performance;
+        areaDataCompras_GIC[index] = area;
 
-      comprasChartGIC.update(); // Actualizar el gráfico
+        comprasChartGIC.update(); // Actualizar el gráfico
+      } else {
+        console.error('Error en la respuesta del servidor:', response.data);
+      }
     })
     .catch(error => {
-      console.error('Error al guardar los datos:', error);
+      console.error('Error al guardar los datos:', error.response ? error.response.data : error.message);
     });
   });
 
   // Obtener los datos actualizados del servidor
   function fetchData() {
-    axios.get('')
+    axios.get('/compras-gic/get-data')
       .then(response => {
         const data = response.data;
         data.forEach(item => {
@@ -304,7 +322,7 @@
         comprasChartGIC.update(); // Actualizar el gráfico
       })
       .catch(error => {
-        console.error('Error al obtener los datos:', error);
+        console.error('Error al obtener los datos:', error.response ? error.response.data : error.message);
       });
   }
 

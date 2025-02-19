@@ -29,6 +29,9 @@ use App\Http\Controllers\ScrapForjasController;
 use App\Http\Controllers\CumplimientoTallerController;
 use App\Http\Controllers\ForjasProduccionController;
 use App\Http\Controllers\ProveedorGICController;
+use App\Http\Controllers\ComprasGICController;
+use App\Http\Controllers\EntregaMaterialesController;
+use App\Http\Controllers\InventarioController;
 use Illuminate\Support\Facades\Mail;
 use App\Models\Ticket;
 
@@ -208,7 +211,18 @@ Route::middleware(['auth'])->group(function () {
      Route::post('/proveedores-gic/store', [ProveedorGICController::class, 'store']);
      Route::get('/proveedores-gic/get-data', [ProveedorGICController::class, 'getData']);
     
+     Route::get('/compras-gic', [ComprasGICController::class, 'index']);
+     Route::post('/compras-gic/store', [ComprasGICController::class, 'store']);
+     Route::get('/compras-gic/get-data', [ComprasGICController::class, 'getData']);
 
-    Route::get('/cuenta', [ActivityController::class, 'index'])->name('cuenta');
+
+     Route::get('/entrega-materiales', [EntregaMaterialesController::class, 'index']);
+     Route::post('/entrega-materiales/store', [EntregaMaterialesController::class, 'store']);
+     Route::get('/entrega-materiales/get-data', [EntregaMaterialesController::class, 'getData']);
+
+     Route::get('/inventario', [InventarioController::class, 'index']);
+     Route::post('/inventario/store', [InventarioController::class, 'store']);
+     Route::get('/inventario/get-data', [InventarioController::class, 'getData']);
+
 
     
