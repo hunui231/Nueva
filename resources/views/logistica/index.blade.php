@@ -26,6 +26,10 @@
 <h2>Entrega de Materiales a Tiempo</h2>
 <canvas id="grafico"></canvas>
 
+<div style="text-align: center; margin-top: 10px;">
+  <button id="prevChart" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">◀ Anterior</button>
+  <button id="nextChart" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">Siguiente ▶</button>
+</div>
 
 <!-- Formulario para ingresar datos -->
 <h2>Ingresar Datos - Entrega de Materiales</h2>
@@ -181,7 +185,12 @@
 <h2>Información de Inventarios</h2>
 <canvas id="inventarioChart"></canvas>
 
-<!-- Formulario para ingresar datos -->
+
+<div style="text-align: center; margin-top: 10px;">
+  <button id="prevChart" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">◀ Anterior</button>
+  <button id="nextChart" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">Siguiente ▶</button>
+</div>
+
 <h2>Ingresar Datos - Inventarios</h2>
 <form id="dataFormInventario">
   <label for="monthInventario">Mes:</label>

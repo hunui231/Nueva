@@ -100,6 +100,11 @@
     <canvas id="scrapChart1"></canvas>
 </div>
 
+<div style="text-align: center; margin-top: 10px;">
+  <button id="prevChart" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">◀ Anterior</button>
+  <button id="nextChart" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">Siguiente ▶</button>
+</div>
+
 <!-- Formulario SCRAP Donaldson -->
 <form id="formScrap1">
     <label for="monthScrap1">Mes:</label>
@@ -244,6 +249,10 @@
     <canvas id="scrapChartTaller"></canvas>
 </div>
 
+<div style="text-align: center; margin-top: 10px;">
+  <button id="prevChart" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">◀ Anterior</button>
+  <button id="nextChart" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">Siguiente ▶</button>
+</div>
 <!-- Formulario SCRAP Taller -->
 <form id="formScrapTaller">
     <label for="monthScrapTaller">Mes:</label>
@@ -380,6 +389,11 @@
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <div class="chart-container">
     <canvas id="scrapChart2"></canvas>
+</div>
+
+<div style="text-align: center; margin-top: 10px;">
+  <button id="prevChart" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">◀ Anterior</button>
+  <button id="nextChart" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">Siguiente ▶</button>
 </div>
 
 <!-- Formulario SCRAP Forjas -->
@@ -530,6 +544,10 @@
     <canvas id="produccionChart"></canvas>
 </div>
 
+<div style="text-align: center; margin-top: 10px;">
+  <button id="prevChart" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">◀ Anterior</button>
+  <button id="nextChart" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">Siguiente ▶</button>
+</div>
 <!-- Formulario Cumplimiento Plan de Producción -->
 <form id="formProduccion">
     <label for="monthProduccion">Mes:</label>
@@ -674,6 +692,11 @@
 
 <div class="chart-container">
     <canvas id="forjasProduccionChart"></canvas>
+</div>
+
+<div style="text-align: center; margin-top: 10px;">
+  <button id="prevChart" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">◀ Anterior</button>
+  <button id="nextChart" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">Siguiente ▶</button>
 </div>
 
 <!-- Formulario Cumplimiento Plan de Producción -->

@@ -56,6 +56,11 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <canvas id="rotacionChart"></canvas>
 
+<div style="text-align: center; margin-top: 10px;">
+  <button id="prevChart" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">◀ Anterior</button>
+  <button id="nextChart" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">Siguiente ▶</button>
+</div>
+
 <h2>Actualizar Datos de Rotación de Personal CI</h2>
 <form id="dataFormRotacion">
     <label for="monthRotacion">Mes:</label>
@@ -192,6 +197,12 @@
 
 <h1>Permanencia Personal Reclutado CI</h1>
 <canvas id="permanenciaChart"></canvas>
+
+<div style="text-align: center; margin-top: 10px;">
+  <button id="prevChart" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">◀ Anterior</button>
+  <button id="nextChart" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">Siguiente ▶</button>
+</div>
+
 <h2>Actualizar Datos de Permanencia de Personal Reclutado CI</h2>
 <form id="dataFormPermanencia">
     <label for="monthPermanencia">Mes:</label>
@@ -336,6 +347,12 @@
 
 <h1>Rotación de Personal GIC</h1>
 <canvas id="rotationChartGIC"></canvas>
+
+<div style="text-align: center; margin-top: 10px;">
+  <button id="prevChart" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">◀ Anterior</button>
+  <button id="nextChart" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">Siguiente ▶</button>
+</div>
+
 <h2>Actualizar Datos de Rotación de Personal GIC</h2>
 <form id="dataFormRotacionGIC">
     <label for="monthRotacionGIC">Mes:</label>
@@ -476,6 +493,11 @@
 <br><br>
 <h1>Permanencia Personal Reclutado GIC</h1>
 <canvas id="permanenceChartGIC"></canvas>
+
+<div style="text-align: center; margin-top: 10px;">
+  <button id="prevChart" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">◀ Anterior</button>
+  <button id="nextChart" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">Siguiente ▶</button>
+</div>
 <h2>Actualizar Datos de Permanencia de Personal Reclutado GIC</h2>
 <form id="dataFormPermanenciaGIC">
     <label for="monthPermanenciaGIC">Mes:</label>

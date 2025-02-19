@@ -13,6 +13,11 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <canvas id="scrapChart"></canvas>
 
+<div style="text-align: center; margin-top: 10px;">
+  <button id="prevChart" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">◀ Anterior</button>
+  <button id="nextChart" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">Siguiente ▶</button>
+</div>
+
 <h2>Actualizar Datos de Producción SCRAP CI</h2>
 <form id="dataFormScrap">
     <label for="monthScrap">Mes:</label>
@@ -152,6 +157,11 @@
 <!-- Rendimiento Operacional CI -->
 <h2>Rendimiento Operacional CI</h2>
 <canvas id="rendimientoChart"></canvas>
+
+<div style="text-align: center; margin-top: 10px;">
+  <button id="prevChart" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">◀ Anterior</button>
+  <button id="nextChart" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">Siguiente ▶</button>
+</div>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <h2>Actualizar Datos de Rendimiento Operacional CI</h2>
 <form id="dataFormRendimiento">

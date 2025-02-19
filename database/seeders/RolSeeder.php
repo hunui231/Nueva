@@ -36,7 +36,7 @@ class RolSeeder extends Seeder
 
 
         // Crear permisos y asignarlos a los roles
-        Permission::firstOrCreate(['name' => 'dashboard'])->syncRoles([$admin, $manager, $developer, $logistica, $cnc, $calidad, $Administracion, $Ventas, $CoordinacionProyectos, $Produccion, $Mantenimiento, $Gerencia, $RH, $AdministracionGIC]);
+        Permission::firstOrCreate(['name' => 'dashboard'])->syncRoles([$admin, $manager, $taller, $developer, $logistica, $cnc, $calidad, $Administracion, $Ventas, $CoordinacionProyectos, $Produccion, $Mantenimiento, $Gerencia, $RH, $AdministracionGIC]);
         Permission::firstOrCreate(['name' => 'users.index'])->syncRoles([$admin, $manager]);
         Permission::firstOrCreate(['name' => 'users.show'])->syncRoles([$admin, $manager]);
         Permission::firstOrCreate(['name' => 'users.create'])->syncRoles([$admin]);
@@ -45,7 +45,7 @@ class RolSeeder extends Seeder
 
 
         //  Logística
-        Permission::firstOrCreate(['name' => 'logistica.index'])->syncRoles([$admin, $logistica,  $manager]);
+        Permission::firstOrCreate(['name' => 'logistica.index'])->syncRoles([$admin, $logistica,  $manager, $Gerencia]);
         Permission::firstOrCreate(['name' => 'logistica.update'])->syncRoles([$admin]);//permiso de actualizar graficos
 
          // Permiso para Calidad
@@ -57,19 +57,19 @@ class RolSeeder extends Seeder
       Permission::firstOrCreate(['name' => 'cnc.update'])->syncRoles([$admin]);
       
             // Permiso Taller
-      Permission::firstOrCreate(['name' => 'taller.index'])->syncRoles([$admin, $taller, $manager]);
+      Permission::firstOrCreate(['name' => 'taller.index'])->syncRoles([$admin, $taller, $manager, $Gerencia]);
 
       //Permiso Administracion
-      Permission::firstOrCreate(['name' => 'administracion.index'])->syncRoles([$admin, $Administracion, $manager]);
+      Permission::firstOrCreate(['name' => 'administracion.index'])->syncRoles([$admin, $Administracion, $manager, $RH]);
     
 
       Permission::firstOrCreate(['name' => 'Ventas.index'])->syncRoles([$admin, $Ventas, $manager]);
 
       Permission::firstOrCreate(['name' => 'produccion.index'])->syncRoles([$admin, $Produccion, $manager]);
 
-      Permission::firstOrCreate(['name' => 'rh.index'])->syncRoles([$admin, $RH, $manager]);
+      Permission::firstOrCreate(['name' => 'rh.index'])->syncRoles([$admin, $RH, $manager, $Gerencia, $Administracion]);
 
-      Permission::firstOrCreate(['name' => 'administraciongic.index'])->syncRoles([$admin, $AdministracionGIC, $manager]);
+      Permission::firstOrCreate(['name' => 'administraciongic.index'])->syncRoles([$admin, $AdministracionGIC, $manager, $Gerencia]);
 
 
     }

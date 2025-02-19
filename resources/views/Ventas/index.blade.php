@@ -9,6 +9,11 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <h2>Clientes Nuevos por Mes</h2>
     <canvas id="clientesChart"></canvas>
+    
+<div style="text-align: center; margin-top: 10px;">
+  <button id="prevChart" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">◀ Anterior</button>
+  <button id="nextChart" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">Siguiente ▶</button>
+</div>
 
     <h2>Ingresar Datos - Clientes Nuevos</h2>
     <form id="dataFormClientes">
@@ -159,6 +164,12 @@
 
     <h2>Porcentaje de Ventas</h2>
     <canvas id="salesChart"></canvas>
+
+    
+<div style="text-align: center; margin-top: 10px;">
+  <button id="prevChart" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">◀ Anterior</button>
+  <button id="nextChart" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">Siguiente ▶</button>
+</div>
 
     <h2>Actualizar Datos de Ventas</h2>
     <form id="dataFormVentas">

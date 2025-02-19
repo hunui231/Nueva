@@ -26,8 +26,9 @@
 <meta name="csrf-token" content="{{ csrf_token() }}">
 
 <h1>Cobranza 2024 CI - 2025 CI</h1>
+@can('administracion.index')
 <canvas id="cobranzaChartCI"></canvas>
-
+@endcan
 <canvas id="graficoX"></canvas>
 
 <div style="text-align: center; margin-top: 10px;">
@@ -422,8 +423,9 @@ function updateChartVisibility() {
 
 
 <h2>Evaluación de Desempeño de Proveedores CI</h2>
+@can('administracion.index')
 <canvas id="kpiChart2"></canvas>
-
+@endcan
 <div style="text-align: center; margin-top: 10px;">
   <button id="prevChart" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">◀ Anterior</button>
   <button id="nextChart" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">Siguiente ▶</button>
