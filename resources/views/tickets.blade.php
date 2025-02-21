@@ -120,33 +120,33 @@
         }
     </style>
 
-     <div class="container">
+  <div class="container">
         <center>
-        <h1>Tickets</h1>
-        <h5>Esta Seccion Esta Unicamente Destinada Para Problemas con la Aplicacion</h5>
+            <h1>Area de  Ayuda</h1>
+            <h3>Describe El problema Brevemente Y Ingresa la informacion Solicitada</h3>
+            <h5>Esta Seccion Esta Unicamente Destinada Para Problemas con la Aplicacion</h5>
         </center>
-        
+        <meta name="csrf-token" content="{{ csrf_token() }}">
+
         <br>
         <form id="ticketForm" action="{{ route('tickets.create') }}" method="POST">
-            @csrf 
-            <label for="usuario">Usuario:</label>
-            <input type="text" id="usuario" name="usuario" required>
-            
-            <label for="area">Área:</label>
-            <input type="text" id="area" name="area" required>
-            
-            <label for="correo">Correo:</label>
-            <input type="email" id="correo" name="correo" required>
-            
-            <label for="descripcion">Descripción del problema:</label>
-            <textarea id="descripcion" name="descripcion" rows="4" required></textarea>
-            
-            <button type="submit" style="background-color:#007bff">Crear Ticket</button>
-            
-        </form>
-   
-        @can('calidad.update')
+    @csrf 
+    <label for="usuario">Usuario:</label>
+    <input type="text" id="usuario" name="usuario" required>
+    
+    <label for="area">Área:</label>
+    <input type="text" id="area" name="area" required>
+    
+    <label for="correo">Correo:</label>
+    <input type="email" id="correo" name="correo" required>
+    
+    <label for="descripcion">Descripción del problema:</label>
+    <textarea id="descripcion" name="descripcion" rows="4" required></textarea>
+    
+    <button type="submit" style="background-color:#007bff">Crear Ticket</button>
+</form>
 
+        @can('admin.update')
         <table id="ticketTable">
             <thead>
                 <tr>
@@ -176,76 +176,74 @@
         </table>
         @endcan
     </div>
-    <script>
-        let tickets = [];
 
-     document.getElementById('ticketForm').addEventListener('submit', function(e) {
-                e.preventDefault(); // Prevenir el envío normal del formulario
-                
-                const formData = new FormData(this); // Recoger los datos del formulario
-                
-                fetch(this.action, {
-                    method: 'POST',
-                    body: formData,
+    <script>
+        // Manejar el envío del formulario
+        document.getElementById('ticketForm').addEventListener('submit', function(e) {
+            e.preventDefault(); // Prevenir el envío normal del formulario
+            
+            const formData = new FormData(this); // Recoger los datos del formulario
+            
+            fetch(this.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.id) {
+                    // Recargar la página para mostrar el nuevo ticket
+                    window.location.reload();
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+
+        // Cambiar el estado del ticket
+        function changeStatus(ticketId) {
+            fetch(`/tickets/${ticketId}/change-status`, {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Recargar la página para reflejar el cambio de estado
+                    window.location.reload();
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        // Eliminar un ticket
+        function deleteTicket(ticketId) {
+            if (confirm('¿Estás seguro de que quieres eliminar este ticket?')) {
+                fetch(`/tickets/${ticketId}`, {
+                    method: 'DELETE',
                     headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                     }
                 })
                 .then(response => response.json())
                 .then(data => {
-        if (data.id) {
-            // Si el ticket fue creado exitosamente, agregarlo a la tabla
-            const ticket = {
-                id: data.id,
-                usuario: data.usuario,
-                area: data.area,
-                correo: data.correo,
-                descripcion: data.descripcion,
-                estado: 'Pendiente'
-            };
-            tickets.push(ticket);
-            renderTickets(); // Llamar a la función para renderizar los tickets en la tabla
-            this.reset(); // Reiniciar el formulario
-
-            // Mostrar el mensaje de éxito
-            const successMessage = document.getElementById('successMessage');
-            successMessage.style.display = 'block';
-            
-            // Ocultar el mensaje después de 3 segundos
-            setTimeout(() => {
-                successMessage.style.display = 'none';
-            }, 3000);
-        }
-    })
-    .catch(error => console.error('Error:', error));
-});
-@can('calidad.update')
-
-            function renderTickets() {
-                const tbody = document.querySelector('#ticketTable tbody');
-                tbody.innerHTML = '';
-                
-                tickets.forEach(ticket => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${ticket.usuario}</td>
-                        <td>${ticket.area}</td>
-                        <td>${ticket.correo}</td>
-                        <td>${ticket.descripcion}</td>
-                        <td class="status ${ticket.estado.toLowerCase()}">${ticket.estado}</td>
-                        <td class="action-buttons">
-                            <button onclick="changeStatus(${ticket.id})">Listo</button>
-                            <button class="delete" onclick="deleteTicket(${ticket.id})">Eliminar</button>
-                        </td>
-                    `;
-                    tbody.appendChild(row);
-                });
+                    if (data.success) {
+                        // Recargar la página para reflejar la eliminación del ticket
+                        window.location.reload();
+                    }
+                })
+                .catch(error => console.error('Error:', error));
             }
-            renderTickets();
- @endcan
-
+        }
     </script>
-     <div id="successMessage" style="display: none; color: green; text-align: center; margin-top: 20px;">
-    Ticket enviado correctamente.
+
+    <div id="successMessage" style="display: none; color: green; text-align: center; margin-top: 20px;">
+        Ticket enviado correctamente.
     </div>
 @endsection

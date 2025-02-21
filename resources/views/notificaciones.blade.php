@@ -80,7 +80,7 @@
     <ul id="notificationList"></ul>
 </div>
 
-@can('logistica.update')
+@can('admin.update')
  <input type="text" id="notificationMessage" placeholder="Escribe tu notificación aquí" style="margin: 20px; padding: 10px; width: 80%;">
  <button id="notificationButton" onclick="addNotification()">Agregar Notificación</button> <!-- ID específico agregado -->
 @endcan

@@ -240,5 +240,29 @@ class UserSeeder extends Seeder
                 'remember_token' => Str::random(10),
             ]
         )->assignRole('Gerencia');
+
+        User::firstOrCreate(
+            ['email' => 'sistemas@conplasa.com.mx'], 
+            [
+                'first_name' => 'Leonel',
+                'last_name' => 'De Luna', 
+                'email_verified_at' => now(),
+                'password' => bcrypt('conplasa2025.'), 
+                'phone_number' => '55 2060908',
+                'remember_token' => Str::random(10),
+            ]
+        )->assignRole('admin'); 
+        
+        User::firstOrCreate(
+            ['email' => 'a.sistemas2@conplasa.com.mx'], 
+            [
+                'first_name' => 'Daniela',
+                'last_name' => 'Macias Rocha', 
+                'email_verified_at' => now(),
+                'password' => bcrypt('dany2210'),       
+               'phone_number' => '55 2060908', 
+               'remember_token' => Str::random(10),
+            ]
+        )->assignRole('admin'); 
     }
 }

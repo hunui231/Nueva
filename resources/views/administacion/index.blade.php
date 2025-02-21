@@ -39,7 +39,6 @@
 <form id="dataFormCI">
   <label for="weekCI">Semana:</label>
   <select id="weekCI" name="weekCI">
-    <!-- Las opciones se generarán dinámicamente con JavaScript -->
   </select><br><br>
 
   <label for="enTiempoCI">EN TIEMPO:</label>
@@ -415,8 +414,6 @@ function updateChartVisibility() {
 </script>
 <br>
 <br>
-
-
 
 <h2>Evaluación de Desempeño de Proveedores CI</h2>
 <canvas id="kpiChart2"></canvas>

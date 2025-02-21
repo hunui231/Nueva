@@ -28,7 +28,7 @@ h2 {
 }
 
 .card-header {
-    background-color: #062fe6;
+    background-color:rgb(0, 0, 0);
     color: white;
     border-top-left-radius: 8px;
     border-top-right-radius: 8px;
@@ -38,12 +38,12 @@ h2 {
 .card-body {
     padding: 20px;
     font-family: 'Arial', sans-serif;
-    color: #495057;
+    color:rgb(0, 0, 0);
 }
 
 h4 {
     margin-top: 20px;
-    color: #062fe6;
+    color:rgb(0, 0, 0);
 }
 
 p {
@@ -51,13 +51,13 @@ p {
 }
 
 a {
-    color: #062fe6;
+    color:rgb(247, 26, 26);
     text-decoration: underline;
 }
 
 a:hover {
     text-decoration: none;
-    color: #062fe6;
+    color:rgb(231, 27, 27);
 }
 </style>
 <div class="container">
@@ -75,12 +75,9 @@ a:hover {
     <!-- Políticas de cuenta o privacidad -->
     <div class="mt-4">
         <h4>Políticas de Privacidad y Uso</h4>
-        <p>Propósito: La aplicación es para que coordinadores y el Director General accedan a indicadores clave de desempeño.</p>
-
+        <p>Propósito: Sequimiento indicadores clave de desempeño.</p>
          <p> Acceso: Solo los administradores de la app y el Director General tienen acceso autorizado a toda información.</p>
-            
-            <p>Privacidad y Seguridad: Los datos son confidenciales.Los usuarios deben proteger sus credenciales y no compartir la información con terceros.</p>
-            
+            <p>Privacidad y Seguridad: Los datos son confidenciales. Los usuarios deben proteger sus credenciales y no compartir la información con terceros.</p>
           <p>Uso Permitido: La aplicación solo debe utilizarse para propósitos relacionados con el seguimiento de indicadores de la empresa.</p>
     </div>
 

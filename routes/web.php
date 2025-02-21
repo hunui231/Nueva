@@ -94,8 +94,10 @@ Route::middleware(['auth'])->group(function () {
         $tickets = Ticket::all(); // Obtener todos los tickets
         return view('tickets', compact('tickets')); // Pasar los tickets a la vista
     })->name('tickets');
-  
-    Route::post('/tickets', [App\Http\Controllers\TicketController::class, 'create'])->name('tickets.create');
+    Route::post('/tickets/create', [TicketController::class, 'create'])->name('tickets.create');
+    Route::post('/tickets/{ticket}/change-status', [TicketController::class, 'changeStatus'])->name('tickets.change-status');
+    Route::delete('/tickets/{ticket}', [TicketController::class, 'destroy'])->name('tickets.destroy');
+    
 
     Route::get('/cuenta', function () {
         return view('cuenta');
@@ -241,3 +243,5 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
     Route::get('/reset-password/{token}', [ResetPasswordController::class, 'showResetForm'])->name('password.reset');
     Route::post('/reset-password', [ResetPasswordController::class, 'reset'])->name('password.update');
+
+    

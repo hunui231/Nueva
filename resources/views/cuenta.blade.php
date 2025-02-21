@@ -137,6 +137,7 @@
         </div>
     </div>
 
+  @can('admin.update')
   <div class="mt-4">
     <h4>Actividad Reciente</h4>
     <ul>
@@ -151,6 +152,7 @@
         @endif
     </ul>
 </div>
-       
+@endcan
+
 
 @endsection
