@@ -431,7 +431,6 @@ function updateChartVisibility() {
 <form id="dataFormKPI2">
   <label for="monthKPI2">Mes:</label>
   <select id="monthKPI2" name="monthKPI2">
-    <!-- Las opciones se generarán dinámicamente con JavaScript -->
   </select><br><br>
 
   <label for="performanceKPI2">Desempeño (%):</label>
@@ -491,7 +490,7 @@ function updateChartVisibility() {
       scales: {
         y: {
           min: 70,
-          max: 105,
+          max: 105 ,
           ticks: {
             callback: function(value) {
               return value + '%';

@@ -33,6 +33,7 @@ use App\Http\Controllers\ComprasGICController;
 use App\Http\Controllers\EntregaMaterialesController;
 use App\Http\Controllers\InventarioController;
 use App\Http\Controllers\Auth\ResetPasswordController;
+use App\Http\Controllers\MantenimientoController;
 use Illuminate\Support\Facades\Mail;
 use App\Models\Ticket;
 
@@ -72,6 +73,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
     Route::put('users/{user}', [UserController::class, 'update'])->name('users.update');
     Route::delete('users/{user}/destroy', [UserController::class, 'destroy'])->name('users.destroy');
+
+    Route::get('/mtto', [App\Http\Controllers\MantenimientoController::class, 'index'])->name('mtto.index')->middleware('can:mtto.index');
+
 
     Route::get('/logistica', [App\Http\Controllers\LogisticaController::class, 'index'])->name('logistica.index')->middleware('can:logistica.index');
     Route::post('/logistica/update', [App\Http\Controllers\LogisticaController::class, 'update'])->name('logistica.update');

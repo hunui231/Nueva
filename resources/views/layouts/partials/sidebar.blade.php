@@ -72,6 +72,13 @@
                     </a>
                 </li>
                 @endcan
+                @can('mtto.index')
+                <li @if($currentPage == 'Manteimiento') class="active" @endif>
+                    <a href="{{ route('mtto.index') }}" class="flex items-center p-2 hover:bg-gray-200">
+                        <i class="fas fa-solid fa-briefcase"></i>MTTO
+                    </a>
+                </li>
+                @endcan
 
                 @can('calidad.index')
                 <li @if($currentPage == 'calidad') class="active" @endif>
@@ -80,7 +87,6 @@
                     </a>
                 </li>
                 @endcan
-
               
             </ul>
         </nav>
