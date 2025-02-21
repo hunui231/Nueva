@@ -62,6 +62,7 @@
 </div>
 
 <h2>Actualizar Datos de Rotación de Personal CI</h2>
+@can('rh.update')
 <form id="dataFormRotacion">
     <label for="monthRotacion">Mes:</label>
     <select id="monthRotacion" name="monthRotacion"></select><br><br>
@@ -74,7 +75,7 @@
 
     <button type="submit" class="button">Actualizar Gráfico</button>
 </form>
-
+@endcan
 <script>
     // Configurar el token CSRF en Axios
     axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
@@ -204,6 +205,7 @@
 </div>
 
 <h2>Actualizar Datos de Permanencia de Personal Reclutado CI</h2>
+@can('rh.update')
 <form id="dataFormPermanencia">
     <label for="monthPermanencia">Mes:</label>
     <select id="monthPermanencia" name="monthPermanencia"></select><br><br>
@@ -216,7 +218,7 @@
 
     <button type="submit" class="button">Actualizar Gráfico</button>
 </form>
-
+@endcan
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
@@ -354,6 +356,7 @@
 </div>
 
 <h2>Actualizar Datos de Rotación de Personal GIC</h2>
+@can('rh.update')
 <form id="dataFormRotacionGIC">
     <label for="monthRotacionGIC">Mes:</label>
     <select id="monthRotacionGIC" name="monthRotacionGIC"></select><br><br>
@@ -366,7 +369,7 @@
 
     <button type="submit" class="button">Actualizar Gráfico</button>
 </form>
-
+@endcan
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
@@ -499,6 +502,7 @@
   <button id="nextChart" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">Siguiente ▶</button>
 </div>
 <h2>Actualizar Datos de Permanencia de Personal Reclutado GIC</h2>
+@can('rh.update')
 <form id="dataFormPermanenciaGIC">
     <label for="monthPermanenciaGIC">Mes:</label>
     <select id="monthPermanenciaGIC" name="monthPermanenciaGIC"></select><br><br>
@@ -511,7 +515,7 @@
 
     <button type="submit" class="button">Actualizar Gráfico</button>
 </form>
-
+@endcan
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>

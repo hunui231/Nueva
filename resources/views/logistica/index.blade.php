@@ -33,11 +33,13 @@
 
 <!-- Formulario para ingresar datos -->
 <h2>Ingresar Datos - Entrega de Materiales</h2>
+@can('logistica.update')
 <form id="dataFormEntregaMateriales">
   <label for="monthEntregaMateriales">Mes:</label>
   <select id="monthEntregaMateriales" name="monthEntregaMateriales">
     <!-- Las opciones se generarán dinámicamente con JavaScript -->
   </select><br><br>
+  <p><p>
 
   <label for="desempenoEntregaMateriales">Desempeño (%):</label>
   <input type="number" id="desempenoEntregaMateriales" name="desempenoEntregaMateriales" min="0" max="100" step="0.01" required><br><br>
@@ -47,7 +49,7 @@
 
   <button type="submit" class="button">Actualizar Gráfico</button>
 </form>
-
+@endcan
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
@@ -192,6 +194,7 @@
 </div>
 
 <h2>Ingresar Datos - Inventarios</h2>
+@can('logistica.update')
 <form id="dataFormInventario">
   <label for="monthInventario">Mes:</label>
   <select id="monthInventario" name="monthInventario">
@@ -206,7 +209,7 @@
 
   <button type="submit" class="button">Actualizar Gráfico</button>
 </form>
-
+@endcan
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
@@ -219,6 +222,7 @@ const ctxInventario = document.getElementById('inventarioChart').getContext('2d'
 const dataLabelsInventario = ["ene-23", "feb-23", "mar-23", "abr-23", "may-23", "jun-23", "jul-23", "ago-23", "sep-23", "oct-23", "nov-23", "dic-23", "ene-24", "feb-24", "mar-24", "abr-24", "may-24", "jun-24", "jul-24", "ago-24", "sep-24", "oct-24", "nov-24", "dic-24"];
 let desempenoDataInventario = Array(13).fill(null);
 let areaCumplimientoDataInventario = Array(13).fill(null);
+
 
 // Configuración del gráfico
 const inventarioChart = new Chart(ctxInventario, {

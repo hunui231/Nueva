@@ -2,7 +2,7 @@
     <x-auth-card>
         <x-slot name="logo">
             <a href="/">
-                <x-application-logo class="w-20 h-20 fill-current text-gray-500" />
+            <img src="{{ asset('theme/images/icon/logo2.png') }}" class="w-20 h-20" alt="Logo">
             </a>
         </x-slot>
 
@@ -13,26 +13,23 @@
             @csrf
 
             <!-- Password Reset Token -->
-            <input type="hidden" name="token" value="{{ $request->route('token') }}">
+            <input type="hidden" name="token" value="{{ $token }}">
 
             <!-- Email Address -->
             <div>
-                <x-label for="email" :value="__('Email')" />
-
-                <x-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email', $request->email)" required autofocus />
+                <x-label for="email" :value="__('Correo')" />
+                <x-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email', $email)" required autofocus />
             </div>
 
             <!-- Password -->
             <div class="mt-4">
-                <x-label for="password" :value="__('Password')" />
-
+                <x-label for="password" :value="__('Contraseña Nueva')" />
                 <x-input id="password" class="block mt-1 w-full" type="password" name="password" required />
             </div>
 
             <!-- Confirm Password -->
             <div class="mt-4">
-                <x-label for="password_confirmation" :value="__('Confirm Password')" />
-
+                <x-label for="password_confirmation" :value="__('Confirmar Contraseña')" />
                 <x-input id="password_confirmation" class="block mt-1 w-full"
                                     type="password"
                                     name="password_confirmation" required />
@@ -40,7 +37,7 @@
 
             <div class="flex items-center justify-end mt-4">
                 <x-button>
-                    {{ __('Reset Password') }}
+                    {{ __('Restablecer Contraseña') }}
                 </x-button>
             </div>
         </form>

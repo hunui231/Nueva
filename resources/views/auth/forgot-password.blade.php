@@ -7,7 +7,7 @@
         </x-slot>
 
         <div class="mb-4 text-sm text-gray-600">
-            {{ __('¿Olvidaste tu contraseña? No hay problema. Escriba su dirección de correo electrónico y se le notificará al administrador del sistema.') }}
+            {{ __('¿Olvidaste tu contraseña? No hay problema. Escriba su dirección de correo electrónico y se le hara llegar un correo de restablecimiento de contraseña.') }}
         </div>
 
         <!-- Mensaje de Estado (Éxito) -->
@@ -16,8 +16,6 @@
                 {{ session('status') }}
             </div>
         @endif
-        <!-- Session Status -->
-        <x-auth-session-status class="mb-4" :status="session('status')" />
 
         <!-- Mensaje de Error -->
         @if (session('error'))
@@ -27,7 +25,7 @@
         @endif
 
         <!-- Formulario para ingresar el correo -->
-        <form method="POST" action="{{ route('enviar.correo') }}">
+        <form method="POST" action="{{ route('password.email') }}">
             @csrf
 
             <!-- Campo para correo -->
@@ -38,13 +36,10 @@
 
             <!-- Botón de Enviar -->
             <div class="flex items-center justify-end mt-4">
-                <x-button class="button-enviar" >
+                <x-button class="button-enviar">
                     {{ __('Enviar') }}
                 </x-button>
             </div>
         </form>
     </x-auth-card>
 </x-guest-layout>
-
-
-

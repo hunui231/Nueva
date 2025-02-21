@@ -24,8 +24,9 @@
 <h2>Evaluación de Desempeño de Proveedores GIC</h2>
 <canvas id="kpiChartGIC"></canvas>
 <meta name="csrf-token" content="{{ csrf_token() }}">
-<!-- Formulario para ingresar datos -->
+
 <h2>Ingresar Datos Proveedores GIC</h2>
+@can('admgic.update')
 <form id="dataFormKPI_GIC">
   <label for="monthKPI_GIC">Mes:</label>
   <select id="monthKPI_GIC" name="monthKPI_GIC">
@@ -40,7 +41,7 @@
 
   <button type="submit" class="button">Actualizar Gráfico</button>
 </form>
-
+@endcan
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
@@ -179,12 +180,12 @@
 
 <h2>Cumplimiento de Compras a Tiempo GIC</h2>
 <canvas id="comprasChartGIC"></canvas>
-<!-- Formulario para ingresar datos -->
+
 <h2>Ingresar Datos - Compras GIC</h2>
+@can('admgic.update')
 <form id="dataFormCompras_GIC">
   <label for="monthCompras_GIC">Mes:</label>
   <select id="monthCompras_GIC" name="monthCompras_GIC">
-    <!-- Las opciones se generarán dinámicamente con JavaScript -->
   </select><br><br>
 
   <label for="performanceCompras_GIC">Desempeño (%):</label>
@@ -195,7 +196,7 @@
 
   <button type="submit" class="button">Actualizar Gráfico</button>
 </form>
-
+@endcan
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>

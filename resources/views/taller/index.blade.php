@@ -104,8 +104,7 @@
   <button id="prevChart" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">◀ Anterior</button>
   <button id="nextChart" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">Siguiente ▶</button>
 </div>
-
-<!-- Formulario SCRAP Donaldson -->
+@can('taller.update')
 <form id="formScrap1">
     <label for="monthScrap1">Mes:</label>
     <select id="monthScrap1" name="monthScrap1"></select><br><br>
@@ -118,7 +117,7 @@
 
     <button type="submit" class="button">Actualizar Gráfico</button>
 </form>
-
+@endcan
 <script>
     // Configurar el token CSRF en Axios
     axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
@@ -132,7 +131,7 @@
             datasets: [
                 {
                     label: "Scrap %",
-                    data: Array(24).fill(null), // Inicializar con valores nulos
+                    data: Array(24).fill(null), 
                     borderColor: "#007bff",
                     tension: 0.3,
                     pointRadius: 5,
@@ -253,7 +252,7 @@
   <button id="prevChart" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">◀ Anterior</button>
   <button id="nextChart" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">Siguiente ▶</button>
 </div>
-<!-- Formulario SCRAP Taller -->
+@can('taller.update')
 <form id="formScrapTaller">
     <label for="monthScrapTaller">Mes:</label>
     <select id="monthScrapTaller" name="monthScrapTaller"></select><br><br>
@@ -266,7 +265,7 @@
 
     <button type="submit" class="button">Actualizar Gráfico</button>
 </form>
-
+@endcan
 <script>
     // Configurar el token CSRF en Axios
     axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
@@ -395,8 +394,7 @@
   <button id="prevChart" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">◀ Anterior</button>
   <button id="nextChart" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">Siguiente ▶</button>
 </div>
-
-<!-- Formulario SCRAP Forjas -->
+@can('taller.update')
 <form id="formScrapForjas">
     <label for="monthScrapForjas">Mes:</label>
     <select id="monthScrapForjas" name="monthScrapForjas"></select><br><br>
@@ -409,7 +407,7 @@
 
     <button type="submit" class="button">Actualizar Gráfico</button>
 </form>
-
+@endcan
 <script>
     // Configurar el token CSRF en Axios
     axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
@@ -548,7 +546,7 @@
   <button id="prevChart" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">◀ Anterior</button>
   <button id="nextChart" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">Siguiente ▶</button>
 </div>
-<!-- Formulario Cumplimiento Plan de Producción -->
+@can('taller.update')
 <form id="formProduccion">
     <label for="monthProduccion">Mes:</label>
     <select id="monthProduccion" name="monthProduccion"></select><br><br>
@@ -561,7 +559,7 @@
 
     <button type="submit" class="button">Actualizar Gráfico</button>
 </form>
-
+@endcan
 <script>
     // Configurar el token CSRF en Axios
     axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
@@ -698,8 +696,7 @@
   <button id="prevChart" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">◀ Anterior</button>
   <button id="nextChart" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">Siguiente ▶</button>
 </div>
-
-<!-- Formulario Cumplimiento Plan de Producción -->
+@can('taller.update')
 <form id="formForjasProduccion">
     <label for="monthForjasProduccion">Mes:</label>
     <select id="monthForjasProduccion" name="monthForjasProduccion"></select><br><br>
@@ -712,7 +709,7 @@
 
     <button type="submit" class="button">Actualizar Gráfico</button>
 </form>
-
+@endcan
 <script>
     axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 

@@ -16,6 +16,7 @@
 </div>
 
     <h2>Ingresar Datos - Clientes Nuevos</h2>
+@can('ventas.update')
     <form id="dataFormClientes">
         <label for="monthClientes">Mes:</label>
         <select id="monthClientes" name="monthClientes"></select><br><br>
@@ -28,7 +29,7 @@
 
         <button type="submit" class="button">Actualizar Gráfico</button>
     </form>
-
+@endcan
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
@@ -172,6 +173,7 @@
 </div>
 
     <h2>Actualizar Datos de Ventas</h2>
+    @can('ventas.update')
     <form id="dataFormVentas">
         <label for="monthVentas">Mes:</label>
         <select id="monthVentas" name="monthVentas"></select><br><br>
@@ -184,7 +186,7 @@
 
         <button type="submit"  class="button">Actualizar Gráfico</button>
     </form>
-
+@endcan
     <script>
       
         const ctxVentas = document.getElementById('salesChart').getContext('2d');

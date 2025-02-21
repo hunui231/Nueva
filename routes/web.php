@@ -32,6 +32,7 @@ use App\Http\Controllers\ProveedorGICController;
 use App\Http\Controllers\ComprasGICController;
 use App\Http\Controllers\EntregaMaterialesController;
 use App\Http\Controllers\InventarioController;
+use App\Http\Controllers\Auth\ResetPasswordController;
 use Illuminate\Support\Facades\Mail;
 use App\Models\Ticket;
 
@@ -225,4 +226,14 @@ Route::middleware(['auth'])->group(function () {
      Route::get('/inventario/get-data', [InventarioController::class, 'getData']);
 
 
-    
+     Route::get('/test-email', function () {
+        Mail::raw('Este es un correo de prueba', function ($message) {
+            $message->to('limiscui221003@gmail.com')->subject('Prueba de correo');
+        });
+        return 'Correo enviado';
+    });
+
+    Route::get('/forgot-password', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
+    Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
+    Route::get('/reset-password/{token}', [ResetPasswordController::class, 'showResetForm'])->name('password.reset');
+    Route::post('/reset-password', [ResetPasswordController::class, 'reset'])->name('password.update');

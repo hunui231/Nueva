@@ -37,7 +37,7 @@ class RolSeeder extends Seeder
 
         // Crear permisos y asignarlos a los roles
         Permission::firstOrCreate(['name' => 'dashboard'])->syncRoles([$admin, $manager, $taller, $developer, $logistica, $cnc, $calidad, $Administracion, $Ventas, $CoordinacionProyectos, $Produccion, $Mantenimiento, $Gerencia, $RH, $AdministracionGIC]);
-        Permission::firstOrCreate(['name' => 'users.index'])->syncRoles([$admin, $manager]);
+        Permission::firstOrCreate(['name' => 'users.index'])->syncRoles([$admin, $manager, $Gerencia, $calidad]);
         Permission::firstOrCreate(['name' => 'users.show'])->syncRoles([$admin, $manager]);
         Permission::firstOrCreate(['name' => 'users.create'])->syncRoles([$admin]);
         Permission::firstOrCreate(['name' => 'users.edit'])->syncRoles([$admin]);
@@ -45,31 +45,36 @@ class RolSeeder extends Seeder
 
 
         //  Logística
-        Permission::firstOrCreate(['name' => 'logistica.index'])->syncRoles([$admin, $logistica,  $manager, $Gerencia]);
-        Permission::firstOrCreate(['name' => 'logistica.update'])->syncRoles([$admin]);//permiso de actualizar graficos
-
+        Permission::firstOrCreate(['name' => 'logistica.index'])->syncRoles([$admin, $logistica,  $manager, $Gerencia, $calidad]);
+        Permission::firstOrCreate(['name' => 'logistica.update'])->syncRoles([$admin, $logistica]);
          // Permiso para Calidad
-         Permission::firstOrCreate(['name' => 'calidad.index'])->syncRoles([$admin, $calidad,  $manager]);
-         Permission::firstOrCreate(['name' => 'calidad.update'])->syncRoles([$admin]); // Permiso para actualizar gráficos
+         Permission::firstOrCreate(['name' => 'calidad.index'])->syncRoles([$admin, $calidad,  $manager, $Gerencia, $calidad]);
+         Permission::firstOrCreate(['name' => 'calidad.update'])->syncRoles([$admin, $calidad]); // Permiso para actualizar gráficos
          
-      // permiso cnc
-      Permission::firstOrCreate(['name' => 'cnc.index'])->syncRoles([$admin, $cnc, $manager]);
-      Permission::firstOrCreate(['name' => 'cnc.update'])->syncRoles([$admin]);
       
             // Permiso Taller
-      Permission::firstOrCreate(['name' => 'taller.index'])->syncRoles([$admin, $taller, $manager, $Gerencia]);
+      Permission::firstOrCreate(['name' => 'taller.index'])->syncRoles([$admin, $taller, $manager, $Gerencia, $calidad]);
+      Permission::firstOrCreate(['name' => 'taller.update'])->syncRoles([$taller, $admin]);
+
 
       //Permiso Administracion
-      Permission::firstOrCreate(['name' => 'administracion.index'])->syncRoles([$admin, $Administracion, $manager, $RH]);
-    
+      Permission::firstOrCreate(['name' => 'administracion.index'])->syncRoles([$admin, $Administracion, $manager]);
+      Permission::firstOrCreate(['name' => 'adm.update'])->syncRoles([$Administracion, $AdministracionGIC, $admin]);
 
       Permission::firstOrCreate(['name' => 'Ventas.index'])->syncRoles([$admin, $Ventas, $manager]);
+      Permission::firstOrCreate(['name' => 'ventas.update'])->syncRoles([$Ventas, $admin]);
 
-      Permission::firstOrCreate(['name' => 'produccion.index'])->syncRoles([$admin, $Produccion, $manager]);
 
-      Permission::firstOrCreate(['name' => 'rh.index'])->syncRoles([$admin, $RH, $manager, $Gerencia, $Administracion]);
+      Permission::firstOrCreate(['name' => 'produccion.index'])->syncRoles([$admin, $Produccion, $manager, $calidad]);
+      Permission::firstOrCreate(['name' => 'produccion.update'])->syncRoles([$Produccion, $admin]);
 
-      Permission::firstOrCreate(['name' => 'administraciongic.index'])->syncRoles([$admin, $AdministracionGIC, $manager, $Gerencia]);
+
+      Permission::firstOrCreate(['name' => 'rh.index'])->syncRoles([$admin, $RH, $manager]);
+      Permission::firstOrCreate(['name' => 'rh.update'])->syncRoles([$RH, $admin]);
+
+
+      Permission::firstOrCreate(['name' => 'administraciongic.index'])->syncRoles([$admin, $AdministracionGIC, $manager, $Gerencia, $calidad]);
+      Permission::firstOrCreate(['name' => 'admgic.update'])->syncRoles([$Administracion, $AdministracionGIC, $admin]);
 
 
     }

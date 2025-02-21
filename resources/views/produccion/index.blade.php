@@ -7,7 +7,6 @@
 @section('content')
 <!-- Scrap Chart -->
 <h2>Producción SCRAP CI</h2>
-<!-- Incluir Axios y Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -19,6 +18,7 @@
 </div>
 
 <h2>Actualizar Datos de Producción SCRAP CI</h2>
+@can('produccion.update')
 <form id="dataFormScrap">
     <label for="monthScrap">Mes:</label>
     <select id="monthScrap" name="monthScrap"></select><br><br>
@@ -31,7 +31,7 @@
 
     <button type="submit" class="button">Actualizar Gráfico</button>
 </form>
-
+@endcan
 <script>
     // Configurar el token CSRF en Axios
     axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
@@ -164,6 +164,7 @@
 </div>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <h2>Actualizar Datos de Rendimiento Operacional CI</h2>
+@can('produccion.update')
 <form id="dataFormRendimiento">
     <label for="monthRendimiento">Mes:</label>
     <select id="monthRendimiento" name="monthRendimiento"></select><br><br>
@@ -176,7 +177,7 @@
 
     <button type="submit" class="button">Actualizar Gráfico</button>
 </form>
-
+@endcan
 <script>
 // Configurar el token CSRF en Axios
 axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
@@ -307,6 +308,7 @@ axios.get('/rendimiento/get-data')
 <canvas id="productionChart"></canvas>
 
 <h2>Actualizar Datos de Cumplimiento al Plan de Producción</h2>
+@can('produccion.update')
 <form id="dataFormProduccion">
     <label for="monthProduccion">Mes:</label>
     <select id="monthProduccion" name="monthProduccion"></select><br><br>
@@ -319,7 +321,7 @@ axios.get('/rendimiento/get-data')
 
     <button type="submit" class="button">Actualizar Gráfico</button>
 </form>
-
+@endcan
 <script>
     // Configurar el token CSRF en Axios
     axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').getAttribute('content');

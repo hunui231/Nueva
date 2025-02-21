@@ -26,19 +26,16 @@
 <meta name="csrf-token" content="{{ csrf_token() }}">
 
 <h1>Cobranza 2024 CI - 2025 CI</h1>
-@can('administracion.index')
 <canvas id="cobranzaChartCI"></canvas>
-@endcan
 <canvas id="graficoX"></canvas>
 
 <div style="text-align: center; margin-top: 10px;">
-  <button id="prevChart" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">◀ Anterior</button>
-  <button id="nextChart" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">Siguiente ▶</button>
+  <button id="prevChart" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">◀ 2024</button>
+  <button id="nextChart" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">2025 ▶</button>
 </div>
 
-<!-- Formulario para CI -->
 <h2>Ingresar Datos - CI</h2>
-@can('administracion.index')
+@can('adm.update')
 <form id="dataFormCI">
   <label for="weekCI">Semana:</label>
   <select id="weekCI" name="weekCI">
@@ -68,16 +65,15 @@
 <canvas id="cobranzaChartGIC"></canvas>
 
 <div style="text-align: center; margin-top: 10px;">
-  <button id="prevChart" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">◀ Anterior</button>
-  <button id="nextChart" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">Siguiente ▶</button>
+  <button id="prevChart" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">◀ 2024</button>
+  <button id="nextChart" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">2025 ▶</button>
 </div>
 <!-- Formulario para GIC -->
 <h2>Ingresar Datos - GIC</h2>
-@can('administracion.index')
+@can('adm.update')
 <form id="dataFormGIC">
   <label for="weekGIC">Semana:</label>
   <select id="weekGIC" name="weekGIC">
-    <!-- Las opciones se generarán dinámicamente con JavaScript -->
   </select><br><br>
 
   <label for="enTiempoGIC">EN TIEMPO:</label>
@@ -423,9 +419,7 @@ function updateChartVisibility() {
 
 
 <h2>Evaluación de Desempeño de Proveedores CI</h2>
-@can('administracion.index')
 <canvas id="kpiChart2"></canvas>
-@endcan
 <div style="text-align: center; margin-top: 10px;">
   <button id="prevChart" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">◀ Anterior</button>
   <button id="nextChart" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">Siguiente ▶</button>
@@ -433,6 +427,7 @@ function updateChartVisibility() {
 
 <!-- Formulario para ingresar datos -->
 <h2>Ingresar Datos Provedores IC</h2>
+@can('adm.update')
 <form id="dataFormKPI2">
   <label for="monthKPI2">Mes:</label>
   <select id="monthKPI2" name="monthKPI2">
@@ -447,6 +442,7 @@ function updateChartVisibility() {
 
   <button type="submit" class="button">Actualizar Gráfico</button>
 </form>
+@endcan
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
@@ -506,7 +502,6 @@ function updateChartVisibility() {
     },
   });
 
-  // Generar las opciones de meses en el formulario
   const monthSelectKPI2 = document.getElementById('monthKPI2');
   dataLabelsKPI2.forEach((label, index) => {
     const option = document.createElement('option');
@@ -579,12 +574,11 @@ function updateChartVisibility() {
   <button id="nextChart" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">Siguiente ▶</button>
 </div>
 
-<!-- Formulario para ingresar datos -->
 <h2>Ingresar Datos - Compras IC</h2>
+@can('adm.update')
 <form id="dataFormComprasIC">
   <label for="monthComprasIC">Mes:</label>
   <select id="monthComprasIC" name="monthComprasIC">
-    <!-- Las opciones se generarán dinámicamente con JavaScript -->
   </select><br><br>
 
   <label for="performanceComprasIC">Desempeño (%):</label>
@@ -595,7 +589,7 @@ function updateChartVisibility() {
 
   <button type="submit" class="button">Actualizar Gráfico</button>
 </form>
-
+@endcan
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
@@ -663,7 +657,6 @@ function updateChartVisibility() {
     },
   });
 
-  // Generar las opciones de meses en el formulario
   const monthSelectComprasIC = document.getElementById('monthComprasIC');
   dataLabelsComprasIC.forEach((label, index) => {
     const option = document.createElement('option');
@@ -672,7 +665,6 @@ function updateChartVisibility() {
     monthSelectComprasIC.appendChild(option);
   });
 
-  // Validar y actualizar el gráfico
   document.getElementById('dataFormComprasIC').addEventListener('submit', (event) => {
     event.preventDefault();
 
