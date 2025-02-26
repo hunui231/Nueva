@@ -88,7 +88,7 @@
         {
           label: 'Área de cumplimiento (%)',
           data: areaDataKPI_GIC,
-          backgroundColor: 'rgba(255, 0, 0, 0.86)', // Fondo rojo semitransparente
+          backgroundColor: 'rgba(255, 0, 0, 0.86)', 
           borderWidth: 0,
           fill: true,
         },
@@ -120,7 +120,6 @@
     },
   });
 
-  // Configuración del gráfico GIC 2
   const kpiChartGIC2 = new Chart(ctxKPI_GIC2, {
     type: 'line',
     data: {

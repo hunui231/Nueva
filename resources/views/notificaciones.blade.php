@@ -73,6 +73,35 @@
             padding: 8px;
         }
     }
+
+    .notification-container {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    margin: 20px;
+    background-color: #f9f9f9;
+}
+
+.notification {
+    padding: 10px;
+    margin: 5px 0;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.close {
+    cursor: pointer;
+    color: #ff0000;
+    font-weight: bold;
+}
+
+.close:hover {
+    color: #cc0000;
+}
 </style>
 
 <div class="notification-container" id="notificationContainer">

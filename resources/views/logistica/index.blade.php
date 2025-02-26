@@ -25,13 +25,14 @@
 
 <h2>Entrega de Materiales a Tiempo</h2>
 <canvas id="grafico"></canvas>
-<canvas id="grafico2" style="display: none;"></canvas> 
+<canvas id="grafico2" style="display: none;"></canvas> <!-- Nuevo gráfico oculto inicialmente -->
 
 <div style="text-align: center; margin-top: 10px;">
   <button id="prevChartEntregaMateriales" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">◀ Anterior</button>
   <button id="nextChartEntregaMateriales" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">Siguiente ▶</button>
 </div>
 
+<!-- Formulario para ingresar datos -->
 <h2>Ingresar Datos - Entrega de Materiales</h2>
 @can('logistica.update')
 <form id="dataFormEntregaMateriales">
@@ -53,8 +54,10 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
+  // Configurar el token CSRF en Axios
   axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
+  // Contexto y datos iniciales del gráfico 1
   const ctx = document.getElementById('grafico').getContext('2d');
   const ctx2 = document.getElementById('grafico2').getContext('2d');
 
@@ -67,12 +70,13 @@
     "ene-25", "feb-25", "mar-25", "abr-25", "may-25", "jun-25", "jul-25", "ago-25", "sep-25", "oct-25", "nov-25", "dic-25"
   ];
 
-  let desempenoData = Array(24).fill(100); 
-  let areaCumplimientoData = Array(24).fill(100); 
+  let desempenoData = Array(24).fill(100); // Datos iniciales para el gráfico 1
+  let areaCumplimientoData = Array(24).fill(100); // Datos iniciales para el gráfico 1
 
-  let desempenoData2 = Array(12).fill(100); 
-  let areaCumplimientoData2 = Array(12).fill(100); 
+  let desempenoData2 = Array(12).fill(100); // Datos iniciales para el gráfico 2
+  let areaCumplimientoData2 = Array(12).fill(100); // Datos iniciales para el gráfico 2
 
+  // Configuración del gráfico 1
   const grafico = new Chart(ctx, {
     type: 'bar',
     data: {
@@ -110,7 +114,7 @@
       },
       plugins: {
         legend: {
-          display: false, 
+          display: false, // Ocultar leyenda
         },
         tooltip: {
           callbacks: {
@@ -123,6 +127,7 @@
     },
   });
 
+  // Configuración del gráfico 2
   const grafico2 = new Chart(ctx2, {
     type: 'bar',
     data: {
@@ -160,7 +165,8 @@
       },
       plugins: {
         legend: {
-          display: false, 
+          display: false, // Ocultar leyenda
+        },
         tooltip: {
           callbacks: {
             label: function(context) {
@@ -172,6 +178,7 @@
     },
   });
 
+  // Generar las opciones de meses en el formulario
   const monthSelectEntregaMateriales = document.getElementById('monthEntregaMateriales');
   dataLabels.forEach((label) => {
     const option = document.createElement('option');
@@ -180,15 +187,22 @@
     monthSelectEntregaMateriales.appendChild(option);
   });
 
+  // Obtener la fecha actual
   const currentDate = new Date();
 
+  // Formatear el mes abreviado (ej: "Feb")
   const month = currentDate.toLocaleString('default', { month: 'short' }).toLowerCase();
 
+  // Formatear el año en dos dígitos (ej: "25")
   const year = currentDate.getFullYear().toString().slice(-2);
 
+  // Crear el formato "MMM-AA" (ej: "Feb-25")
   const currentMonthYear = `${month}-${year}`;
 
+  // Establecer el valor predeterminado como el mes actual
   monthSelectEntregaMateriales.value = currentMonthYear;
+
+  // Validar y actualizar el gráfico
   document.getElementById('dataFormEntregaMateriales').addEventListener('submit', (event) => {
     event.preventDefault();
 
@@ -202,6 +216,7 @@
       return;
     }
 
+    // Enviar los datos al servidor
     axios.post('/entrega-materiales/store', {
       mes: month,
       desempeno: desempeno,
@@ -209,11 +224,12 @@
     })
     .then(response => {
       if (response.data.success) {
+        // Actualizar los datos del gráfico
         const index = dataLabels.indexOf(month);
         desempenoData[index] = desempeno;
         areaCumplimientoData[index] = areaCumplimiento;
 
-        grafico.update(); 
+        grafico.update(); // Actualizar el gráfico
       } else {
         console.error('Error en la respuesta del servidor:', response.data);
       }
@@ -223,6 +239,7 @@
     });
   });
 
+  // Obtener los datos actualizados del servidor
   function fetchData() {
     axios.get('/entrega-materiales/get-data')
       .then(response => {
@@ -241,8 +258,10 @@
       });
   }
 
+  // Cargar los datos iniciales al cargar la página
   fetchData();
 
+  // Alternar entre gráficos
   let currentChartEntregaMateriales = 1;
   document.getElementById('nextChartEntregaMateriales').addEventListener('click', () => {
     if (currentChartEntregaMateriales === 1) {
@@ -493,6 +512,8 @@
       });
   }
   fetchData();
+
+  // Alternar entre gráficos
   let currentChartInventario = 1;
   document.getElementById('nextChartInventario').addEventListener('click', () => {
     if (currentChartInventario === 1) {

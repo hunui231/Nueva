@@ -365,7 +365,7 @@ const data = {
             data: Array.from({ length: 22 }, () => Math.random() * 5),
             stack: 'Stack 0',
         },
-        {
+        { 
             label: 'RANGO 2',
             backgroundColor: 'yellow',
             data: Array.from({ length: 22 }, () => Math.random() * 3),
