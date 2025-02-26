@@ -5,6 +5,12 @@
 @endsection
 
 @section('content')
+
+@php
+    use App\Models\Indicador;
+    $indicadores = Indicador::all(); 
+@endphp
+
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.css" rel="stylesheet" />
 <link href="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.css" rel="stylesheet" />
@@ -13,9 +19,9 @@
  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.js"></script>
  <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
 
-<h1 class="maspudo">Bienvenido, has Iniciado Sesión!</h1>
+ <h1 class="maspudo">Bienvenido, has Iniciado Sesión!</h1>
 <h2 class="maspudo">CONEXIONES INYECCION</h2>
- <style>
+<style>
        * {
         margin: 0;
         padding: 0;
@@ -123,194 +129,193 @@
     }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
- <div class="chart-row">
+<div class="chart-row">
+    @php
+        // Mapear los indicadores por su nombre (seccion)
+        $indicadoresMap = [];
+        foreach ($indicadores as $indicador) {
+            $indicadoresMap[$indicador->seccion] = $indicador;
+        }
+    @endphp
     <div class="dashboard">
         <div class="title-cpa">Administración</div>
-        <div class="indicator"><div class="circle gray">5</div> INDICADORES</div>
-        <div class="indicator"><div class="circle green">4</div> CUMPLEN</div>
-        <div class="indicator"><div class="circle red">1</div> NO CUMPLEN</div>
+        <div class="indicator"><div class="circle gray">{{ $indicadoresMap['Administración']->total ?? 0 }}</div> INDICADORES</div>
+        <div class="indicator"><div class="circle green">{{ $indicadoresMap['Administración']->cumplen ?? 0 }}</div> CUMPLEN</div>
+        <div class="indicator"><div class="circle red">{{ $indicadoresMap['Administración']->no_cumplen ?? 0 }}</div> NO CUMPLEN</div>
         <div class="chart-container">
             <canvas id="chart1"></canvas>
-            <div class="chart-text">80%</div>
+            <div class="chart-text">{{ $indicadoresMap['Administración']->porcentaje ?? 0 }}%</div>
         </div>
         <div class="nav-buttons">
-    @can('administracion.index')
-        <a href="{{ route('administracion.index') }}">&gt;&gt;&gt;</a>
-    @endcan
-</div>
+            @can('administracion.index')
+                <a href="{{ route('administracion.index') }}">&gt;&gt;&gt;</a>
+            @endcan
+        </div>
     </div>
+
+    <!-- Indicador 2: Ventas -->
     <div class="dashboard">
         <div class="title-cpa">Ventas</div>
-        <div class="indicator"><div class="circle gray">6</div>INDICADORES</div>
-        <div class="indicator"><div class="circle green">1</div>CUMPLEN</div>
-        <div class="indicator"><div class="circle red">5</div> NO CUMPLEN</div>
+        <div class="indicator"><div class="circle gray">{{ $indicadoresMap['Ventas']->total ?? 0 }}</div> INDICADORES</div>
+        <div class="indicator"><div class="circle green">{{ $indicadoresMap['Ventas']->cumplen ?? 0 }}</div> CUMPLEN</div>
+        <div class="indicator"><div class="circle red">{{ $indicadoresMap['Ventas']->no_cumplen ?? 0 }}</div> NO CUMPLEN</div>
         <div class="chart-container">
             <canvas id="chart2"></canvas>
-            <div class="chart-text">17%</div>
+            <div class="chart-text">{{ $indicadoresMap['Ventas']->porcentaje ?? 0 }}%</div>
         </div>
         <div class="nav-buttons">
-    @can('Ventas.index')
-        <a href="{{ route('Ventas.index') }}">&gt;&gt;&gt;</a>
-    @endcan
-</div>
+            @can('Ventas.index')
+                <a href="{{ route('Ventas.index') }}">&gt;&gt;&gt;</a>
+            @endcan
+        </div>
     </div>
 </div>
 <br>
 
 <div class="chart-row">
+    <!-- Indicador 3: Producción -->
     <div class="dashboard">
-        <div class="title-cpa">Produccion</div>
-        <div class="indicator"><div class="circle gray">4</div> INDICADORES</div>
-        <div class="indicator"><div class="circle green">3</div> CUMPLEN</div>
-        <div class="indicator"><div class="circle red">1</div> NO CUMPLEN</div>
+        <div class="title-cpa">Producción</div>
+        <div class="indicator"><div class="circle gray">{{ $indicadoresMap['Producción']->total ?? 0 }}</div> INDICADORES</div>
+        <div class="indicator"><div class="circle green">{{ $indicadoresMap['Producción']->cumplen ?? 0 }}</div> CUMPLEN</div>
+        <div class="indicator"><div class="circle red">{{ $indicadoresMap['Producción']->no_cumplen ?? 0 }}</div> NO CUMPLEN</div>
         <div class="chart-container">
             <canvas id="chart3"></canvas>
-            <div class="chart-text">75%</div>
+            <div class="chart-text">{{ $indicadoresMap['Producción']->porcentaje ?? 0 }}%</div>
         </div>
         <div class="nav-buttons">
-    @can('produccion.index')
-        <a href="{{ route('produccion.index') }}">&gt;&gt;&gt;</a>
-    @endcan
-</div>
+            @can('produccion.index')
+                <a href="{{ route('produccion.index') }}">&gt;&gt;&gt;</a>
+            @endcan
+        </div>
     </div>
-    <br>
+
+    <!-- Indicador 4: RRHH -->
     <div class="dashboard">
         <div class="title-cpa">RRHH</div>
-        <div class="indicator"><div class="circle gray">7</div> INDICADORES</div>
-        <div class="indicator"><div class="circle green">6</div> CUMPLEN</div>
-        <div class="indicator"><div class="circle red">1</div> NO CUMPLEN</div>
+        <div class="indicator"><div class="circle gray">{{ $indicadoresMap['RRHH']->total ?? 0 }}</div> INDICADORES</div>
+        <div class="indicator"><div class="circle green">{{ $indicadoresMap['RRHH']->cumplen ?? 0 }}</div> CUMPLEN</div>
+        <div class="indicator"><div class="circle red">{{ $indicadoresMap['RRHH']->no_cumplen ?? 0 }}</div> NO CUMPLEN</div>
         <div class="chart-container">
             <canvas id="chart4"></canvas>
-            <div class="chart-text">86%</div>
+            <div class="chart-text">{{ $indicadoresMap['RRHH']->porcentaje ?? 0 }}%</div>
         </div>
         <div class="nav-buttons">
-    @can('rh.index')
-        <a href="{{ route('rh.index') }}">&gt;&gt;&gt;</a>
-    @endcan
-</div>
+            @can('rh.index')
+                <a href="{{ route('rh.index') }}">&gt;&gt;&gt;</a>
+            @endcan
+        </div>
     </div>
 </div>
-    <script>
-        function renderChart(canvasId, percentage) {
-            const ctx = document.getElementById(canvasId).getContext('2d');
-            new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    datasets: [{
-                        data: [percentage, 100 - percentage],
-                        backgroundColor: ['green', 'white'],
-                    }]
-                },
-                options: {
-                    responsive: false,
-                    cutout: '70%',
-                    plugins: { legend: { display: false } }
-                }
-            });
-        }
+<br>
 
-        renderChart('chart1', 80);
-        renderChart('chart2', 83);
-        renderChart('chart3', 75);
-        renderChart('chart4', 86);
-    </script>
+<script>
+    function renderChart(canvasId, percentage) {
+        const ctx = document.getElementById(canvasId).getContext('2d');
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                datasets: [{
+                    data: [percentage, 100 - percentage],
+                    backgroundColor: ['green', 'white'],
+                }]
+            },
+            options: {
+                responsive: false,
+                cutout: '70%',
+                plugins: { legend: { display: false } }
+            }
+        });
+    }
+
+    renderChart('chart1', {{ $indicadoresMap['Administración']->porcentaje ?? 0 }});
+    renderChart('chart2', {{ $indicadoresMap['Ventas']->porcentaje ?? 0 }});
+    renderChart('chart3', {{ $indicadoresMap['Producción']->porcentaje ?? 0 }});
+    renderChart('chart4', {{ $indicadoresMap['RRHH']->porcentaje ?? 0 }});
+</script>
 
 <br>
 <h1 class="maspudo2">Grupo industrial Conplasa</h1>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
- <div class="chart-row">
+
+<div class="chart-row">
+    <!-- Indicador 5: Operacion MM -->
     <div class="dashboard">
         <div class="title-gic">Operacion MM</div>
-        <div class="indicator"><div class="circle gray">5</div> INDICADORES</div>
-        <div class="indicator"><div class="circle green">4</div> CUMPLEN</div>
-        <div class="indicator"><div class="circle red">1</div> NO CUMPLEN</div>
+        <div class="indicator"><div class="circle gray">{{ $indicadoresMap['OperacionMM']->total ?? 0 }}</div> INDICADORES</div>
+        <div class="indicator"><div class="circle green">{{ $indicadoresMap['OperacionMM']->cumplen ?? 0 }}</div> CUMPLEN</div>
+        <div class="indicator"><div class="circle red">{{ $indicadoresMap['OperacionMM']->no_cumplen ?? 0 }}</div> NO CUMPLEN</div>
         <div class="chart-container">
             <canvas id="chart5"></canvas>
-            <div class="chart-text">80%</div>
+            <div class="chart-text">{{ $indicadoresMap['OperacionMM']->porcentaje ?? 0 }}%</div>
         </div>
         <div class="nav-buttons">
-    @can('taller.index')
-        <a href="{{ route('taller.index') }}">&gt;&gt;&gt;</a>
-    @endcan
-</div>
+            @can('taller.index')
+                <a href="{{ route('taller.index') }}">&gt;&gt;&gt;</a>
+            @endcan
+        </div>
     </div>
-    <br>
+
+    <!-- Indicador 6: Administracion GIC -->
     <div class="dashboard">
-        <div class="title-gic">Administracion</div>
-        <div class="indicator"><div class="circle gray">6</div> INDICADORES</div>
-        <div class="indicator"><div class="circle green">5</div> CUMPLEN</div>
-        <div class="indicator"><div class="circle red">1</div> NO CUMPLEN</div>
+        <div class="title-gic">Administracion GIC</div>
+        <div class="indicator"><div class="circle gray">{{ $indicadoresMap['AdministracionGIC']->total ?? 0 }}</div> INDICADORES</div>
+        <div class="indicator"><div class="circle green">{{ $indicadoresMap['AdministracionGIC']->cumplen ?? 0 }}</div> CUMPLEN</div>
+        <div class="indicator"><div class="circle red">{{ $indicadoresMap['AdministracionGIC']->no_cumplen ?? 0 }}</div> NO CUMPLEN</div>
         <div class="chart-container">
             <canvas id="chart6"></canvas>
-            <div class="chart-text">83%</div>
+            <div class="chart-text">{{ $indicadoresMap['AdministracionGIC']->porcentaje ?? 0 }}%</div>
         </div>
         <div class="nav-buttons">
-    @can('administraciongic.index')
-        <a href="{{ route('administraciongic.index') }}">&gt;&gt;&gt;</a>
-    @endcan
-</div>
+            @can('administraciongic.index')
+                <a href="{{ route('administraciongic.index') }}">&gt;&gt;&gt;</a>
+            @endcan
+        </div>
     </div>
 </div>
 <br>
 
 <div class="chart-row">
+    <!-- Indicador 7: Produccion Log -->
     <div class="dashboard">
-        <div class="title-gic">Produccion(Log.)</div>
-        <div class="indicator"><div class="circle gray">4</div> INDICADORES</div>
-        <div class="indicator"><div class="circle green">3</div> CUMPLEN</div>
-        <div class="indicator"><div class="circle red">1</div> NO CUMPLEN</div>
+        <div class="title-gic">Produccion Log</div>
+        <div class="indicator"><div class="circle gray">{{ $indicadoresMap['ProduccionLog']->total ?? 0 }}</div> INDICADORES</div>
+        <div class="indicator"><div class="circle green">{{ $indicadoresMap['ProduccionLog']->cumplen ?? 0 }}</div> CUMPLEN</div>
+        <div class="indicator"><div class="circle red">{{ $indicadoresMap['ProduccionLog']->no_cumplen ?? 0 }}</div> NO CUMPLEN</div>
         <div class="chart-container">
             <canvas id="chart7"></canvas>
-            <div class="chart-text">75%</div>
+            <div class="chart-text">{{ $indicadoresMap['ProduccionLog']->porcentaje ?? 0 }}%</div>
         </div>
         <div class="nav-buttons">
-    @can('logistica.index')
-        <a href="{{ route('logistica.index') }}">&gt;&gt;&gt;</a>
-    @endcan
-</div>
+            @can('logistica.index')
+                <a href="{{ route('logistica.index') }}">&gt;&gt;&gt;</a>
+            @endcan
+        </div>
     </div>
-    <br>
+
+    <!-- Indicador 8: RRHH GIC -->
     <div class="dashboard">
-        <div class="title-gic">RRHH</div>
-        <div class="indicator"><div class="circle gray">7</div> INDICADORES</div>
-        <div class="indicator"><div class="circle green">7</div> CUMPLEN</div>
-        <div class="indicator"><div class="circle red">0</div> NO CUMPLEN</div>
+        <div class="title-gic">RRHH GIC</div>
+        <div class="indicator"><div class="circle gray">{{ $indicadoresMap['RRHHGIC']->total ?? 0 }}</div> INDICADORES</div>
+        <div class="indicator"><div class="circle green">{{ $indicadoresMap['RRHHGIC']->cumplen ?? 0 }}</div> CUMPLEN</div>
+        <div class="indicator"><div class="circle red">{{ $indicadoresMap['RRHHGIC']->no_cumplen ?? 0 }}</div> NO CUMPLEN</div>
         <div class="chart-container">
             <canvas id="chart8"></canvas>
-            <div class="chart-text">100%</div>
+            <div class="chart-text">{{ $indicadoresMap['RRHHGIC']->porcentaje ?? 0 }}%</div>
         </div>
         <div class="nav-buttons">
-    @can('rh.index')
-        <a href="{{ route('rh.index') }}">&gt;&gt;&gt;</a>
-    @endcan
-</div>
+            @can('rh.index')
+                <a href="{{ route('rh.index') }}">&gt;&gt;&gt;</a>
+            @endcan
+        </div>
     </div>
 </div>
-    <script>
-        function renderChart(canvasId, percentage) {
-            const ctx = document.getElementById(canvasId).getContext('2d');
-            new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    datasets: [{
-                        data: [percentage, 100 - percentage],
-                        backgroundColor: ['green', 'white'],
-                    }]
-                },
-                options: {
-                    responsive: false,
-                    cutout: '70%',
-                    plugins: { legend: { display: false } }
-                }
-            });
-        }
-
-        renderChart('chart5', 80);
-        renderChart('chart6', 83);
-        renderChart('chart7', 75);
-        renderChart('chart8', 100);
-    </script>
-
+<script>
+    renderChart('chart5', {{ $indicadoresMap['OperacionMM']->porcentaje ?? 0 }});
+    renderChart('chart6', {{ $indicadoresMap['AdministracionGIC']->porcentaje ?? 0 }});
+    renderChart('chart7', {{ $indicadoresMap['ProduccionLog']->porcentaje ?? 0 }});
+    renderChart('chart8', {{ $indicadoresMap['RRHHGIC']->porcentaje ?? 0 }});
+</script>
  <style>
   
     #calendar {
@@ -347,8 +352,8 @@ document.addEventListener('DOMContentLoaded', function() {
         },
         events: [
             {
-                title: 'Reunion',
-                start: '2025-02-19'
+                title: 'Cumpleaños',
+                start: '2025-02-26'
             },
             {
                 title: 'Entregas',

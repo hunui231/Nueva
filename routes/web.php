@@ -34,6 +34,7 @@ use App\Http\Controllers\EntregaMaterialesController;
 use App\Http\Controllers\InventarioController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\MantenimientoController;
+use App\Models\Indicador;
 use Illuminate\Support\Facades\Mail;
 use App\Models\Ticket;
 
@@ -49,7 +50,8 @@ use App\Models\Ticket;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    $indicadores = Indicador::all();    
+    return view('welcome', compact('indicadores'));
 });
 
 

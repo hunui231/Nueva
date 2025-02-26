@@ -50,10 +50,7 @@
             transition: background-color 0.3s, color 0.3s;
         }
          
-        a:hover {
-            background-color: #ffed4a;
-            color: #333;
-        }
+      
 
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(-20px); }
@@ -64,6 +61,10 @@
             max-height: 200px;
             max-width: 200px;
             margin-top: 30px;
+        }
+        a.logo-link {
+            border: none;
+            padding: 0;
         }
     </style>
 </head>
@@ -84,10 +85,11 @@
                 @endauth
             </div>
         @endif
-        
-        <a href="/">
+        <a href="/" class="logo-link">
             <img src="{{ asset('theme/images/icon/logo2.png') }}" alt="Logo">
         </a>
+        
+       
     </div>
 </body>
 </html>

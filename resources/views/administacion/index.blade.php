@@ -62,10 +62,11 @@
 <hr>
 <h1>Cobranza 2024 GIC - 2025 GIC</h1>
 <canvas id="cobranzaChartGIC"></canvas>
+<canvas id="graficoXGIC"></canvas>
 
 <div style="text-align: center; margin-top: 10px;">
-  <button id="prevChart" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">◀ 2024</button>
-  <button id="nextChart" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">2025 ▶</button>
+  <button id="prevChartGIC" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">◀ 2024</button>
+  <button id="nextChartGIC" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">2025 ▶</button>
 </div>
 <!-- Formulario para GIC -->
 <h2>Ingresar Datos - GIC</h2>
@@ -281,7 +282,6 @@ const configGIC = {
     },
 };
 
-// Función para crear el gráfico
 function crearGraficoGIC() {
     if (cobranzaChartGIC) {
         cobranzaChartGIC.destroy();  // Si ya existe una instancia, la destruimos antes de crear una nueva
@@ -289,7 +289,6 @@ function crearGraficoGIC() {
     cobranzaChartGIC = new Chart(ctxGIC, configGIC);  // Crear el gráfico
 }
 
-// Función para cargar los datos de GIC desde el backend
 async function cargarDatosGIC() {
     try {
         const response = await fetch('/obtener-gic');
@@ -348,81 +347,181 @@ function updateChartVisibility() {
 }
 
 // Inicialización del gráfico X
- const ctx = document.getElementById('graficoX').getContext('2d');
-        const semanas = Array.from({ length: 22 }, (_, i) => `Semana ${i * 2 + 6}`);
+const ctx = document.getElementById('graficoX').getContext('2d');
+const semanas = Array.from({ length: 22 }, (_, i) => `Semana ${i * 2 + 6}`);
 
-        const data = {
-            labels: semanas,
-            datasets: [
-                {
-                    label: 'EN TIEMPO',
-                    backgroundColor: 'lightgreen',
-                    data: Array.from({ length: 22 }, () => Math.random() * 10 + 85),
-                    stack: 'Stack 0',
-                },
-                {
-                    label: 'RANGO 1',
-                    backgroundColor: 'green',
-                    data: Array.from({ length: 22 }, () => Math.random() * 5),
-                    stack: 'Stack 0',
-                },
-                {
-                    label: 'RANGO 2',
-                    backgroundColor: 'yellow',
-                    data: Array.from({ length: 22 }, () => Math.random() * 3),
-                    stack: 'Stack 0',
-                },
-                {
-                    label: 'RANGO 3',
-                    backgroundColor: 'orange',
-                    data: Array.from({ length: 22 }, () => Math.random() * 2),
-                    stack: 'Stack 0',
-                },
-                {
-                    label: 'RANGO 4',
-                    backgroundColor: 'red',
-                    data: Array.from({ length: 22 }, () => Math.random() * 5),
-                    stack: 'Stack 0',
-                }
-            ]
-        };
+const data = {
+    labels: semanas,
+    datasets: [
+        {
+            label: 'EN TIEMPO',
+            backgroundColor: 'lightgreen',
+            data: Array.from({ length: 22 }, () => Math.random() * 10 + 85),
+            stack: 'Stack 0',
+        },
+        {
+            label: 'RANGO 1',
+            backgroundColor: 'green',
+            data: Array.from({ length: 22 }, () => Math.random() * 5),
+            stack: 'Stack 0',
+        },
+        {
+            label: 'RANGO 2',
+            backgroundColor: 'yellow',
+            data: Array.from({ length: 22 }, () => Math.random() * 3),
+            stack: 'Stack 0',
+        },
+        {
+            label: 'RANGO 3',
+            backgroundColor: 'orange',
+            data: Array.from({ length: 22 }, () => Math.random() * 2),
+            stack: 'Stack 0',
+        },
+        {
+            label: 'RANGO 4',
+            backgroundColor: 'red',
+            data: Array.from({ length: 22 }, () => Math.random() * 5),
+            stack: 'Stack 0',
+        }
+    ]
+};
 
-        new Chart(ctx, {
-            type: 'bar',
-            data: data,
-            options: {
-                responsive: true,
-                scales: {
-                    x: {
-                        stacked: true
-                    },
-                    y: {
-                        stacked: true,
-                        beginAtZero: true,
-                        max: 105,
-                        ticks: {
-                            callback: function(value) {
-                                return value + "%";
-                            }
-                        }
+new Chart(ctx, {
+    type: 'bar',
+    data: data,
+    options: {
+        responsive: true,
+        scales: {
+            x: {
+                stacked: true
+            },
+            y: {
+                stacked: true,
+                beginAtZero: true,
+                max: 100,
+                ticks: {
+                    callback: function(value) {
+                        return value + "%";
                     }
                 }
             }
-        });
-        updateChartVisibility();
+        }
+    }
+});
 
+const ctxGICX = document.getElementById('graficoXGIC').getContext('2d');
+const semanasGIC = Array.from({ length: 22 }, (_, i) => `Semana ${i * 2 + 6}`);
+
+const dataGICX = {
+    labels: semanasGIC,
+    datasets: [
+        {
+            label: 'EN TIEMPO',
+            backgroundColor: 'lightgreen',
+            data: Array.from({ length: 22 }, () => Math.random() * 10 + 85),
+            stack: 'Stack 0',
+        },
+        {
+            label: 'RANGO 1',
+            backgroundColor: 'green',
+            data: Array.from({ length: 22 }, () => Math.random() * 5),
+            stack: 'Stack 0',
+        },
+        {
+            label: 'RANGO 2',
+            backgroundColor: 'yellow',
+            data: Array.from({ length: 22 }, () => Math.random() * 3),
+            stack: 'Stack 0',
+        },
+        {
+            label: 'RANGO 3',
+            backgroundColor: 'orange',
+            data: Array.from({ length: 22 }, () => Math.random() * 2),
+            stack: 'Stack 0',
+        },
+        {
+            label: 'RANGO 4',
+            backgroundColor: 'red',
+            data: Array.from({ length: 22 }, () => Math.random() * 5),
+            stack: 'Stack 0',
+        }
+    ]
+};
+
+new Chart(ctxGICX, {
+    type: 'bar',
+    data: dataGICX,
+    options: {
+        responsive: true,
+        scales: {
+            x: {
+                stacked: true
+            },
+            y: {
+                stacked: true,
+                beginAtZero: true,
+                max: 100,
+                ticks: {
+                    callback: function(value) {
+                        return value + "%";
+                    }
+                }
+            }
+        }
+    }
+});
+
+// Configurar la semana actual en los formularios
+function setCurrentWeek() {
+    const currentWeek = `SEMANA ${new Date().getWeek()}`;
+    document.getElementById('weekCI').value = currentWeek;
+    document.getElementById('weekGIC').value = currentWeek;
+}
+
+Date.prototype.getWeek = function() {
+    const date = new Date(this.getTime());
+    date.setHours(0, 0, 0, 0);
+    date.setDate(date.getDate() + 3 - (date.getDay() + 6) % 7);
+    const week1 = new Date(date.getFullYear(), 0, 4);
+    return 1 + Math.round(((date.getTime() - week1.getTime()) / 86400000 - 3 + (week1.getDay() + 6) % 7) / 7);
+};
+
+window.addEventListener('load', setCurrentWeek);
+
+// Carrusel para GIC
+let chartsGIC = ['cobranzaChartGIC', 'graficoXGIC'];
+let currentChartIndexGIC = 0;
+
+document.getElementById('prevChartGIC').addEventListener('click', () => {
+    currentChartIndexGIC = (currentChartIndexGIC === 0) ? chartsGIC.length - 1 : currentChartIndexGIC - 1;
+    updateChartVisibilityGIC();
+});
+
+document.getElementById('nextChartGIC').addEventListener('click', () => {
+    currentChartIndexGIC = (currentChartIndexGIC === chartsGIC.length - 1) ? 0 : currentChartIndexGIC + 1;
+    updateChartVisibilityGIC();
+});
+
+function updateChartVisibilityGIC() {
+    chartsGIC.forEach((chartId, index) => {
+        document.getElementById(chartId).style.display = (index === currentChartIndexGIC) ? 'block' : 'none';
+    });
+}
+
+updateChartVisibility();
+updateChartVisibilityGIC();
 </script>
 <br>
 <br>
 
 <h2>Evaluación de Desempeño de Proveedores CI</h2>
 <canvas id="kpiChart2"></canvas>
+<canvas id="kpiChart3" style="display: none;"></canvas> <!-- Nuevo gráfico oculto inicialmente -->
 <div style="text-align: center; margin-top: 10px;">
-  <button id="prevChart" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">◀ Anterior</button>
-  <button id="nextChart" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">Siguiente ▶</button>
+  <button id="prevChartbtn" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">◀ Anterior</button>
+  <button id="nextChartbtn" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">Siguiente ▶</button>
 </div>
 
-<!-- Formulario para ingresar datos -->
 <h2>Ingresar Datos Provedores IC</h2>
 @can('adm.update')
 <form id="dataFormKPI2">
@@ -444,13 +543,19 @@ function updateChartVisibility() {
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
   const ctxKPI2 = document.getElementById('kpiChart2').getContext('2d');
+  const ctxKPI3 = document.getElementById('kpiChart3').getContext('2d');
 
-  // Datos iniciales del gráfico
+  // Datos iniciales del gráfico 1
   const dataLabelsKPI2 = ['ene-23', 'mar-23', 'may-23', 'jul-23', 'sep-23', 'nov-23', 'ene-24', 'mar-24', 'may-24', 'jul-24', 'sep-24', 'nov-24'];
   let performanceDataKPI2 = [97, 98, 98, 99, 97, 96, 97, 96, 98, 99, 97, 99.23];
   let areaDataKPI2 = [80, 80, 80, 95, 95, 95, 95, 96, 96, 96, 96, 97];
 
-  // Configuración del gráfico
+  // Datos iniciales del gráfico 2
+  const dataLabelsKPI3 = ['ene-25', 'feb-25', 'mar-25', 'abr-25', 'may-25', 'jun-25', 'jul-25', 'ago-25', 'sep-23', 'oct-25', 'nov-25', 'dic-25'];
+  let performanceDataKPI3 = [95, 96, 97, 98, 96, 95, 96, 95, 97, 98, 96, 98.5];
+  let areaDataKPI3 = [85, 85, 85, 90, 90, 90, 90, 91, 91, 91, 91, 92];
+
+  // Configuración del gráfico 1
   const kpiChart2 = new Chart(ctxKPI2, {
     type: 'line',
     data: {
@@ -487,7 +592,55 @@ function updateChartVisibility() {
       scales: {
         y: {
           min: 70,
-          max: 105 ,
+          max: 105,
+          ticks: {
+            callback: function(value) {
+              return value + '%';
+            },
+          },
+        },
+      },
+    },
+  });
+
+  // Configuración del gráfico 2
+  const kpiChart3 = new Chart(ctxKPI3, {
+    type: 'line',
+    data: {
+      labels: dataLabelsKPI3,
+      datasets: [
+        {
+          label: 'Desempeño (%)',
+          data: performanceDataKPI3,
+          borderColor: '#87CEEB',
+          backgroundColor: 'transparent',
+          tension: 0.2,
+        },
+        {
+          label: 'Área de cumplimiento',
+          data: areaDataKPI3,
+          backgroundColor: 'rgb(255, 0, 0)',
+          borderWidth: 0,
+          fill: true,
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: function(tooltipItem) {
+              return tooltipItem.dataset.label + ': ' + tooltipItem.raw.toFixed(2) + '%';
+            },
+          },
+        },
+      },
+      scales: {
+        y: {
+          min: 70,
+          max: 105,
           ticks: {
             callback: function(value) {
               return value + '%';
@@ -505,6 +658,13 @@ function updateChartVisibility() {
     option.textContent = label;
     monthSelectKPI2.appendChild(option);
   });
+
+  // Colocar el mes actual en el input de mes
+  const currentDate = new Date();
+  const currentMonth = currentDate.toLocaleString('default', { month: 'short' }).toLowerCase();
+  const currentYear = currentDate.getFullYear().toString().slice(-2);
+  const currentMonthYear = `${currentMonth}-${currentYear}`;
+  monthSelectKPI2.value = currentMonthYear;
 
   // Validar y actualizar el gráfico
   document.getElementById('dataFormKPI2').addEventListener('submit', (event) => {
@@ -560,14 +720,41 @@ function updateChartVisibility() {
 
   // Cargar los datos iniciales al cargar la página
   fetchData();
+
+  // Alternar entre gráficos
+  let currentChart = 1;
+  document.getElementById('nextChartbtn').addEventListener('click', () => {
+    if (currentChart === 1) {
+      document.getElementById('kpiChart2').style.display = 'none';
+      document.getElementById('kpiChart3').style.display = 'block';
+      currentChart = 2;
+    } else {
+      document.getElementById('kpiChart2').style.display = 'block';
+      document.getElementById('kpiChart3').style.display = 'none';
+      currentChart = 1;
+    }
+  });
+
+  document.getElementById('prevChartbtn').addEventListener('click', () => {
+    if (currentChart === 1) {
+      document.getElementById('kpiChart2').style.display = 'none';
+      document.getElementById('kpiChart3').style.display = 'block';
+      currentChart = 2;
+    } else {
+      document.getElementById('kpiChart2').style.display = 'block';
+      document.getElementById('kpiChart3').style.display = 'none';
+      currentChart = 1;
+    }
+  });
 </script>
 <br><br>
 <h2>Cumplimiento de compras a tiempo IC</h2>
 <canvas id="comprasChartIC"></canvas>
+<canvas id="comprasChartIC2" style="display: none;"></canvas> <!-- Nuevo gráfico oculto inicialmente -->
 
 <div style="text-align: center; margin-top: 10px;">
-  <button id="prevChart" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">◀ Anterior</button>
-  <button id="nextChart" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">Siguiente ▶</button>
+  <button id="prevChartComprasIC" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">◀ Anterior</button>
+  <button id="nextChartComprasIC" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">Siguiente ▶</button>
 </div>
 
 <h2>Ingresar Datos - Compras IC</h2>
@@ -586,14 +773,16 @@ function updateChartVisibility() {
   <button type="submit" class="button">Actualizar Gráfico</button>
 </form>
 @endcan
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
-  // Contexto y datos iniciales del gráfico
+  // Contexto y datos iniciales del gráfico 1
   const ctxComprasIC = document.getElementById('comprasChartIC').getContext('2d');
+  const ctxComprasIC2 = document.getElementById('comprasChartIC2').getContext('2d');
 
   const dataLabelsComprasIC = [
-    'ene-23', 'feb-23', 'mar-23', 'abr-23', 'may-23', 'jun-23', 'ago-23', 'sep-23', 'sep-23', 'oct-23', 'nov-23', 'dic-23',
+    'ene-23', 'feb-23', 'mar-23', 'abr-23', 'may-23', 'jun-23', 'jul-23', 'ago-23', 'sep-23', 'oct-23', 'nov-23', 'dic-23',
     'ene-24', 'feb-24', 'mar-24', 'abr-24', 'may-24', 'jun-24', 'jul-24', 'ago-24', 'sep-24', 'oct-24', 'nov-24', 'dic-24'
   ];
 
@@ -605,7 +794,20 @@ function updateChartVisibility() {
     70, 70, 70, 70, 70, 80, 80, 80, 80, 80, 80, 80, 80, 85, 85, 85, 85, 85, 85, 85, 85, 85, 85, 85
   ];
 
-  // Configuración del gráfico
+  // Datos iniciales del gráfico 2
+  const dataLabelsComprasIC2 = [
+    'ene-25', 'feb-25', 'mar-25', 'abr-25', 'may-25', 'jun-25', 'jul-25', 'ago-25', 'sep-25', 'oct-25', 'nov-25', 'dic-25'
+  ];
+
+  let performanceDataComprasIC2 = [
+    90, 91, 92, 93, 91, 90, 91, 90, 92, 93, 91, 93.5
+  ];
+
+  let areaDataComprasIC2 = [
+    85, 85, 85, 90, 90, 90, 90, 91, 91, 91, 91, 92
+  ];
+
+  // Configuración del gráfico 1
   const comprasChartIC = new Chart(ctxComprasIC, {
     type: 'line',
     data: {
@@ -621,6 +823,54 @@ function updateChartVisibility() {
         {
           label: 'Área de cumplimiento',
           data: areaDataComprasIC,
+          backgroundColor: 'rgba(255, 0, 0, 0.97)',
+          borderWidth: 0,
+          fill: true,
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: function(tooltipItem) {
+              return tooltipItem.dataset.label + ': ' + tooltipItem.raw.toFixed(2) + '%';
+            },
+          },
+        },
+      },
+      scales: {
+        y: {
+          min: 60,
+          max: 100,
+          ticks: {
+            callback: function(value) {
+              return value + '%';
+            },
+          },
+        },
+      },
+    },
+  });
+
+  // Configuración del gráfico 2
+  const comprasChartIC2 = new Chart(ctxComprasIC2, {
+    type: 'line',
+    data: {
+      labels: dataLabelsComprasIC2,
+      datasets: [
+        {
+          label: 'Desempeño (%)',
+          data: performanceDataComprasIC2,
+          borderColor: '#87CEEB',
+          backgroundColor: 'transparent',
+          tension: 0.2,
+        },
+        {
+          label: 'Área de cumplimiento',
+          data: areaDataComprasIC2,
           backgroundColor: 'rgba(255, 0, 0, 0.97)',
           borderWidth: 0,
           fill: true,
@@ -711,8 +961,32 @@ function updateChartVisibility() {
         console.error('Error al obtener los datos:', error);
       });
   }
-
-  // Cargar los datos iniciales al cargar la página
   fetchData();
+
+  // Alternar entre gráficos
+  let currentChartComprasIC = 1;
+  document.getElementById('nextChartComprasIC').addEventListener('click', () => {
+    if (currentChartComprasIC === 1) {
+      document.getElementById('comprasChartIC').style.display = 'none';
+      document.getElementById('comprasChartIC2').style.display = 'block';
+      currentChartComprasIC = 2;
+    } else {
+      document.getElementById('comprasChartIC').style.display = 'block';
+      document.getElementById('comprasChartIC2').style.display = 'none';
+      currentChartComprasIC = 1;
+    }
+  });
+
+  document.getElementById('prevChartComprasIC').addEventListener('click', () => {
+    if (currentChartComprasIC === 1) {
+      document.getElementById('comprasChartIC').style.display = 'none';
+      document.getElementById('comprasChartIC2').style.display = 'block';
+      currentChartComprasIC = 2;
+    } else {
+      document.getElementById('comprasChartIC').style.display = 'block';
+      document.getElementById('comprasChartIC2').style.display = 'none';
+      currentChartComprasIC = 1;
+    }
+  });
 </script>
 @endsection
