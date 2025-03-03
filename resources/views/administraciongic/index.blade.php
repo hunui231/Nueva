@@ -52,7 +52,6 @@
 <script>
   const ctxKPI_GIC = document.getElementById('kpiChartGIC').getContext('2d');
   const ctxKPI_GIC2 = document.getElementById('kpiChartGIC2').getContext('2d');
-
   // Datos iniciales del gráfico GIC
   const dataLabelsKPI_GIC = [
     'ene-23', 'feb-23', 'mar-23', 'abr-23', 'may-23', 'jun-23', 
@@ -60,7 +59,6 @@
     'ene-24', 'feb-24', 'mar-24', 'abr-24', 'may-24', 'jun-24', 
     'jul-24', 'ago-24', 'sep-24', 'oct-24', 'nov-24', 'dic-24'
   ];
-
   const dataLabelsKPI_GIC2 = [
     'ene-25', 'feb-25', 'mar-25', 'abr-25', 'may-25', 'jun-25', 
     'jul-25', 'ago-25', 'sep-25', 'oct-25', 'nov-25', 'dic-25'
@@ -276,8 +274,6 @@
     }
   });
 </script>
-
-
 <br><br>
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <h2>Cumplimiento de Compras a Tiempo GIC</h2>

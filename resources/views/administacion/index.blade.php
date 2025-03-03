@@ -16,15 +16,19 @@
     cursor: pointer;
     transition: background-color 0.3s;
 }
-
 .button:hover {
     background-color: #45a049;
 }
-
-  </style>
-
+h1 {
+  font-family: "Lato", sans-serif;
+  font-size: 32px;
+  font-weight: bold;
+  color:rgb(49, 50, 51);
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+  text-align: center;
+}
+</style>
 <meta name="csrf-token" content="{{ csrf_token() }}">
-
 <h1>Cobranza 2024 CI - 2025 CI</h1>
 <canvas id="cobranzaChartCI"></canvas>
 <canvas id="graficoX"></canvas>
@@ -94,7 +98,6 @@
   <button type="submit" class=" button">Actualizar Gráfico GIC</button>
 </form>
 @endcan
-
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 const ctxCI = document.getElementById('cobranzaChartCI').getContext('2d');
@@ -346,7 +349,6 @@ function updateChartVisibility() {
     });
 }
 
-// Inicialización del gráfico X
 const ctx = document.getElementById('graficoX').getContext('2d');
 const semanas = Array.from({ length: 22 }, (_, i) => `Semana ${i * 2 + 6}`);
 
@@ -471,7 +473,7 @@ new Chart(ctxGICX, {
     }
 });
 
-// Configurar la semana actual en los formularios
+// Configurar la semana actual en los formula
 function setCurrentWeek() {
     const currentWeek = `SEMANA ${new Date().getWeek()}`;
     document.getElementById('weekCI').value = currentWeek;
@@ -513,7 +515,6 @@ updateChartVisibilityGIC();
 </script>
 <br>
 <br>
-
 <h2>Evaluación de Desempeño de Proveedores CI</h2>
 <canvas id="kpiChart2"></canvas>
 <canvas id="kpiChart3" style="display: none;"></canvas> <!-- Nuevo gráfico oculto inicialmente -->
@@ -542,6 +543,12 @@ updateChartVisibilityGIC();
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
+function createGradient(ctx, chartArea) {
+  const gradient = ctx.createLinearGradient(0, chartArea.bottom, 0, chartArea.top);
+  gradient.addColorStop(0, 'rgb(233, 16, 16)'); // Rojo oscuro en la parte inferior
+  gradient.addColorStop(1, 'rgb(255, 0, 0)'); // Rojo intenso en la parte superior
+  return gradient;
+}
   const ctxKPI2 = document.getElementById('kpiChart2').getContext('2d');
   const ctxKPI3 = document.getElementById('kpiChart3').getContext('2d');
 
@@ -571,9 +578,16 @@ updateChartVisibilityGIC();
         {
           label: 'Área de cumplimiento',
           data: areaDataKPI2,
-          backgroundColor: 'rgb(255, 0, 0)',
-          borderWidth: 0,
-          fill: true,
+          backgroundColor: function(context) {
+          const chart = context.chart;
+          const { ctx, chartArea } = chart;
+          if (!chartArea) {
+            return null;
+          }
+          return createGradient(ctx, chartArea);
+        },
+        borderWidth: 0,
+        fill: true,
         },
       ],
     },
@@ -619,9 +633,16 @@ updateChartVisibilityGIC();
         {
           label: 'Área de cumplimiento',
           data: areaDataKPI3,
-          backgroundColor: 'rgb(255, 0, 0)',
-          borderWidth: 0,
-          fill: true,
+          backgroundColor: function(context) {
+          const chart = context.chart;
+          const { ctx, chartArea } = chart;
+          if (!chartArea) {
+            return null;
+          }
+          return createGradient(ctx, chartArea);
+        },
+        borderWidth: 0,
+        fill: true,
         },
       ],
     },
@@ -777,6 +798,12 @@ updateChartVisibilityGIC();
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
+  function createGradient(ctx, chartArea) {
+  const gradient = ctx.createLinearGradient(0, chartArea.bottom, 0, chartArea.top);
+  gradient.addColorStop(0, 'rgb(233, 16, 16)'); // Rojo oscuro en la parte inferior
+  gradient.addColorStop(1, 'rgb(255, 0, 0)'); // Rojo intenso en la parte superior
+  return gradient;
+}
   // Contexto y datos iniciales del gráfico 1
   const ctxComprasIC = document.getElementById('comprasChartIC').getContext('2d');
   const ctxComprasIC2 = document.getElementById('comprasChartIC2').getContext('2d');
@@ -823,9 +850,16 @@ updateChartVisibilityGIC();
         {
           label: 'Área de cumplimiento',
           data: areaDataComprasIC,
-          backgroundColor: 'rgba(255, 0, 0, 0.97)',
-          borderWidth: 0,
-          fill: true,
+         backgroundColor: function(context) {
+          const chart = context.chart;
+          const { ctx, chartArea } = chart;
+          if (!chartArea) {
+            return null;
+          }
+          return createGradient(ctx, chartArea);
+        },
+        borderWidth: 0,
+        fill: true,
         },
       ],
     },

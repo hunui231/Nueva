@@ -91,7 +91,7 @@
             </ul>
         </nav>
     </div>
-    <h6>Derechos Reservados @Conplasa2024°</h6>
+    <h6></h6>
 </aside>
 
  <button id="sidebarToggle" class="lg:hidden fixed top-0 left-0 p-4 z-50 bg-gray-800 text-white">
@@ -152,7 +152,6 @@
         color: #2b6cb0; 
     }
 </style>
-
  <script>
     document.addEventListener('DOMContentLoaded', function () {
         const sidebar = document.querySelector('.menu-sidebar');
