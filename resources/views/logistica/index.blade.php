@@ -19,11 +19,24 @@
 
 .button:hover {
     background-color: #45a049;
+
 }
+<style>
+  .box-title {
+    font-size: 28px;
+    font-weight: bold;
+    text-align: center;
+    background:rgb(255, 0, 0);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 10px;
+    display: inline-block;
+  }
 </style>
 <meta name="csrf-token" content="{{ csrf_token() }}">
 
-<h2>Entrega de Materiales a Tiempo</h2>
+
+<h2 class="box-title">Entrega de Materiales a Tiempo</h2>
 <canvas id="grafico"></canvas>
 <canvas id="grafico2" style="display: none;"></canvas> <!-- Nuevo gráfico oculto inicialmente -->
 
@@ -38,13 +51,11 @@
 <form id="dataFormEntregaMateriales">
   <label for="monthEntregaMateriales">Mes:</label>
   <select id="monthEntregaMateriales" name="monthEntregaMateriales">
-    <!-- Las opciones se generarán dinámicamente con JavaScript -->
   </select><br><br>
-  <p><p>
-
+  @can('admin.update')
   <label for="desempenoEntregaMateriales">Desempeño (%):</label>
   <input type="number" id="desempenoEntregaMateriales" name="desempenoEntregaMateriales" min="0" max="100" step="0.01" required><br><br>
-
+ @endcan
   <label for="areaCumplimientoEntregaMateriales">Área de cumplimiento (%):</label>
   <input type="number" id="areaCumplimientoEntregaMateriales" name="areaCumplimientoEntregaMateriales" min="0" max="100" step="0.01" required><br><br>
 
@@ -61,14 +72,23 @@
   const ctx = document.getElementById('grafico').getContext('2d');
   const ctx2 = document.getElementById('grafico2').getContext('2d');
 
-  const dataLabels = [
-    "ene-23", "feb-23", "mar-23", "abr-23", "may-23", "jun-23", "jul-23", "ago-23", "sep-23", "oct-23", "nov-23", "dic-23",
-    "ene-24", "feb-24", "mar-24", "abr-24", "may-24", "jun-24", "jul-24", "ago-24", "sep-24", "oct-24", "nov-24", "dic-24"
-  ];
+  // Función para generar opciones de meses y años
+  function generateMonthOptions(startYear, endYear) {
+    const months = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
+    let options = [];
 
-  const dataLabels2 = [
-    "ene-25", "feb-25", "mar-25", "abr-25", "may-25", "jun-25", "jul-25", "ago-25", "sep-25", "oct-25", "nov-25", "dic-25"
-  ];
+    for (let year = startYear; year <= endYear; year++) {
+      months.forEach((month) => {
+        options.push(`${month}-${year.toString().slice(-2)}`);
+      });
+    }
+
+    return options;
+  }
+
+  const currentYear = new Date().getFullYear();
+  const dataLabels = generateMonthOptions(23, 24); // Genera desde 2023 hasta 2024
+  const dataLabels2 = generateMonthOptions(25, 25); // Genera solo 2025
 
   let desempenoData = Array(24).fill(100); // Datos iniciales para el gráfico 1
   let areaCumplimientoData = Array(24).fill(100); // Datos iniciales para el gráfico 1
@@ -180,7 +200,7 @@
 
   // Generar las opciones de meses en el formulario
   const monthSelectEntregaMateriales = document.getElementById('monthEntregaMateriales');
-  dataLabels.forEach((label) => {
+  dataLabels.concat(dataLabels2).forEach((label) => {
     const option = document.createElement('option');
     option.value = label;
     option.textContent = label;
@@ -226,10 +246,18 @@
       if (response.data.success) {
         // Actualizar los datos del gráfico
         const index = dataLabels.indexOf(month);
-        desempenoData[index] = desempeno;
-        areaCumplimientoData[index] = areaCumplimiento;
-
-        grafico.update(); // Actualizar el gráfico
+        if (index !== -1) {
+          desempenoData[index] = desempeno;
+          areaCumplimientoData[index] = areaCumplimiento;
+          grafico.update(); // Actualizar el gráfico 1
+        } else {
+          const index2 = dataLabels2.indexOf(month);
+          if (index2 !== -1) {
+            desempenoData2[index2] = desempeno;
+            areaCumplimientoData2[index2] = areaCumplimiento;
+            grafico2.update(); // Actualizar el gráfico 2
+          }
+        }
       } else {
         console.error('Error en la respuesta del servidor:', response.data);
       }
@@ -249,9 +277,16 @@
           if (index !== -1) {
             desempenoData[index] = item.desempeno;
             areaCumplimientoData[index] = item.area_cumplimiento;
+          } else {
+            const index2 = dataLabels2.indexOf(item.mes);
+            if (index2 !== -1) {
+              desempenoData2[index2] = item.desempeno;
+              areaCumplimientoData2[index2] = item.area_cumplimiento;
+            }
           }
         });
-        grafico.update(); // Actualizar el gráfico
+        grafico.update(); // Actualizar el gráfico 1
+        grafico2.update(); // Actualizar el gráfico 2
       })
       .catch(error => {
         console.error('Error al obtener los datos:', error.response ? error.response.data : error.message);
@@ -297,15 +332,15 @@
   <button id="nextChartInventario" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">Siguiente ▶</button>
 </div>
 
-<h2>Ingresar Datos - Inventarios</h2>
+<h2 class="box-title">Ingresar Datos - Inventarios</h2>
 @can('logistica.update')
 <form id="dataFormInventario">
   <label for="monthInventario">Mes:</label>
   <select id="monthInventario" name="monthInventario"></select><br><br>
-
+  @can('admin.update')
   <label for="desempenoInventario">Desempeño Inventario (%):</label>
   <input type="number" id="desempenoInventario" name="desempenoInventario" min="0" max="100" step="0.01" required><br><br>
-
+  @endcan
   <label for="areaCumplimientoInventario">Área de Cumplimiento (%):</label>
   <input type="number" id="areaCumplimientoInventario" name="areaCumplimientoInventario" min="0" max="100" step="0.01" required><br><br>
 
@@ -315,26 +350,40 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
+  // Configurar el token CSRF en Axios
   axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
+  // Contexto de los gráficos
   const ctxInventario = document.getElementById('inventarioChart').getContext('2d');
   const ctxInventario2 = document.getElementById('inventarioChart2').getContext('2d');
 
-  const dataLabelsInventario = [
-    "ene-23", "feb-23", "mar-23", "abr-23", "may-23", "jun-23", "jul-23", "ago-23", "sep-23", "oct-23", "nov-23", "dic-23",
-    "ene-24", "feb-24", "mar-24", "abr-24", "may-24", "jun-24", "jul-24", "ago-24", "sep-24", "oct-24", "nov-24", "dic-24"
-  ];
+  // Función para generar opciones de meses y años
+  function generarOpcionesMesesInventario(anioInicio, anioFin) {
+    const meses = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
+    let opciones = [];
 
-  const dataLabelsInventario2 = [
-    "ene-25", "feb-25", "mar-25", "abr-25", "may-25", "jun-25", "jul-25", "ago-25", "sep-25", "oct-25", "nov-25", "dic-25"
-  ];
+    for (let anio = anioInicio; anio <= anioFin; anio++) {
+      meses.forEach((mes) => {
+        opciones.push(`${mes}-${anio.toString().slice(-2)}`);
+      });
+    }
 
-  let desempenoDataInventario = Array(24).fill(null); 
-  let areaCumplimientoDataInventario = Array(24).fill(null); 
+    return opciones;
+  }
 
-  let desempenoDataInventario2 = Array(12).fill(null); 
-  let areaCumplimientoDataInventario2 = Array(12).fill(null);
+  // Generar las etiquetas de los meses
+  const anioActualInventario = new Date().getFullYear();
+  const dataLabelsInventario = generarOpcionesMesesInventario(23, 24); // Genera desde 2023 hasta 2024
+  const dataLabelsInventario2 = generarOpcionesMesesInventario(25, 25); // Genera solo 2025
 
+  // Datos iniciales para los gráficos
+  let desempenoDataInventario = Array(24).fill(0); 
+  let areaCumplimientoDataInventario = Array(24).fill(0); 
+
+  let desempenoDataInventario2 = Array(12).fill(0); 
+  let areaCumplimientoDataInventario2 = Array(12).fill(0);
+
+  // Configuración del gráfico 1
   const inventarioChart = new Chart(ctxInventario, {
     type: 'line',
     data: {
@@ -349,6 +398,7 @@
           pointRadius: 4,
           fill: false,
           tension: 0.3,
+          spanGaps: true, // Permitir dibujar líneas incluso si hay gaps
         },
         {
           label: "Área de Cumplimiento",
@@ -364,11 +414,11 @@
       scales: {
         y: {
           beginAtZero: false,
-          min: 65,
+          min: 0,
           max: 100,
           ticks: {
-            callback: function(value) {
-              return value + "%";
+            callback: function(valor) {
+              return valor + "%";
             },
           },
         },
@@ -379,8 +429,8 @@
         },
         tooltip: {
           callbacks: {
-            label: function(context) {
-              return context.raw + "%";
+            label: function(contexto) {
+              return contexto.raw + "%";
             },
           },
         },
@@ -388,6 +438,7 @@
     },
   });
 
+  // Configuración del gráfico 2
   const inventarioChart2 = new Chart(ctxInventario2, {
     type: 'line',
     data: {
@@ -402,6 +453,7 @@
           pointRadius: 4,
           fill: false,
           tension: 0.3,
+          spanGaps: true, // Permitir dibujar líneas incluso si hay gaps
         },
         {
           label: "Área de Cumplimiento",
@@ -420,8 +472,8 @@
           min: 65,
           max: 100,
           ticks: {
-            callback: function(value) {
-              return value + "%";
+            callback: function(valor) {
+              return valor + "%";
             },
           },
         },
@@ -432,8 +484,8 @@
         },
         tooltip: {
           callbacks: {
-            label: function(context) {
-              return context.raw + "%";
+            label: function(contexto) {
+              return contexto.raw + "%";
             },
           },
         },
@@ -441,52 +493,68 @@
     },
   });
 
-  
-  const monthSelectInventario = document.getElementById('monthInventario');
-  dataLabelsInventario.forEach((label) => {
-    const option = document.createElement('option');
-    option.value = label;
-    option.textContent = label;
-    monthSelectInventario.appendChild(option);
+  // Generar las opciones de meses en el formulario
+  const selectorMesInventario = document.getElementById('monthInventario');
+  dataLabelsInventario.concat(dataLabelsInventario2).forEach((etiqueta) => {
+    const opcion = document.createElement('option');
+    opcion.value = etiqueta;
+    opcion.textContent = etiqueta;
+    selectorMesInventario.appendChild(opcion);
   });
 
-  const currentDatel = new Date();
+  // Obtener la fecha actual
+  const fechaActual = new Date();
 
-  const monthl = currentDate.toLocaleString('default', { monthl: 'short' }).toLowerCase();
+  // Formatear el mes abreviado (ej: "Feb")
+  const mesActual = fechaActual.toLocaleString('default', { month: 'short' }).toLowerCase();
 
-  const yearl = currentDate.getFullYear().toString().slice(-2);
+  // Formatear el año en dos dígitos (ej: "25")
+  const anioActual = fechaActual.getFullYear().toString().slice(-2);
 
-  const currentMonthYearl = `${monthl}-${year}`;
+  // Crear el formato "MMM-AA" (ej: "Feb-25")
+  const mesAnioActual = `${mesActual}-${anioActual}`;
 
-  monthSelectInventario.value = currentMonthYearl;
+  // Establecer el valor predeterminado como el mes actual
+  selectorMesInventario.value = mesAnioActual;
 
-  document.getElementById('dataFormInventario').addEventListener('submit', (event) => {
-    event.preventDefault();
+  // Validar y actualizar el gráfico
+  document.getElementById('dataFormInventario').addEventListener('submit', (evento) => {
+    evento.preventDefault();
 
-    const month = monthSelectInventario.value;
+    const mesSeleccionado = selectorMesInventario.value;
     const desempeno = parseFloat(document.getElementById('desempenoInventario').value);
     const areaCumplimiento = parseFloat(document.getElementById('areaCumplimientoInventario').value);
 
-   
+    // Validar que los valores estén dentro del rango
     if (desempeno < 0 || desempeno > 100 || areaCumplimiento < 0 || areaCumplimiento > 100) {
       alert('Los valores deben estar entre 0% y 100%.');
       return;
     }
 
+    // Enviar los datos al servidor
     axios.post('/inventario/store', {
-      mes: month,
+      mes: mesSeleccionado,
       desempeno: desempeno,
       area_cumplimiento: areaCumplimiento,
     })
-    .then(response => {
-      if (response.data.success) {
-        const index = dataLabelsInventario.indexOf(month);
-        desempenoDataInventario[index] = desempeno;
-        areaCumplimientoDataInventario[index] = areaCumplimiento;
-
-        inventarioChart.update(); 
+    .then(respuesta => {
+      if (respuesta.data.success) {
+        // Actualizar los datos del gráfico
+        const indice = dataLabelsInventario.indexOf(mesSeleccionado);
+        if (indice !== -1) {
+          desempenoDataInventario[indice] = desempeno;
+          areaCumplimientoDataInventario[indice] = areaCumplimiento;
+          inventarioChart.update(); // Actualizar el gráfico 1
+        } else {
+          const indice2 = dataLabelsInventario2.indexOf(mesSeleccionado);
+          if (indice2 !== -1) {
+            desempenoDataInventario2[indice2] = desempeno;
+            areaCumplimientoDataInventario2[indice2] = areaCumplimiento;
+            inventarioChart2.update(); // Actualizar el gráfico 2
+          }
+        }
       } else {
-        console.error('Error en la respuesta del servidor:', response.data);
+        console.error('Error en la respuesta del servidor:', respuesta.data);
       }
     })
     .catch(error => {
@@ -494,48 +562,58 @@
     });
   });
 
-  function fetchData() {
+  // Obtener los datos actualizados del servidor
+  function obtenerDatosInventario() {
     axios.get('/inventario/get-data')
-      .then(response => {
-        const data = response.data;
-        data.forEach(item => {
-          const index = dataLabelsInventario.indexOf(item.mes);
-          if (index !== -1) {
-            desempenoDataInventario[index] = item.desempeno;
-            areaCumplimientoDataInventario[index] = item.area_cumplimiento;
+      .then(respuesta => {
+        const datos = respuesta.data;
+        datos.forEach(item => {
+          const indice = dataLabelsInventario.indexOf(item.mes);
+          if (indice !== -1) {
+            desempenoDataInventario[indice] = item.desempeno;
+            areaCumplimientoDataInventario[indice] = item.area_cumplimiento;
+          } else {
+            const indice2 = dataLabelsInventario2.indexOf(item.mes);
+            if (indice2 !== -1) {
+              desempenoDataInventario2[indice2] = item.desempeno;
+              areaCumplimientoDataInventario2[indice2] = item.area_cumplimiento;
+            }
           }
         });
-        inventarioChart.update(); 
+        inventarioChart.update(); // Actualizar el gráfico 1
+        inventarioChart2.update(); // Actualizar el gráfico 2
       })
       .catch(error => {
         console.error('Error al obtener los datos:', error.response ? error.response.data : error.message);
       });
   }
-  fetchData();
+
+  // Cargar los datos iniciales al cargar la página
+  obtenerDatosInventario();
 
   // Alternar entre gráficos
-  let currentChartInventario = 1;
+  let graficoActualInventario = 1;
   document.getElementById('nextChartInventario').addEventListener('click', () => {
-    if (currentChartInventario === 1) {
+    if (graficoActualInventario === 1) {
       document.getElementById('inventarioChart').style.display = 'none';
       document.getElementById('inventarioChart2').style.display = 'block';
-      currentChartInventario = 2;
+      graficoActualInventario = 2;
     } else {
       document.getElementById('inventarioChart').style.display = 'block';
       document.getElementById('inventarioChart2').style.display = 'none';
-      currentChartInventario = 1;
+      graficoActualInventario = 1;
     }
   });
 
   document.getElementById('prevChartInventario').addEventListener('click', () => {
-    if (currentChartInventario === 1) {
+    if (graficoActualInventario === 1) {
       document.getElementById('inventarioChart').style.display = 'none';
       document.getElementById('inventarioChart2').style.display = 'block';
-      currentChartInventario = 2;
+      graficoActualInventario = 2;
     } else {
       document.getElementById('inventarioChart').style.display = 'block';
       document.getElementById('inventarioChart2').style.display = 'none';
-      currentChartInventario = 1;
+      graficoActualInventario = 1;
     }
   });
 </script>

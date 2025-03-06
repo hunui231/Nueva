@@ -42,8 +42,7 @@ h1 {
 @can('adm.update')
 <form id="dataFormCI">
   <label for="weekCI">Semana:</label>
-  <select id="weekCI" name="weekCI">
-  </select><br><br>
+  <select id="weekCI" name="weekCI"></select><br><br>
 
   <label for="enTiempoCI">EN TIEMPO:</label>
   <input type="number" id="enTiempoCI" name="enTiempoCI" min="0" max="100" required><br><br>
@@ -72,13 +71,13 @@ h1 {
   <button id="prevChartGIC" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">◀ 2024</button>
   <button id="nextChartGIC" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">2025 ▶</button>
 </div>
+
 <!-- Formulario para GIC -->
 <h2>Ingresar Datos - GIC</h2>
 @can('adm.update')
 <form id="dataFormGIC">
   <label for="weekGIC">Semana:</label>
-  <select id="weekGIC" name="weekGIC">
-  </select><br><br>
+  <select id="weekGIC" name="weekGIC"></select><br><br>
 
   <label for="enTiempoGIC">EN TIEMPO:</label>
   <input type="number" id="enTiempoGIC" name="enTiempoGIC" min="0" max="100" required><br><br>
@@ -95,119 +94,111 @@ h1 {
   <label for="rango4GIC">RANGO 4:</label>
   <input type="number" id="rango4GIC" name="rango4GIC" min="0" max="100" required><br><br>
 
-  <button type="submit" class=" button">Actualizar Gráfico GIC</button>
+  <button type="submit" class="button">Actualizar Gráfico GIC</button>
 </form>
 @endcan
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
+// Función para obtener la semana actual
+function getCurrentWeek() {
+  const now = new Date();
+  const startOfYear = new Date(now.getFullYear(), 0, 1);
+  const pastDaysOfYear = (now - startOfYear) / 86400000;
+  return Math.ceil((pastDaysOfYear + startOfYear.getDay() + 1) / 7);
+}
+
+// Función para generar opciones de semanas dinámicamente
+function generateWeekOptions(selectElement, year) {
+  const currentYear = new Date().getFullYear();
+  const currentWeek = getCurrentWeek();
+  const totalWeeks = year === currentYear ? currentWeek : 52; // 52 semanas en un año
+
+  for (let week = 1; week <= totalWeeks; week++) {
+    const option = document.createElement('option');
+    option.value = `SEMANA ${week}`;
+    option.textContent = `SEMANA ${week}`;
+    if (year === currentYear && week === currentWeek) {
+      option.selected = true; // Seleccionar la semana actual
+    }
+    selectElement.appendChild(option);
+  }
+}
+
+// Validación de años futuros
+function validateYear(year) {
+  const currentYear = new Date().getFullYear();
+  return year >= currentYear;
+}
+
+// Configuración inicial de gráficos y datos
 const ctxCI = document.getElementById('cobranzaChartCI').getContext('2d');
-let cobranzaChartCI;  // Variable para almacenar la instancia del gráfico
+let cobranzaChartCI;
 
 const initialDataCI = {
-    labels: ['SEMANA 6', 'SEMANA 8', 'SEMANA 10', 'SEMANA 12', 'SEMANA 15', 'SEMANA 17', 'SEMANA 19', 'SEMANA 21', 'SEMANA 23', 'SEMANA 25', 'SEMANA 27', 'SEMANA 31', 'SEMANA 35', 'SEMANA 37', 'SEMANA 39', 'SEMANA 43', 'SEMANA 45', 'SEMANA 49'],
-    datasets: [
-        {
-            label: 'EN TIEMPO',
-            data: [99, 90, 92, 88, 93, 95, 91, 89, 94, 96, 97, 92, 93, 95, 96],
-            backgroundColor: 'lightgreen',
-            stack: 'stack1',
-        },
-        {
-            label: 'RANGO 1',
-            data: [3, 3, 2, 4, 2, 1, 3, 4, 1, 2, 1, 2, 2, 1, 1],
-            backgroundColor: 'yellow',
-            stack: 'stack1',
-        },
-        {
-            label: 'RANGO 2',
-            data: [3, 3, 2, 3, 2, 1, 2, 3, 2, 1, 1, 2, 2, 2, 1],
-            backgroundColor: 'orange',
-            stack: 'stack1',
-        },
-        {
-            label: 'RANGO 3',
-            data: [3, 2, 1, 2, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1],
-            backgroundColor: 'red',
-            stack: 'stack1',
-        },
-        {
-            label: 'RANGO 4',
-            data: [2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-            backgroundColor: 'darkred',
-            stack: 'stack1',
-        },
-    ],
+  labels: ['SEMANA 6', 'SEMANA 8', 'SEMANA 10', 'SEMANA 12', 'SEMANA 15', 'SEMANA 17', 'SEMANA 19', 'SEMANA 21', 'SEMANA 23', 'SEMANA 25', 'SEMANA 27', 'SEMANA 31', 'SEMANA 35', 'SEMANA 37', 'SEMANA 39', 'SEMANA 43', 'SEMANA 45', 'SEMANA 49'],
+  datasets: [
+    { label: 'EN TIEMPO', data: [99, 90, 92, 88, 93, 95, 91, 89, 94, 96, 97, 92, 93, 95, 96], backgroundColor: 'lightgreen', stack: 'stack1' },
+    { label: 'RANGO 1', data: [3, 3, 2, 4, 2, 1, 3, 4, 1, 2, 1, 2, 2, 1, 1], backgroundColor: 'yellow', stack: 'stack1' },
+    { label: 'RANGO 2', data: [3, 3, 2, 3, 2, 1, 2, 3, 2, 1, 1, 2, 2, 2, 1], backgroundColor: 'orange', stack: 'stack1' },
+    { label: 'RANGO 3', data: [3, 2, 1, 2, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1], backgroundColor: 'red', stack: 'stack1' },
+    { label: 'RANGO 4', data: [2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], backgroundColor: 'darkred', stack: 'stack1' },
+  ],
 };
 
 const configCI = {
-    type: 'bar',
-    data: initialDataCI,
-    options: {
-        responsive: true,
-        plugins: {
-            legend: {
-                position: 'top',
-            },
-        },
-        scales: {
-            x: {
-                stacked: true,
-            },
-            y: {
-                stacked: true,
-                max: 105,
-                ticks: {
-                    callback: function (value) {
-                        return value + '%';
-                    },
-                },
-            },
-        },
+  type: 'bar',
+  data: initialDataCI,
+  options: {
+    responsive: true,
+    plugins: { legend: { position: 'top' } },
+    scales: {
+      x: { stacked: true },
+      y: { stacked: true, max: 105, ticks: { callback: (value) => value + '%' } },
     },
+  },
 };
 
 // Función para crear el gráfico
 function crearGrafico() {
-    if (cobranzaChartCI) {
-        cobranzaChartCI.destroy();  // Si ya existe una instancia, la destruimos antes de crear una nueva
-    }
-    cobranzaChartCI = new Chart(ctxCI, configCI);  // Crear el gráfico
+  if (cobranzaChartCI) cobranzaChartCI.destroy();
+  cobranzaChartCI = new Chart(ctxCI, configCI);
 }
 
 // Función para cargar los datos desde el backend
 async function cargarDatos() {
-    try {
-        const response = await fetch('/obtener-ci');
-        const datos = await response.json();
+  try {
+    const response = await fetch('/obtener-ci');
+    const datos = await response.json();
 
-        if (response.ok) {
-            console.log(datos); // Verifica si los datos son correctos
-
-            // Actualiza los labels y datasets con los datos recuperados
-            initialDataCI.labels = datos.map(item => item.semana);  // Asumiendo que el campo 'semana' existe
-            initialDataCI.datasets[0].data = datos.map(item => item.en_tiempo);
-            initialDataCI.datasets[1].data = datos.map(item => item.rango1);
-            initialDataCI.datasets[2].data = datos.map(item => item.rango2);
-            initialDataCI.datasets[3].data = datos.map(item => item.rango3);
-            initialDataCI.datasets[4].data = datos.map(item => item.rango4);
-
-            // Crear el gráfico con los datos cargados
-            crearGrafico();
-        } else {
-            console.error('Error al cargar los datos:', datos.error);
-        }
-    } catch (error) {
-        console.error('Error al cargar los datos:', error);
+    if (response.ok) {
+      initialDataCI.labels = datos.map(item => item.semana);
+      initialDataCI.datasets[0].data = datos.map(item => item.en_tiempo);
+      initialDataCI.datasets[1].data = datos.map(item => item.rango1);
+      initialDataCI.datasets[2].data = datos.map(item => item.rango2);
+      initialDataCI.datasets[3].data = datos.map(item => item.rango3);
+      initialDataCI.datasets[4].data = datos.map(item => item.rango4);
+      crearGrafico();
+    } else {
+      console.error('Error al cargar los datos:', datos.error);
     }
+  } catch (error) {
+    console.error('Error al cargar los datos:', error);
+  }
 }
 
-// Llamar a la función para cargar los datos cuando la página se cargue
+// Inicialización al cargar la página
 window.addEventListener('load', () => {
-    // Inicializar gráfico con datos predeterminados
-    crearGrafico();
+  const weekSelectCI = document.getElementById('weekCI');
+  const weekSelectGIC = document.getElementById('weekGIC');
+  const currentYear = new Date().getFullYear();
 
-    // Cargar datos del servidor
-    cargarDatos();
+  // Generar opciones de semanas para CI y GIC
+  generateWeekOptions(weekSelectCI, currentYear);
+  generateWeekOptions(weekSelectGIC, currentYear);
+
+  // Crear gráficos y cargar datos
+  crearGrafico();
+  cargarDatos();
 });
 
 // Generar las opciones de semanas en el formulario CI
@@ -527,8 +518,7 @@ updateChartVisibilityGIC();
 @can('adm.update')
 <form id="dataFormKPI2">
   <label for="monthKPI2">Mes:</label>
-  <select id="monthKPI2" name="monthKPI2">
-  </select><br><br>
+  <select id="monthKPI2" name="monthKPI2"></select><br><br>
 
   <label for="performanceKPI2">Desempeño (%):</label>
   <input type="number" id="performanceKPI2" name="performanceKPI2" min="0" max="100" step="0.01" required><br><br>
@@ -543,12 +533,13 @@ updateChartVisibilityGIC();
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
-function createGradient(ctx, chartArea) {
-  const gradient = ctx.createLinearGradient(0, chartArea.bottom, 0, chartArea.top);
-  gradient.addColorStop(0, 'rgb(233, 16, 16)'); // Rojo oscuro en la parte inferior
-  gradient.addColorStop(1, 'rgb(255, 0, 0)'); // Rojo intenso en la parte superior
-  return gradient;
-}
+  function createGradient(ctx, chartArea) {
+    const gradient = ctx.createLinearGradient(0, chartArea.bottom, 0, chartArea.top);
+    gradient.addColorStop(0, 'rgb(233, 16, 16)'); // Rojo oscuro en la parte inferior
+    gradient.addColorStop(1, 'rgb(255, 0, 0)'); // Rojo intenso en la parte superior
+    return gradient;
+  }
+
   const ctxKPI2 = document.getElementById('kpiChart2').getContext('2d');
   const ctxKPI3 = document.getElementById('kpiChart3').getContext('2d');
 
@@ -558,9 +549,9 @@ function createGradient(ctx, chartArea) {
   let areaDataKPI2 = [80, 80, 80, 95, 95, 95, 95, 96, 96, 96, 96, 97];
 
   // Datos iniciales del gráfico 2
-  const dataLabelsKPI3 = ['ene-25', 'feb-25', 'mar-25', 'abr-25', 'may-25', 'jun-25', 'jul-25', 'ago-25', 'sep-23', 'oct-25', 'nov-25', 'dic-25'];
-  let performanceDataKPI3 = [95, 96, 97, 98, 96, 95, 96, 95, 97, 98, 96, 98.5];
-  let areaDataKPI3 = [85, 85, 85, 90, 90, 90, 90, 91, 91, 91, 91, 92];
+  const dataLabelsKPI3 = ['ene-25', 'feb-25', 'mar-25', 'abr-25', 'may-25', 'jun-25', 'jul-25', 'ago-25', 'sep-25', 'oct-25', 'nov-25', 'dic-25'];
+  let performanceDataKPI3 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+  let areaDataKPI3 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
   // Configuración del gráfico 1
   const kpiChart2 = new Chart(ctxKPI2, {
@@ -579,15 +570,13 @@ function createGradient(ctx, chartArea) {
           label: 'Área de cumplimiento',
           data: areaDataKPI2,
           backgroundColor: function(context) {
-          const chart = context.chart;
-          const { ctx, chartArea } = chart;
-          if (!chartArea) {
-            return null;
-          }
-          return createGradient(ctx, chartArea);
-        },
-        borderWidth: 0,
-        fill: true,
+            const chart = context.chart;
+            const { ctx, chartArea } = chart;
+            if (!chartArea) return null;
+            return createGradient(ctx, chartArea);
+          },
+          borderWidth: 0,
+          fill: true,
         },
       ],
     },
@@ -634,15 +623,13 @@ function createGradient(ctx, chartArea) {
           label: 'Área de cumplimiento',
           data: areaDataKPI3,
           backgroundColor: function(context) {
-          const chart = context.chart;
-          const { ctx, chartArea } = chart;
-          if (!chartArea) {
-            return null;
-          }
-          return createGradient(ctx, chartArea);
-        },
-        borderWidth: 0,
-        fill: true,
+            const chart = context.chart;
+            const { ctx, chartArea } = chart;
+            if (!chartArea) return null;
+            return createGradient(ctx, chartArea);
+          },
+          borderWidth: 0,
+          fill: true,
         },
       ],
     },
@@ -672,20 +659,43 @@ function createGradient(ctx, chartArea) {
     },
   });
 
-  const monthSelectKPI2 = document.getElementById('monthKPI2');
-  dataLabelsKPI2.forEach((label, index) => {
-    const option = document.createElement('option');
-    option.value = label;
-    option.textContent = label;
-    monthSelectKPI2.appendChild(option);
-  });
+  // Configurar el token CSRF en Axios
+  axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-  // Colocar el mes actual en el input de mes
+  // Generar las opciones de meses en el formulario
+  const monthSelectKPI2 = document.getElementById('monthKPI2');
+  const generateMonthOptions = () => {
+    const currentDate = new Date();
+    const currentYear = currentDate.getFullYear();
+    const currentMonth = currentDate.getMonth();
+
+    for (let year = currentYear; year <= currentYear + 2; year++) {
+      for (let month = 0; month < 12; month++) {
+        const monthLabel = new Date(year, month).toLocaleString('default', { month: 'short' }).toLowerCase();
+        const yearLabel = year.toString().slice(-2);
+        const fullLabel = `${monthLabel}-${yearLabel}`;
+
+        const option = document.createElement('option');
+        option.value = fullLabel;
+        option.textContent = fullLabel;
+
+        if (year === currentYear && month < currentMonth) {
+          option.disabled = false; // Deshabilitar meses pasados
+        }
+
+        monthSelectKPI2.appendChild(option);
+      }
+    }
+  };
+
+  generateMonthOptions();
+
+  // Establecer el mes actual como seleccionado por defecto
   const currentDate = new Date();
   const currentMonth = currentDate.toLocaleString('default', { month: 'short' }).toLowerCase();
   const currentYear = currentDate.getFullYear().toString().slice(-2);
-  const currentMonthYear = `${currentMonth}-${currentYear}`;
-  monthSelectKPI2.value = currentMonthYear;
+  const currentMonthLabel = `${currentMonth}-${currentYear}`;
+  monthSelectKPI2.value = currentMonthLabel;
 
   // Validar y actualizar el gráfico
   document.getElementById('dataFormKPI2').addEventListener('submit', (event) => {
@@ -708,39 +718,39 @@ function createGradient(ctx, chartArea) {
       area_cumplimiento: area,
     })
     .then(response => {
-      // Actualizar los datos del gráfico
-      const index = dataLabelsKPI2.indexOf(month);
-      performanceDataKPI2[index] = performance;
-      areaDataKPI2[index] = area;
-
-      kpiChart2.update(); // Actualizar el gráfico
+      if (response.data.success) {
+        // Actualizar los datos del gráfico
+        const index = dataLabelsKPI2.indexOf(month);
+        if (index !== -1) {
+          performanceDataKPI2[index] = performance;
+          areaDataKPI2[index] = area;
+          kpiChart2.update(); // Actualizar el gráfico
+        }
+      } else {
+        console.error('Error en la respuesta del servidor:', response.data);
+      }
     })
     .catch(error => {
-      console.error('Error al guardar los datos:', error);
+      console.error('Error al guardar los datos:', error.response ? error.response.data : error.message);
     });
   });
 
-  // Obtener los datos actualizados del servidor
-  function fetchData() {
-    axios.get('/proveedores-ci/get-data')
-      .then(response => {
-        const data = response.data;
-        data.forEach(item => {
-          const index = dataLabelsKPI2.indexOf(item.mes);
-          if (index !== -1) {
-            performanceDataKPI2[index] = item.desempeno;
-            areaDataKPI2[index] = item.area_cumplimiento;
-          }
-        });
-        kpiChart2.update(); // Actualizar el gráfico
-      })
-      .catch(error => {
-        console.error('Error al obtener los datos:', error);
-      });
-  }
-
   // Cargar los datos iniciales al cargar la página
-  fetchData();
+  axios.get('/proveedores-ci/get-data')
+    .then(response => {
+      const data = response.data;
+      data.forEach(item => {
+        const index = dataLabelsKPI2.indexOf(item.mes);
+        if (index !== -1) {
+          performanceDataKPI2[index] = item.desempeno;
+          areaDataKPI2[index] = item.area_cumplimiento;
+        }
+      });
+      kpiChart2.update();
+    })
+    .catch(error => {
+      console.error('Error al obtener los datos:', error.response ? error.response.data : error.message);
+    });
 
   // Alternar entre gráficos
   let currentChart = 1;
@@ -782,8 +792,7 @@ function createGradient(ctx, chartArea) {
 @can('adm.update')
 <form id="dataFormComprasIC">
   <label for="monthComprasIC">Mes:</label>
-  <select id="monthComprasIC" name="monthComprasIC">
-  </select><br><br>
+  <select id="monthComprasIC" name="monthComprasIC"></select><br><br>
 
   <label for="performanceComprasIC">Desempeño (%):</label>
   <input type="number" id="performanceComprasIC" name="performanceComprasIC" min="0" max="100" step="0.01" required><br><br>
@@ -799,11 +808,12 @@ function createGradient(ctx, chartArea) {
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
   function createGradient(ctx, chartArea) {
-  const gradient = ctx.createLinearGradient(0, chartArea.bottom, 0, chartArea.top);
-  gradient.addColorStop(0, 'rgb(233, 16, 16)'); // Rojo oscuro en la parte inferior
-  gradient.addColorStop(1, 'rgb(255, 0, 0)'); // Rojo intenso en la parte superior
-  return gradient;
-}
+    const gradient = ctx.createLinearGradient(0, chartArea.bottom, 0, chartArea.top);
+    gradient.addColorStop(0, 'rgb(233, 16, 16)'); // Rojo oscuro en la parte inferior
+    gradient.addColorStop(1, 'rgb(255, 0, 0)'); // Rojo intenso en la parte superior
+    return gradient;
+  }
+
   // Contexto y datos iniciales del gráfico 1
   const ctxComprasIC = document.getElementById('comprasChartIC').getContext('2d');
   const ctxComprasIC2 = document.getElementById('comprasChartIC2').getContext('2d');
@@ -827,11 +837,11 @@ function createGradient(ctx, chartArea) {
   ];
 
   let performanceDataComprasIC2 = [
-    90, 91, 92, 93, 91, 90, 91, 90, 92, 93, 91, 93.5
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
   ];
 
   let areaDataComprasIC2 = [
-    85, 85, 85, 90, 90, 90, 90, 91, 91, 91, 91, 92
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
   ];
 
   // Configuración del gráfico 1
@@ -850,16 +860,14 @@ function createGradient(ctx, chartArea) {
         {
           label: 'Área de cumplimiento',
           data: areaDataComprasIC,
-         backgroundColor: function(context) {
-          const chart = context.chart;
-          const { ctx, chartArea } = chart;
-          if (!chartArea) {
-            return null;
-          }
-          return createGradient(ctx, chartArea);
-        },
-        borderWidth: 0,
-        fill: true,
+          backgroundColor: function(context) {
+            const chart = context.chart;
+            const { ctx, chartArea } = chart;
+            if (!chartArea) return null;
+            return createGradient(ctx, chartArea);
+          },
+          borderWidth: 0,
+          fill: true,
         },
       ],
     },
@@ -937,14 +945,45 @@ function createGradient(ctx, chartArea) {
     },
   });
 
-  const monthSelectComprasIC = document.getElementById('monthComprasIC');
-  dataLabelsComprasIC.forEach((label, index) => {
-    const option = document.createElement('option');
-    option.value = label;
-    option.textContent = label;
-    monthSelectComprasIC.appendChild(option);
-  });
+  // Configurar el token CSRF en Axios
+  axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
+  // Generar las opciones de meses en el formulario
+  const monthSelectComprasIC = document.getElementById('monthComprasIC');
+  const generateMonthOptionsl = () => {
+    const currentDate = new Date();
+    const currentYear = currentDate.getFullYear();
+    const currentMonth = currentDate.getMonth();
+
+    for (let year = currentYear; year <= currentYear + 2; year++) {
+      for (let month = 0; month < 12; month++) {
+        const monthLabel = new Date(year, month).toLocaleString('default', { month: 'short' }).toLowerCase();
+        const yearLabel = year.toString().slice(-2);
+        const fullLabel = `${monthLabel}-${yearLabel}`;
+
+        const option = document.createElement('option');
+        option.value = fullLabel;
+        option.textContent = fullLabel;
+
+        if (year === currentYear && month < currentMonth) {
+          option.disabled = false; // Deshabilitar meses pasados
+        }
+
+        monthSelectComprasIC.appendChild(option);
+      }
+    }
+  };
+
+  generateMonthOptionsl();
+
+  // Establecer el mes actual como seleccionado por defecto
+  const currentDatel = new Date();
+  const currentMonthl = currentDatel.toLocaleString('default', { month: 'short' }).toLowerCase();
+  const currentYearl = currentDatel.getFullYear().toString().slice(-2);
+  const currentMonthLabel2 = `${currentMonthl}-${currentYearl}`;
+  monthSelectComprasIC.value = currentMonthLabel2;
+
+  // Validar y actualizar el gráfico
   document.getElementById('dataFormComprasIC').addEventListener('submit', (event) => {
     event.preventDefault();
 
@@ -965,37 +1004,39 @@ function createGradient(ctx, chartArea) {
       area_cumplimiento: area,
     })
     .then(response => {
-      // Actualizar los datos del gráfico
-      const index = dataLabelsComprasIC.indexOf(month);
-      performanceDataComprasIC[index] = performance;
-      areaDataComprasIC[index] = area;
-
-      comprasChartIC.update(); // Actualizar el gráfico
+      if (response.data.success) {
+        // Actualizar los datos del gráfico
+        const index = dataLabelsComprasIC.indexOf(month);
+        if (index !== -1) {
+          performanceDataComprasIC[index] = performance;
+          areaDataComprasIC[index] = area;
+          comprasChartIC.update(); // Actualizar el gráfico
+        }
+      } else {
+        console.error('Error en la respuesta del servidor:', response.data);
+      }
     })
     .catch(error => {
-      console.error('Error al guardar los datos:', error);
+      console.error('Error al guardar los datos:', error.response ? error.response.data : error.message);
     });
   });
 
-  // Obtener los datos actualizados del servidor
-  function fetchData() {
-    axios.get('/cumplimiento-compras-ic/get-data')
-      .then(response => {
-        const data = response.data;
-        data.forEach(item => {
-          const index = dataLabelsComprasIC.indexOf(item.mes);
-          if (index !== -1) {
-            performanceDataComprasIC[index] = item.desempeno;
-            areaDataComprasIC[index] = item.area_cumplimiento;
-          }
-        });
-        comprasChartIC.update(); // Actualizar el gráfico
-      })
-      .catch(error => {
-        console.error('Error al obtener los datos:', error);
+  // Cargar los datos iniciales al cargar la página
+  axios.get('/cumplimiento-compras-ic/get-data')
+    .then(response => {
+      const data = response.data;
+      data.forEach(item => {
+        const index = dataLabelsComprasIC.indexOf(item.mes);
+        if (index !== -1) {
+          performanceDataComprasIC[index] = item.desempeno;
+          areaDataComprasIC[index] = item.area_cumplimiento;
+        }
       });
-  }
-  fetchData();
+      comprasChartIC.update();
+    })
+    .catch(error => {
+      console.error('Error al obtener los datos:', error.response ? error.response.data : error.message);
+    });
 
   // Alternar entre gráficos
   let currentChartComprasIC = 1;

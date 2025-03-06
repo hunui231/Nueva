@@ -20,7 +20,7 @@
  <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
 
  <h1 class="maspudo">Bienvenido, has Iniciado Sesión!</h1>
-<h2 class="maspudo">CONEXIONES INYECCION</h2>
+<h2 class="maspudo">CONPLASA INYECCION</h2>
 <style>
        * {
         margin: 0;
@@ -148,7 +148,7 @@
         </div>
         <div class="nav-buttons">
             @can('administracion.index')
-                <a href="{{ route('administracion.index') }}">&gt;&gt;&gt;</a>
+            <a href="{{ route('administracion.index') }}"><i class="fas fa-angle-double-right"></i></a>
             @endcan
         </div>
     </div>
@@ -165,7 +165,7 @@
         </div>
         <div class="nav-buttons">
             @can('Ventas.index')
-                <a href="{{ route('Ventas.index') }}">&gt;&gt;&gt;</a>
+                <a href="{{ route('Ventas.index') }}"><i class="fas fa-angle-double-right"></i></a>
             @endcan
         </div>
     </div>
@@ -185,7 +185,7 @@
         </div>
         <div class="nav-buttons">
             @can('produccion.index')
-                <a href="{{ route('produccion.index') }}">&gt;&gt;&gt;</a>
+                <a href="{{ route('produccion.index') }}"><i class="fas fa-angle-double-right"></i></a>
             @endcan
         </div>
     </div>
@@ -202,7 +202,7 @@
         </div>
         <div class="nav-buttons">
             @can('rh.index')
-                <a href="{{ route('rh.index') }}">&gt;&gt;&gt;</a>
+                <a href="{{ route('rh.index') }}"><i class="fas fa-angle-double-right"></i></a>
             @endcan
         </div>
     </div>
@@ -251,7 +251,7 @@
         </div>
         <div class="nav-buttons">
             @can('taller.index')
-                <a href="{{ route('taller.index') }}">&gt;&gt;&gt;</a>
+                <a href="{{ route('taller.index') }}"><i class="fas fa-angle-double-right"></i></a>
             @endcan
         </div>
     </div>
@@ -268,7 +268,7 @@
         </div>
         <div class="nav-buttons">
             @can('administraciongic.index')
-                <a href="{{ route('administraciongic.index') }}">&gt;&gt;&gt;</a>
+                <a href="{{ route('administraciongic.index') }}"><i class="fas fa-angle-double-right"></i></a>
             @endcan
         </div>
     </div>
@@ -288,7 +288,7 @@
         </div>
         <div class="nav-buttons">
             @can('logistica.index')
-                <a href="{{ route('logistica.index') }}">&gt;&gt;&gt;</a>
+                <a href="{{ route('logistica.index') }}"><i class="fas fa-angle-double-right"></i></a>
             @endcan
         </div>
     </div>
@@ -305,7 +305,7 @@
         </div>
         <div class="nav-buttons">
             @can('rh.index')
-                <a href="{{ route('rh.index') }}">&gt;&gt;&gt;</a>
+                <a href="{{ route('rh.index') }}"><i class="fas fa-angle-double-right"></i></a>
             @endcan
         </div>
     </div>

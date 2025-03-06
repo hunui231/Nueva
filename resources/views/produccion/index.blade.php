@@ -5,8 +5,19 @@
 @endsection
 
 @section('content')
-<!-- Scrap Chart -->
-<h2>Producción SCRAP CI</h2>
+<style>
+  .box-title {
+    font-size: 28px;
+    font-weight: bold;
+    text-align: center;
+    background:rgb(46, 180, 204);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 10px;
+    display: inline-block;
+  }
+</style>
+<h2 class="box-title">Producción SCRAP CI</h2>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -38,30 +49,46 @@
     // Configurar el token CSRF en Axios
     axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-    // Datos iniciales del gráfico 1
-    const ctxScrap = document.getElementById('scrapChart').getContext('2d');
-    const ctxScrap2 = document.getElementById('scrapChart2').getContext('2d');
+    // Función para generar opciones de meses y años
+    function generarOpcionesMesesScrap(anioInicio, anioFin) {
+        const meses = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
+        let opciones = [];
 
-    const months = ['ene-23', 'feb-23', 'mar-23', 'abr-23', 'may-23', 'jun-23', 'jul-23', 'ago-23', 'sep-23', 'oct-23', 'nov-23', 'dic-23', 'ene-24', 'feb-24', 'mar-24', 'abr-24', 'may-24', 'jun-24', 'jul-24', 'ago-24', 'sep-24', 'oct-24', 'nov-24', 'dic-24'];
-    let performanceDataScrap1 = Array(24).fill(null); // Datos iniciales para el gráfico 1
+        for (let anio = anioInicio; anio <= anioFin; anio++) {
+            meses.forEach((mes) => {
+                opciones.push(`${mes}-${anio.toString().slice(-2)}`);
+            });
+        }
+
+        return opciones;
+    }
+
+    // Generar las etiquetas de los meses
+    const anioActualScrap = new Date().getFullYear();
+    const dataLabelsScrap = generarOpcionesMesesScrap(23, 24); // Genera desde 2023 hasta 2024
+    const dataLabelsScrap2 = generarOpcionesMesesScrap(25, 25); // Genera solo 2025
+
+    // Datos iniciales para los gráficos
+    let desempenoDataScrap1 = Array(24).fill(null); // Datos iniciales para el gráfico 1
     let areaDataScrap1 = Array(24).fill(null); // Datos iniciales para el gráfico 1
-    const months2 = ['ene-25', 'feb-25', 'mar-25', 'abr-25', 'may-25', 'jun-25', 'jul-25', 'ago-25', 'sep-25', 'oct-25', 'nov-25', 'dic-25'];
-    let performanceDataScrap2 = Array(24).fill(null); // Datos iniciales para el gráfico 2
-    let areaDataScrap2 = Array(24).fill(null); // Datos iniciales para el gráfico 2
+
+    let desempenoDataScrap2 = Array(12).fill(1.0); // Datos iniciales para el gráfico 2
+    let areaDataScrap2 = Array(12).fill(3.5); // Datos iniciales para el gráfico 2
 
     // Configuración del gráfico 1
-    const scrapChart = new Chart(ctxScrap, {
+    const scrapChart = new Chart(document.getElementById('scrapChart').getContext('2d'), {
         type: 'line',
         data: {
-            labels: months,
+            labels: dataLabelsScrap,
             datasets: [
                 {
                     label: 'Desempeño',
-                    data: performanceDataScrap1,
+                    data: desempenoDataScrap1,
                     borderColor: '#007bff',
                     borderWidth: 2,
                     fill: false,
-                    tension: 0.3
+                    tension: 0.3,
+                    spanGaps: true, // Permitir dibujar líneas incluso si hay gaps
                 },
                 {
                     label: 'Área de cumplimiento',
@@ -69,7 +96,8 @@
                     borderColor: '#ff0000',
                     borderWidth: 2,
                     fill: false,
-                    tension: 0.1
+                    tension: 0.1,
+                    spanGaps: true, // Permitir dibujar líneas incluso si hay gaps
                 }
             ]
         },
@@ -102,18 +130,19 @@
     });
 
     // Configuración del gráfico 2
-    const scrapChart2 = new Chart(ctxScrap2, {
+    const scrapChart2 = new Chart(document.getElementById('scrapChart2').getContext('2d'), {
         type: 'line',
         data: {
-            labels: months2,
+            labels: dataLabelsScrap2,
             datasets: [
                 {
                     label: 'Desempeño',
-                    data: performanceDataScrap2,
+                    data: desempenoDataScrap2,
                     borderColor: '#007bff',
                     borderWidth: 2,
                     fill: false,
-                    tension: 0.3
+                    tension: 0.3,
+                    spanGaps: true, // Permitir dibujar líneas incluso si hay gaps
                 },
                 {
                     label: 'Área de cumplimiento',
@@ -121,7 +150,8 @@
                     borderColor: '#ff0000',
                     borderWidth: 2,
                     fill: false,
-                    tension: 0.1
+                    tension: 0.1,
+                    spanGaps: true, // Permitir dibujar líneas incluso si hay gaps
                 }
             ]
         },
@@ -154,49 +184,67 @@
     });
 
     // Generar las opciones de meses en el formulario
-    const monthSelectScrap = document.getElementById('monthScrap');
-    months.forEach((month) => {
-        const option = document.createElement('option');
-        option.value = month;
-        option.textContent = month;
-        monthSelectScrap.appendChild(option);
+    const selectorMesScrap = document.getElementById('monthScrap');
+    dataLabelsScrap.concat(dataLabelsScrap2).forEach((etiqueta) => {
+        const opcion = document.createElement('option');
+        opcion.value = etiqueta;
+        opcion.textContent = etiqueta;
+        selectorMesScrap.appendChild(opcion);
     });
 
-    // Validar y actualizar el gráfico
-    document.getElementById('dataFormScrap').addEventListener('submit', (event) => {
-        event.preventDefault();
+    // Obtener la fecha actual
+    const fechaActual = new Date();
 
-        const month = monthSelectScrap.value;
-        const performance = parseFloat(document.getElementById('performanceScrap').value);
+    // Formatear el mes abreviado (ej: "Feb")
+    const mesActual = fechaActual.toLocaleString('default', { month: 'short' }).toLowerCase();
+
+    // Formatear el año en dos dígitos (ej: "25")
+    const anioActual = fechaActual.getFullYear().toString().slice(-2);
+
+    // Crear el formato "MMM-AA" (ej: "Feb-25")
+    const mesAnioActual = `${mesActual}-${anioActual}`;
+
+    // Establecer el valor predeterminado como el mes actual
+    selectorMesScrap.value = mesAnioActual;
+
+    // Validar y actualizar el gráfico
+    document.getElementById('dataFormScrap').addEventListener('submit', (evento) => {
+        evento.preventDefault();
+
+        const mesSeleccionado = selectorMesScrap.value;
+        const desempeno = parseFloat(document.getElementById('performanceScrap').value);
         const area = parseFloat(document.getElementById('areaScrap').value);
 
         // Validar que los valores estén dentro del rango
-        if (performance < 0 || performance > 100 || area < 0 || area > 100) {
+        if (desempeno < 0 || desempeno > 100 || area < 0 || area > 100) {
             alert('Los valores deben estar entre 0% y 100%.');
             return;
         }
 
         // Enviar los datos al servidor
         axios.post('/scrap/store', {
-            mes: month,
-            desempeno: performance,
+            mes: mesSeleccionado,
+            desempeno: desempeno,
             area_cumplimiento: area,
         })
-        .then(response => {
-            if (response.data.success) {
+        .then(respuesta => {
+            if (respuesta.data.success) {
                 // Actualizar los datos del gráfico activo
-                const index = months.indexOf(month);
+                const indice = dataLabelsScrap.indexOf(mesSeleccionado);
                 if (currentScrapChart === 1) {
-                    scrapChart.data.datasets[0].data[index] = performance;
-                    scrapChart.data.datasets[1].data[index] = area;
+                    desempenoDataScrap1[indice] = desempeno;
+                    areaDataScrap1[indice] = area;
                     scrapChart.update();
                 } else {
-                    scrapChart2.data.datasets[0].data[index] = performance;
-                    scrapChart2.data.datasets[1].data[index] = area;
-                    scrapChart2.update();
+                    const indice2 = dataLabelsScrap2.indexOf(mesSeleccionado);
+                    if (indice2 !== -1) {
+                        desempenoDataScrap2[indice2] = desempeno;
+                        areaDataScrap2[indice2] = area;
+                        scrapChart2.update();
+                    }
                 }
             } else {
-                console.error('Error en la respuesta del servidor:', response.data);
+                console.error('Error en la respuesta del servidor:', respuesta.data);
             }
         })
         .catch(error => {
@@ -205,53 +253,62 @@
     });
 
     // Cargar los datos iniciales al cargar la página
-    axios.get('/scrap/get-data')
-        .then(response => {
-            const data = response.data;
-            data.forEach(item => {
-                const index = months.indexOf(item.mes);
-                if (index !== -1) {
-                    scrapChart.data.datasets[0].data[index] = item.desempeno;
-                    scrapChart.data.datasets[1].data[index] = item.area_cumplimiento;
-                }
+    function obtenerDatosScrap() {
+        axios.get('/scrap/get-data')
+            .then(respuesta => {
+                const datos = respuesta.data;
+                datos.forEach(item => {
+                    const indice = dataLabelsScrap.indexOf(item.mes);
+                    if (indice !== -1) {
+                        desempenoDataScrap1[indice] = item.desempeno;
+                        areaDataScrap1[indice] = item.area_cumplimiento;
+                    } else {
+                        const indice2 = dataLabelsScrap2.indexOf(item.mes);
+                        if (indice2 !== -1) {
+                            desempenoDataScrap2[indice2] = item.desempeno;
+                            areaDataScrap2[indice2] = item.area_cumplimiento;
+                        }
+                    }
+                });
+                scrapChart.update(); // Actualizar el gráfico 1
+                scrapChart2.update(); // Actualizar el gráfico 2
+            })
+            .catch(error => {
+                console.error('Error al obtener los datos:', error.response ? error.response.data : error.message);
             });
-            scrapChart.update(); // Actualizar el gráfico
-        })
-        .catch(error => {
-            console.error('Error al obtener los datos:', error.response ? error.response.data : error.message);
-        });
+    }
+
+    obtenerDatosScrap();
 
     // Alternar entre gráficos
-    let currentScrapChart = 1;
+    let graficoActualScrap = 1;
     document.getElementById('nextChart').addEventListener('click', () => {
-        if (currentScrapChart === 1) {
+        if (graficoActualScrap === 1) {
             document.getElementById('scrapChart').style.display = 'none';
             document.getElementById('scrapChart2').style.display = 'block';
-            currentScrapChart = 2;
+            graficoActualScrap = 2;
         } else {
             document.getElementById('scrapChart').style.display = 'block';
             document.getElementById('scrapChart2').style.display = 'none';
-            currentScrapChart = 1;
+            graficoActualScrap = 1;
         }
     });
 
     document.getElementById('prevChart').addEventListener('click', () => {
-        if (currentScrapChart === 1) {
+        if (graficoActualScrap === 1) {
             document.getElementById('scrapChart').style.display = 'none';
             document.getElementById('scrapChart2').style.display = 'block';
-            currentScrapChart = 2;
+            graficoActualScrap = 2;
         } else {
             document.getElementById('scrapChart').style.display = 'block';
             document.getElementById('scrapChart2').style.display = 'none';
-            currentScrapChart = 1;
+            graficoActualScrap = 1;
         }
     });
 </script>
 <br><br>
 
-<!-- Rendimiento Operacional CI -->
-<!-- Rendimiento Operacional CI -->
-<h2>Rendimiento Operacional CI</h2>
+<h2 class="box-title">Rendimiento Operacional CI</h2>
 <canvas id="rendimientoChart"></canvas>
 <canvas id="rendimientoChart2" style="display: none;"></canvas> <!-- Nuevo gráfico oculto inicialmente -->
 
@@ -282,219 +339,264 @@
   // Configurar el token CSRF en Axios
   axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-  // Datos iniciales del gráfico 1
-  const ctxRendimiento = document.getElementById('rendimientoChart').getContext('2d');
-  const ctxRendimiento2 = document.getElementById('rendimientoChart2').getContext('2d');
+  // Función para generar opciones de meses y años
+  function generarOpcionesMesesRendimiento(anioInicioRend, anioFinRend) {
+    const mesesRend = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
+    let opcionesRend = [];
 
-  const monthsr = [
-    'ene-23', 'feb-23', 'mar-23', 'abr-23', 'may-23', 'jun-23', 'jul-23', 'ago-23', 'sep-23', 'oct-23', 'nov-23', 'dic-23',
-    'ene-24', 'feb-24', 'mar-24', 'abr-24', 'may-24', 'jun-24', 'jul-24', 'ago-24', 'sep-24', 'oct-24', 'nov-24', 'dic-24'
-  ];
+    for (let anio = anioInicioRend; anio <= anioFinRend; anio++) {
+      mesesRend.forEach((mes) => {
+        opcionesRend.push(`${mes}-${anio.toString().slice(-2)}`);
+      });
+    }
 
-  const monthsr2 = [
-    'ene-25', 'feb-25', 'mar-25', 'abr-25', 'may-25', 'jun-25', 'jul-25', 'ago-25', 'sep-25', 'oct-25', 'nov-25', 'dic-25'
-  ];
+    return opcionesRend;
+  }
 
-  let desempenoData = Array(24).fill(null); // Datos iniciales para el gráfico 1
-  let areaData = Array(24).fill(null); // Datos iniciales para el gráfico 1
+  // Generar las etiquetas de los meses
+  const anioActualRend = new Date().getFullYear();
+  const dataLabelsRend = generarOpcionesMesesRendimiento(23, 24); // Genera desde 2023 hasta 2024
+  const dataLabelsRend2 = generarOpcionesMesesRendimiento(25, 25); // Genera solo 2025
 
-  let desempenoData2 = Array(12).fill(null); // Datos iniciales para el gráfico 2
-  let areaData2 = Array(12).fill(null); // Datos iniciales para el gráfico 2
+  // Datos iniciales para los gráficos
+  let desempenoDataRend = Array(24).fill(null); // Datos iniciales para el gráfico 1
+  let areaDataRend = Array(24).fill(null); // Datos iniciales para el gráfico 1
 
-  // Configuración del gráfico 1
-  const rendimientoChart = new Chart(ctxRendimiento, {
+  let desempenoDataRend2 = Array(12).fill(0); // Datos iniciales para el gráfico 2
+  let areaDataRend2 = Array(12).fill(0); // Datos iniciales para el gráfico 2
+
+  
+  const rendimientoChart = new Chart(document.getElementById('rendimientoChart').getContext('2d'), {
     type: 'line',
     data: {
-        labels: monthsr,
-        datasets: [
-            {
-                label: 'Desempeño',
-                data: desempenoData,
-                borderColor: '#007bff',
-                backgroundColor: '#007bff',
-                fill: false,
-                tension: 0.3
-            },
-            {
-                label: 'Área de cumplimiento',
-                data: areaData,
-                borderColor: 'red',
-                backgroundColor: 'red',
-                fill: false,
-                borderWidth: 2,
-                tension: 0.1
-            }
-        ]
+      labels: dataLabelsRend,
+      datasets: [
+        {
+          label: 'Desempeño',
+          data: desempenoDataRend,
+          borderColor: '#007bff',
+          backgroundColor: '#007bff',
+          fill: false,
+          tension: 0.3,
+          spanGaps: true, 
+        },
+        {
+          label: 'Área de cumplimiento',
+          data: areaDataRend,
+          borderColor: 'red',
+          backgroundColor: 'red',
+          fill: false,
+          borderWidth: 2,
+          tension: 0.1,
+          spanGaps: true, 
+        }
+      ]
     },
     options: {
-        responsive: true,
-        plugins: {
-            legend: { display: false },
-            tooltip: {
-                callbacks: {
-                    label: function (tooltipItem) {
-                        return tooltipItem.dataset.label + ': ' + tooltipItem.raw.toFixed(2) + '%';
-                    }
-                }
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: function (tooltipItem) {
+              return tooltipItem.dataset.label + ': ' + tooltipItem.raw.toFixed(2) + '%';
             }
-        },
-        scales: {
-            y: {
-                min: 75,
-                max: 105,
-                ticks: {
-                    callback: function (value) {
-                        return value + '%';
-                    }
-                }
-            }
+          }
         }
+      },
+      scales: {
+        y: {
+          min: 75,
+          max: 105,
+          ticks: {
+            callback: function (value) {
+              return value + '%';
+            }
+          }
+        }
+      }
     }
   });
 
   // Configuración del gráfico 2
-  const rendimientoChart2 = new Chart(ctxRendimiento2, {
+  const rendimientoChart2 = new Chart(document.getElementById('rendimientoChart2').getContext('2d'), {
     type: 'line',
     data: {
-        labels: monthsr2,
-        datasets: [
-            {
-                label: 'Desempeño',
-                data: desempenoData2,
-                borderColor: '#007bff',
-                backgroundColor: '#007bff',
-                fill: false,
-                tension: 0.3
-            },
-            {
-                label: 'Área de cumplimiento',
-                data: areaData2,
-                borderColor: 'red',
-                backgroundColor: 'red',
-                fill: false,
-                borderWidth: 2,
-                tension: 0.1
-            }
-        ]
+      labels: dataLabelsRend2,
+      datasets: [
+        {
+          label: 'Desempeño',
+          data: desempenoDataRend2,
+          borderColor: '#007bff',
+          backgroundColor: '#007bff',
+          fill: false,
+          tension: 0.3,
+          spanGaps: true, // Permitir dibujar líneas incluso si hay gaps
+        },
+        {
+          label: 'Área de cumplimiento',
+          data: areaDataRend2,
+          borderColor: 'red',
+          backgroundColor: 'red',
+          fill: false,
+          borderWidth: 2,
+          tension: 0.1,
+          spanGaps: true, // Permitir dibujar líneas incluso si hay gaps
+        }
+      ]
     },
     options: {
-        responsive: true,
-        plugins: {
-            legend: { display: false },
-            tooltip: {
-                callbacks: {
-                    label: function (tooltipItem) {
-                        return tooltipItem.dataset.label + ': ' + tooltipItem.raw.toFixed(2) + '%';
-                    }
-                }
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: function (tooltipItem) {
+              return tooltipItem.dataset.label + ': ' + tooltipItem.raw.toFixed(2) + '%';
             }
-        },
-        scales: {
-            y: {
-                min: 75,
-                max: 105,
-                ticks: {
-                    callback: function (value) {
-                        return value + '%';
-                    }
-                }
-            }
+          }
         }
+      },
+      scales: {
+        y: {
+          min: 75,
+          max: 105,
+          ticks: {
+            callback: function (value) {
+              return value + '%';
+            }
+          }
+        }
+      }
     }
   });
 
   // Generar las opciones de meses en el formulario
-  const monthSelectRendimiento = document.getElementById('monthRendimiento');
-  monthsr.forEach((month) => {
-    const option = document.createElement('option');
-    option.value = month;
-    option.textContent = month;
-    monthSelectRendimiento.appendChild(option);
+  const selectorMesRend = document.getElementById('monthRendimiento');
+  dataLabelsRend.concat(dataLabelsRend2).forEach((etiqueta) => {
+    const opcion = document.createElement('option');
+    opcion.value = etiqueta;
+    opcion.textContent = etiqueta;
+    selectorMesRend.appendChild(opcion);
   });
 
-  // Validar y actualizar el gráfico
-  document.getElementById('dataFormRendimiento').addEventListener('submit', (event) => {
-    event.preventDefault();
+  // Obtener la fecha actual
+  const fechaActualRend = new Date();
 
-    const month = monthSelectRendimiento.value;
-    const performance = parseFloat(document.getElementById('performanceRendimiento').value);
+  // Formatear el mes abreviado (ej: "Feb")
+  const mesActualRend = fechaActualRend.toLocaleString('default', { month: 'short' }).toLowerCase();
+
+  // Formatear el año en dos dígitos (ej: "25")
+  const anioActualRendu = fechaActualRend.getFullYear().toString().slice(-2);
+
+  // Crear el formato "MMM-AA" (ej: "Feb-25")
+  const mesAnioActualRend = `${mesActualRend}-${anioActualRendu}`;
+
+  // Establecer el valor predeterminado como el mes actual
+  selectorMesRend.value = mesAnioActualRend;
+
+  // Validar y actualizar el gráfico
+  document.getElementById('dataFormRendimiento').addEventListener('submit', (evento) => {
+    evento.preventDefault();
+
+    const mesSeleccionado = selectorMesRend.value;
+    const desempeno = parseFloat(document.getElementById('performanceRendimiento').value);
     const area = parseFloat(document.getElementById('areaRendimiento').value);
 
     // Validar que los valores estén dentro del rango
-    if (performance < 0 || performance > 100 || area < 0 || area > 100) {
-        alert('Los valores deben estar entre 0% y 100%.');
-        return;
+    if (desempeno < 0 || desempeno > 100 || area < 0 || area > 100) {
+      alert('Los valores deben estar entre 0% y 100%.');
+      return;
     }
 
     // Enviar los datos al servidor
     axios.post('/rendimiento/store', {
-        mes: month,
-        desempeno: performance,
-        area_cumplimiento: area,
+      mes: mesSeleccionado,
+      desempeno: desempeno,
+      area_cumplimiento: area,
     })
-    .then(response => {
-        if (response.data.success) {
-            // Actualizar los datos del gráfico
-            const index = monthsr.indexOf(month);
-            rendimientoChart.data.datasets[0].data[index] = performance;
-            rendimientoChart.data.datasets[1].data[index] = area;
-            rendimientoChart.update(); // Actualizar el gráfico
+    .then(respuesta => {
+      if (respuesta.data.success) {
+        // Actualizar los datos del gráfico activo
+        const indice = dataLabelsRend.indexOf(mesSeleccionado);
+        if (currentChartRendimiento === 1) {
+          desempenoDataRend[indice] = desempeno;
+          areaDataRend[indice] = area;
+          rendimientoChart.update();
         } else {
-            console.error('Error en la respuesta del servidor:', response.data);
+          const indice2 = dataLabelsRend2.indexOf(mesSeleccionado);
+          if (indice2 !== -1) {
+            desempenoDataRend2[indice2] = desempeno;
+            areaDataRend2[indice2] = area;
+            rendimientoChart2.update();
+          }
         }
+      } else {
+        console.error('Error en la respuesta del servidor:', respuesta.data);
+      }
     })
     .catch(error => {
-        console.error('Error al guardar los datos:', error.response ? error.response.data : error.message);
+      console.error('Error al guardar los datos:', error.response ? error.response.data : error.message);
     });
   });
 
   // Cargar los datos iniciales al cargar la página
-  axios.get('/rendimiento/get-data')
-    .then(response => {
-        const data = response.data;
-        data.forEach(item => {
-            const index = monthsr.indexOf(item.mes);
-            if (index !== -1) {
-                rendimientoChart.data.datasets[0].data[index] = item.desempeno;
-                rendimientoChart.data.datasets[1].data[index] = item.area_cumplimiento;
+  function obtenerDatosRendimiento() {
+    axios.get('/rendimiento/get-data')
+      .then(respuesta => {
+        const datos = respuesta.data;
+        datos.forEach(item => {
+          const indice = dataLabelsRend.indexOf(item.mes);
+          if (indice !== -1) {
+            desempenoDataRend[indice] = item.desempeno;
+            areaDataRend[indice] = item.area_cumplimiento;
+          } else {
+            const indice2 = dataLabelsRend2.indexOf(item.mes);
+            if (indice2 !== -1) {
+              desempenoDataRend2[indice2] = item.desempeno;
+              areaDataRend2[indice2] = item.area_cumplimiento;
             }
+          }
         });
-        rendimientoChart.update(); // Actualizar el gráfico
-    })
-    .catch(error => {
+        rendimientoChart.update(); // Actualizar el gráfico 1
+        rendimientoChart2.update(); // Actualizar el gráfico 2
+      })
+      .catch(error => {
         console.error('Error al obtener los datos:', error.response ? error.response.data : error.message);
-    });
+      });
+  }
+
+  obtenerDatosRendimiento();
 
   // Alternar entre gráficos
-  let currentChartRendimiento = 1;
+  let graficoActualRendimiento = 1;
   document.getElementById('nextChartRendimiento').addEventListener('click', () => {
-    if (currentChartRendimiento === 1) {
+    if (graficoActualRendimiento === 1) {
       document.getElementById('rendimientoChart').style.display = 'none';
       document.getElementById('rendimientoChart2').style.display = 'block';
-      currentChartRendimiento = 2;
+      graficoActualRendimiento = 2;
     } else {
       document.getElementById('rendimientoChart').style.display = 'block';
       document.getElementById('rendimientoChart2').style.display = 'none';
-      currentChartRendimiento = 1;
+      graficoActualRendimiento = 1;
     }
   });
 
   document.getElementById('prevChartRendimiento').addEventListener('click', () => {
-    if (currentChartRendimiento === 1) {
+    if (graficoActualRendimiento === 1) {
       document.getElementById('rendimientoChart').style.display = 'none';
       document.getElementById('rendimientoChart2').style.display = 'block';
-      currentChartRendimiento = 2;
+      graficoActualRendimiento = 2;
     } else {
       document.getElementById('rendimientoChart').style.display = 'block';
       document.getElementById('rendimientoChart2').style.display = 'none';
-      currentChartRendimiento = 1;
+      graficoActualRendimiento = 1;
     }
   });
 </script>
-
 <br><br>
 <!-- Cumplimiento al Plan de Producción -->
-<h2>Cumplimiento al Plan de Producción</h2>
+<h2 class="box-title">Cumplimiento al Plan de Producción</h2>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -521,52 +623,62 @@
     <button type="submit" class="button">Actualizar Gráfico</button>
 </form>
 @endcan
+
 <script>
     // Configurar el token CSRF en Axios
     axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-    // Datos iniciales del gráfico 1
-    const ctxProduction = document.getElementById('productionChart').getContext('2d');
-    const ctxProduction2 = document.getElementById('productionChart2').getContext('2d');
+    // Función para generar opciones de meses y años
+    function generarOpcionesMesesProduccion(anioInicioProd, anioFinProd) {
+        const mesesProd = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
+        let opcionesProd = [];
 
-    const monthsproduccion = [
-        'ene-23', 'feb-23', 'mar-23', 'abr-23', 'may-23', 'jun-23', 'jul-23', 'ago-23', 'sep-23', 'oct-23', 'nov-23', 'dic-23',
-        'ene-24', 'feb-24', 'mar-24', 'abr-24', 'may-24', 'jun-24', 'jul-24', 'ago-24', 'sep-24', 'oct-24', 'nov-24', 'dic-24'
-    ];
+        for (let anio = anioInicioProd; anio <= anioFinProd; anio++) {
+            mesesProd.forEach((mes) => {
+                opcionesProd.push(`${mes}-${anio.toString().slice(-2)}`);
+            });
+        }
 
-    const monthsproduccion2 = [
-        'ene-25', 'feb-25', 'mar-25', 'abr-25', 'may-25', 'jun-25', 'jul-25', 'ago-25', 'sep-25', 'oct-25', 'nov-25', 'dic-25'
-    ];
+        return opcionesProd;
+    }
 
-    let cumplimientoData = Array(24).fill(null); // Datos iniciales para el gráfico 1
-    let metaData = Array(24).fill(null); // Datos iniciales para el gráfico 1
+    // Generar las etiquetas de los meses
+    const anioActualProd = new Date().getFullYear();
+    const dataLabelsProduccion = generarOpcionesMesesProduccion(23, 24); // Genera desde 2023 hasta 2024
+    const dataLabelsProduccion2 = generarOpcionesMesesProduccion(25, 25); // Genera solo 2025
 
-    let cumplimientoData2 = Array(12).fill(null); // Datos iniciales para el gráfico 2
-    let metaData2 = Array(12).fill(null); // Datos iniciales para el gráfico 2
+    // Datos iniciales para los gráficos
+    let cumplimientoDataProd = Array(24).fill(null); // Datos iniciales para el gráfico 1
+    let metaDataProd = Array(24).fill(null); // Datos iniciales para el gráfico 1
+
+    let cumplimientoDataProd2 = Array(12).fill(0); // Datos iniciales para el gráfico 2
+    let metaDataProd2 = Array(12).fill(0); // Datos iniciales para el gráfico 2
 
     // Configuración del gráfico 1
-    const productionChart = new Chart(ctxProduction, {
+    const productionChart = new Chart(document.getElementById('productionChart').getContext('2d'), {
         type: 'line',
         data: {
-            labels: monthsproduccion,
+            labels: dataLabelsProduccion,
             datasets: [
                 {
                     label: 'Cumplimiento',
-                    data: cumplimientoData,
+                    data: cumplimientoDataProd,
                     borderColor: 'red',
                     backgroundColor: 'transparent',
                     tension: 0.3,
                     pointBackgroundColor: 'red',
-                    fill: false
+                    fill: false,
+                    spanGaps: true, // Permitir dibujar líneas incluso si hay gaps
                 },
                 {
                     label: 'Meta',
-                    data: metaData,
+                    data: metaDataProd,
                     borderColor: '#007bff',
                     backgroundColor: '#007bff',
                     tension: 0.1,
                     pointBackgroundColor: '#007bff',
                     fill: false,
+                    spanGaps: true, 
                 }
             ]
         },
@@ -595,28 +707,30 @@
     });
 
     // Configuración del gráfico 2
-    const productionChart2 = new Chart(ctxProduction2, {
+    const productionChart2 = new Chart(document.getElementById('productionChart2').getContext('2d'), {
         type: 'line',
         data: {
-            labels: monthsproduccion2,
+            labels: dataLabelsProduccion2,
             datasets: [
                 {
                     label: 'Cumplimiento',
-                    data: cumplimientoData2,
+                    data: cumplimientoDataProd2,
                     borderColor: 'red',
                     backgroundColor: 'transparent',
                     tension: 0.3,
                     pointBackgroundColor: 'red',
-                    fill: false
+                    fill: false,
+                    spanGaps: true, // Permitir dibujar líneas incluso si hay gaps
                 },
                 {
                     label: 'Meta',
-                    data: metaData2,
+                    data: metaDataProd2,
                     borderColor: '#007bff',
                     backgroundColor: '#007bff',
                     tension: 0.1,
                     pointBackgroundColor: '#007bff',
                     fill: false,
+                    spanGaps: true, // Permitir dibujar líneas incluso si hay gaps
                 }
             ]
         },
@@ -645,43 +759,67 @@
     });
 
     // Generar las opciones de meses en el formulario
-    const monthSelectProduccion = document.getElementById('monthProduccion');
-    monthsproduccion.forEach((month) => {
-        const option = document.createElement('option');
-        option.value = month;
-        option.textContent = month;
-        monthSelectProduccion.appendChild(option);
+    const selectorMesProduccion = document.getElementById('monthProduccion');
+    dataLabelsProduccion.concat(dataLabelsProduccion2).forEach((etiqueta) => {
+        const opcion = document.createElement('option');
+        opcion.value = etiqueta;
+        opcion.textContent = etiqueta;
+        selectorMesProduccion.appendChild(opcion);
     });
 
-    // Validar y actualizar el gráfico
-    document.getElementById('dataFormProduccion').addEventListener('submit', (event) => {
-        event.preventDefault();
+    // Obtener la fecha actual
+    const fechaActualProd = new Date();
 
-        const month = monthSelectProduccion.value;
-        const performance = parseFloat(document.getElementById('performanceProduccion').value);
+    // Formatear el mes abreviado (ej: "Feb")
+    const mesActualProd = fechaActualProd.toLocaleString('default', { month: 'short' }).toLowerCase();
+
+    // Formatear el año en dos dígitos (ej: "25")
+    const anioActualProdt = fechaActualProd.getFullYear().toString().slice(-2);
+
+    // Crear el formato "MMM-AA" (ej: "Feb-25")
+    const mesAnioActualProd = `${mesActualProd}-${anioActualProdt}`;
+
+    // Establecer el valor predeterminado como el mes actual
+    selectorMesProduccion.value = mesAnioActualProd;
+
+    // Validar y actualizar el gráfico
+    document.getElementById('dataFormProduccion').addEventListener('submit', (evento) => {
+        evento.preventDefault();
+
+        const mesSeleccionado = selectorMesProduccion.value;
+        const desempeno = parseFloat(document.getElementById('performanceProduccion').value);
         const area = parseFloat(document.getElementById('areaProduccion').value);
 
         // Validar que los valores estén dentro del rango
-        if (performance < 0 || performance > 100 || area < 0 || area > 100) {
+        if (desempeno < 0 || desempeno > 100 || area < 0 || area > 100) {
             alert('Los valores deben estar entre 0% y 100%.');
             return;
         }
 
         // Enviar los datos al servidor
         axios.post('/produccion/store', {
-            mes: month,
-            desempeno: performance,
+            mes: mesSeleccionado,
+            desempeno: desempeno,
             area_cumplimiento: area,
         })
-        .then(response => {
-            if (response.data.success) {
-                // Actualizar los datos del gráfico
-                const index = monthsproduccion.indexOf(month);
-                productionChart.data.datasets[0].data[index] = performance;
-                productionChart.data.datasets[1].data[index] = area;
-                productionChart.update(); // Actualizar el gráfico
+        .then(respuesta => {
+            if (respuesta.data.success) {
+                // Actualizar los datos del gráfico activo
+                const indice = dataLabelsProduccion.indexOf(mesSeleccionado);
+                if (currentChartProduccion === 1) {
+                    cumplimientoDataProd[indice] = desempeno;
+                    metaDataProd[indice] = area;
+                    productionChart.update();
+                } else {
+                    const indice2 = dataLabelsProduccion2.indexOf(mesSeleccionado);
+                    if (indice2 !== -1) {
+                        cumplimientoDataProd2[indice2] = desempeno;
+                        metaDataProd2[indice2] = area;
+                        productionChart2.update();
+                    }
+                }
             } else {
-                console.error('Error en la respuesta del servidor:', response.data);
+                console.error('Error en la respuesta del servidor:', respuesta.data);
             }
         })
         .catch(error => {
@@ -690,45 +828,56 @@
     });
 
     // Cargar los datos iniciales al cargar la página
-    axios.get('/produccion/get-data')
-        .then(response => {
-            const data = response.data;
-            data.forEach(item => {
-                const index = monthsproduccion.indexOf(item.mes);
-                if (index !== -1) {
-                    productionChart.data.datasets[0].data[index] = item.desempeno;
-                    productionChart.data.datasets[1].data[index] = item.area_cumplimiento;
-                }
+    function obtenerDatosProduccion() {
+        axios.get('/produccion/get-data')
+            .then(respuesta => {
+                const datos = respuesta.data;
+                datos.forEach(item => {
+                    const indice = dataLabelsProduccion.indexOf(item.mes);
+                    if (indice !== -1) {
+                        cumplimientoDataProd[indice] = item.desempeno;
+                        metaDataProd[indice] = item.area_cumplimiento;
+                    } else {
+                        const indice2 = dataLabelsProduccion2.indexOf(item.mes);
+                        if (indice2 !== -1) {
+                            cumplimientoDataProd2[indice2] = item.desempeno;
+                            metaDataProd2[indice2] = item.area_cumplimiento;
+                        }
+                    }
+                });
+                productionChart.update(); // Actualizar el gráfico 1
+                productionChart2.update(); // Actualizar el gráfico 2
+            })
+            .catch(error => {
+                console.error('Error al obtener los datos:', error.response ? error.response.data : error.message);
             });
-            productionChart.update(); // Actualizar el gráfico
-        })
-        .catch(error => {
-            console.error('Error al obtener los datos:', error.response ? error.response.data : error.message);
-        });
+    }
+
+    obtenerDatosProduccion();
 
     // Alternar entre gráficos
-    let currentChartProduccion = 1;
+    let graficoActualProduccion = 1;
     document.getElementById('nextChartProduccion').addEventListener('click', () => {
-        if (currentChartProduccion === 1) {
+        if (graficoActualProduccion === 1) {
             document.getElementById('productionChart').style.display = 'none';
             document.getElementById('productionChart2').style.display = 'block';
-            currentChartProduccion = 2;
+            graficoActualProduccion = 2;
         } else {
             document.getElementById('productionChart').style.display = 'block';
             document.getElementById('productionChart2').style.display = 'none';
-            currentChartProduccion = 1;
+            graficoActualProduccion = 1;
         }
     });
 
     document.getElementById('prevChartProduccion').addEventListener('click', () => {
-        if (currentChartProduccion === 1) {
+        if (graficoActualProduccion === 1) {
             document.getElementById('productionChart').style.display = 'none';
             document.getElementById('productionChart2').style.display = 'block';
-            currentChartProduccion = 2;
+            graficoActualProduccion = 2;
         } else {
             document.getElementById('productionChart').style.display = 'block';
             document.getElementById('productionChart2').style.display = 'none';
-            currentChartProduccion = 1;
+            graficoActualProduccion = 1;
         }
     });
 </script>
