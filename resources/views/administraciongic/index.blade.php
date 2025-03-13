@@ -20,9 +20,20 @@
 .button:hover {
     background-color: #45a049;
 }
+
+  .box-title {
+    font-size: 28px;
+    font-weight: bold;
+    text-align: center;
+    background:rgb(255, 0, 0);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 10px;
+    display: inline-block;
+  }
 </style>
 <meta name="csrf-token" content="{{ csrf_token() }}">
-<h2>Evaluación de Desempeño de Proveedores GIC</h2>
+<h2 class="box-title">Evaluación de Desempeño de Proveedores GIC</h2>
 <canvas id="kpiChartGIC"></canvas>
 <canvas id="kpiChartGIC2" style="display: none;"></canvas>
 
@@ -310,7 +321,7 @@
 </script>
 <br><br>
 <meta name="csrf-token" content="{{ csrf_token() }}">
-<h2>Cumplimiento de Compras a Tiempo GIC</h2>
+<h2 class="box-title">Cumplimiento de Compras a Tiempo GIC</h2>
 <canvas id="comprasChartGIC"></canvas>
 <canvas id="comprasChartGIC2" style="display: none;"></canvas>
 

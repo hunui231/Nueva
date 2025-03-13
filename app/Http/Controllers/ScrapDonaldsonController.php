@@ -21,15 +21,14 @@ class ScrapDonaldsonController extends Controller
        {
            $request->validate([
                'mes' => 'required|string',
-               'desempeno' => 'required|numeric|between:0,100', // Cambiado de 'scrap' a 'desempeno'
-               'area_cumplimiento' => 'required|numeric|between:0,100',
+               'desempeno' => 'nullable|numeric|between:0,100', // Cambiado de 'scrap' a 'desempeno'
+               'area_cumplimiento' => 'nullable|numeric|between:0,100',
            ]);
    
-           // Actualizar o crear un registro
            $scrap = ScrapDonaldson::updateOrCreate(
-               ['mes' => $request->mes], // Buscar por mes
+               ['mes' => $request->mes], 
                [
-                   'desempeno' => $request->desempeno, // Cambiado de 'scrap' a 'desempeno'
+                   'desempeno' => $request->desempeno, 
                    'area_cumplimiento' => $request->area_cumplimiento,
                ]
            );

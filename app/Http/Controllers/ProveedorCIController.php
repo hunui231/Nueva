@@ -21,8 +21,8 @@ class ProveedorCIController extends Controller
     {
         $request->validate([
             'mes' => 'required|string',
-            'desempeno' => 'required|numeric|between:0,100',
-            'area_cumplimiento' => 'required|numeric|between:0,100',
+            'desempeno' => 'nullable|numeric|between:0,100',
+            'area_cumplimiento' => 'nullable|numeric|between:0,100',
         ]);
 
         $proveedor = ProveedorCI::updateOrCreate(

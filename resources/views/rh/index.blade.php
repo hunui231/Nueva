@@ -76,10 +76,10 @@
   <select id="monthRotacion" name="monthRotacion"></select><br><br>
   @can('admin.update')
   <label for="performanceRotacion">Desempeño (%):</label>
-  <input type="number" id="performanceRotacion" name="performanceRotacion" min="0" max="100" step="0.01" required><br><br>
+  <input type="number" id="performanceRotacion" name="performanceRotacion" min="0" max="100" step="0.01"><br><br>
   @endcan
   <label for="areaRotacion">Área de cumplimiento (%):</label>
-  <input type="number" id="areaRotacion" name="areaRotacion" min="0" max="100" step="0.01" required><br><br>
+  <input type="number" id="areaRotacion" name="areaRotacion" min="0" max="100" step="0.01" ><br><br>
 
   <button type="submit" class="button">Actualizar Gráfico</button>
 </form>
@@ -116,7 +116,6 @@
   let rotacionData2 = Array(12).fill(0); // Datos iniciales para el gráfico 2
   let metaData2 = Array(12).fill(4.5); // Datos iniciales para el gráfico 2
 
-  // Configuración del gráfico 1
   const rotacionChart = new Chart(ctxRotacion, {
     type: 'line',
     data: {
@@ -243,57 +242,50 @@
   monthSelectRotacion.value = currentMonthYear;
 
   // Validar y actualizar el gráfico
-  document.getElementById('dataFormRotacion').addEventListener('submit', (event) => {
-    event.preventDefault();
+  document.getElementById('dataFormRotacion').addEventListener('submit', (evento) => {
+    evento.preventDefault();
 
-    const month = monthSelectRotacion.value;
-    const performance = parseFloat(document.getElementById('performanceRotacion').value);
-    const area = parseFloat(document.getElementById('areaRotacion').value);
+    const mesSeleccionado = monthSelectRotacion.value;
+    const desempeno = document.getElementById('performanceRotacion').value;
+    const area = document.getElementById('areaRotacion').value;
 
-    // Validar que los valores estén dentro del rango
-    if (performance < 0 || performance > 100 || area < 0 || area > 100) {
-      alert('Los valores deben estar entre 0% y 100%.');
-      return;
+    // Convertir a número solo si el campo no está vacío
+    const desempenoNum = desempeno === "" ? null : parseFloat(desempeno);
+    const areaNum = area === "" ? null : parseFloat(area);
+
+    // Validar que los valores estén dentro del rango (solo si no son null)
+    if ((desempenoNum !== null && (desempenoNum < 0 || desempenoNum > 100))) {
+        alert('El valor de Desempeño debe estar entre 0% y 100%.');
+        return;
     }
-    
-    // Validar que el año no sea anterior al actual
-    const selectedYear = parseInt(month.split('-')[1], 10) + 2000; // Convertir "25" a 2025
-    if (selectedYear < new Date().getFullYear()) {
-      alert('No se pueden ingresar datos para años anteriores.');
-      return;
+    if ((areaNum !== null && (areaNum < 0 || areaNum > 100))) {
+        alert('El valor de Área de Cumplimiento debe estar entre 0% y 100%.');
+        return;
     }
 
     // Enviar los datos al servidor
     axios.post('/rotacion/store', {
-      mes: month,
-      desempeno: performance,
-      area_cumplimiento: area,
+        mes: mesSeleccionado,
+        desempeno: desempenoNum,
+        area_cumplimiento: areaNum,
     })
-    .then(response => {
-      if (response.data.success) {
-        // Actualizar los datos del gráfico
-        const index = dataLabelsRotacion.indexOf(month);
-        if (index !== -1) {
-          rotacionData[index] = performance;
-          metaData[index] = area;
-          rotacionChart.update(); // Actualizar el gráfico 1
+    .then(respuesta => {
+        if (respuesta.data.success) {
+            // Actualizar los datos del segundo gráfico (el vacío)
+            const indice2 = dataLabelsRotacion2.indexOf(mesSeleccionado);
+            if (indice2 !== -1) {
+                if (desempenoNum !== null) rotacionData2[indice2] = desempenoNum;
+                if (areaNum !== null) metaData2[indice2] = areaNum;
+                rotacionChart2.update(); // Actualizar el gráfico 2
+            }
         } else {
-          const index2 = dataLabelsRotacion2.indexOf(month);
-          if (index2 !== -1) {
-            rotacionData2[index2] = performance;
-            metaData2[index2] = area;
-            rotacionChart2.update(); // Actualizar el gráfico 2
-          }
+            console.error('Error en la respuesta del servidor:', respuesta.data);
         }
-      } else {
-        console.error('Error en la respuesta del servidor:', response.data);
-      }
     })
     .catch(error => {
-      console.error('Error al guardar los datos:', error.response ? error.response.data : error.message);
+        console.error('Error al guardar los datos:', error.response ? error.response.data : error.message);
     });
-  });
-
+});
   // Obtener los datos actualizados del servidor
   function fetchDataRotacion() {
     axios.get('/rotacion/get-data')
@@ -366,10 +358,10 @@
   <select id="monthPermanencia" name="monthPermanencia"></select><br><br>
   @can('admin.update')
   <label for="performancePermanencia">Desempeño (%):</label>
-  <input type="number" id="performancePermanencia" name="performancePermanencia" min="0" max="100" step="0.01" required><br><br>
+  <input type="number" id="performancePermanencia" name="performancePermanencia" min="0" max="100" step="0.01"><br><br>
  @endcan
   <label for="areaPermanencia">Área de cumplimiento (%):</label>
-  <input type="number" id="areaPermanencia" name="areaPermanencia" min="0" max="100" step="0.01" required><br><br>
+  <input type="number" id="areaPermanencia" name="areaPermanencia" min="0" max="100" step="0.01" ><br><br>
 
   <button type="submit" class="button">Actualizar Gráfico</button>
 </form>
@@ -536,58 +528,50 @@
   // Establecer el valor predeterminado como el mes actual
   monthSelectPermanencia.value = currentMonthYearPermanencia;
 
-  // Validar y actualizar el gráfico
-  document.getElementById('dataFormPermanencia').addEventListener('submit', (event) => {
-    event.preventDefault();
+  document.getElementById('dataFormPermanencia').addEventListener('submit', (evento) => {
+    evento.preventDefault();
 
-    const month = monthSelectPermanencia.value;
-    const performance = parseFloat(document.getElementById('performancePermanencia').value);
-    const area = parseFloat(document.getElementById('areaPermanencia').value);
+    const mesSeleccionado = monthSelectPermanencia.value;
+    const desempeno = document.getElementById('performancePermanencia').value;
+    const area = document.getElementById('areaPermanencia').value;
 
-    // Validar que los valores estén dentro del rango
-    if (performance < 0 || performance > 100 || area < 0 || area > 100) {
-      alert('Los valores deben estar entre 0% y 100%.');
-      return;
+    // Convertir a número solo si el campo no está vacío
+    const desempenoNum = desempeno === "" ? null : parseFloat(desempeno);
+    const areaNum = area === "" ? null : parseFloat(area);
+
+    // Validar que los valores estén dentro del rango (solo si no son null)
+    if ((desempenoNum !== null && (desempenoNum < 0 || desempenoNum > 100))) {
+        alert('El valor de Desempeño debe estar entre 0% y 100%.');
+        return;
     }
-
-    // Validar que el año no sea anterior al actual
-    const selectedYear = parseInt(month.split('-')[1], 10) + 2000; // Convertir "25" a 2025
-    if (selectedYear < new Date().getFullYear()) {
-      alert('No se pueden ingresar datos para años anteriores.');
-      return;
+    if ((areaNum !== null && (areaNum < 0 || areaNum > 100))) {
+        alert('El valor de Área de Cumplimiento debe estar entre 0% y 100%.');
+        return;
     }
 
     // Enviar los datos al servidor
     axios.post('/permanencia/store', {
-      mes: month,
-      desempeno: performance,
-      area_cumplimiento: area,
+        mes: mesSeleccionado,
+        desempeno: desempenoNum,
+        area_cumplimiento: areaNum,
     })
-    .then(response => {
-      if (response.data.success) {
-        // Actualizar los datos del gráfico
-        const index = dataLabelsPermanencia.indexOf(month);
-        if (index !== -1) {
-          permanenciaData[index] = performance;
-          metaDataPermanencia[index] = area;
-          permanenciaChart.update(); // Actualizar el gráfico 1
+    .then(respuesta => {
+        if (respuesta.data.success) {
+            // Actualizar los datos del segundo gráfico (el vacío)
+            const indice2 = dataLabelsPermanencia2.indexOf(mesSeleccionado);
+            if (indice2 !== -1) {
+                if (desempenoNum !== null) permanenciaData2[indice2] = desempenoNum;
+                if (areaNum !== null) metaDataPermanencia2[indice2] = areaNum;
+                permanenciaChart2.update(); // Actualizar el gráfico 2
+            }
         } else {
-          const index2 = dataLabelsPermanencia2.indexOf(month);
-          if (index2 !== -1) {
-            permanenciaData2[index2] = performance;
-            metaDataPermanencia2[index2] = area;
-            permanenciaChart2.update(); // Actualizar el gráfico 2
-          }
+            console.error('Error en la respuesta del servidor:', respuesta.data);
         }
-      } else {
-        console.error('Error en la respuesta del servidor:', response.data);
-      }
     })
     .catch(error => {
-      console.error('Error al guardar los datos:', error.response ? error.response.data : error.message);
+        console.error('Error al guardar los datos:', error.response ? error.response.data : error.message);
     });
-  });
-
+});
   // Obtener los datos actualizados del servidor
   function fetchDataPermanencia() {
     axios.get('/permanencia/get-data')
@@ -664,10 +648,10 @@
   <select id="monthRotacionGIC" name="monthRotacionGIC"></select><br><br>
   @can('admin.update')
   <label for="performanceRotacionGIC">Desempeño (%):</label>
-  <input type="number" id="performanceRotacionGIC" name="performanceRotacionGIC" min="0" max="100" step="0.01" required><br><br>
+  <input type="number" id="performanceRotacionGIC" name="performanceRotacionGIC" min="0" max="100" step="0.01"><br><br>
   @endcan
   <label for="areaRotacionGIC">Área de cumplimiento (%):</label>
-  <input type="number" id="areaRotacionGIC" name="areaRotacionGIC" min="0" max="100" step="0.01" required><br><br>
+  <input type="number" id="areaRotacionGIC" name="areaRotacionGIC" min="0" max="100" step="0.01" ><br><br>
 
   <button type="submit" class="button">Actualizar Gráfico</button>
 </form>
@@ -833,56 +817,50 @@
   monthSelectRotacionGIC.value = currentMonthYearRotacionGIC;
 
   // Validar y actualizar el gráfico
-  document.getElementById('dataFormRotacionGIC').addEventListener('submit', (event) => {
-    event.preventDefault();
+  document.getElementById('dataFormRotacionGIC').addEventListener('submit', (evento) => {
+    evento.preventDefault();
 
-    const month = monthSelectRotacionGIC.value;
-    const performance = parseFloat(document.getElementById('performanceRotacionGIC').value);
-    const area = parseFloat(document.getElementById('areaRotacionGIC').value);
+    const mesSeleccionado = monthSelectRotacionGIC.value;
+    const desempeno = document.getElementById('performanceRotacionGIC').value;
+    const area = document.getElementById('areaRotacionGIC').value;
 
-    // Validar que los valores estén dentro del rango
-    if (performance < 0 || performance > 100 || area < 0 || area > 100) {
-      alert('Los valores deben estar entre 0% y 100%.');
-      return;
+    // Convertir a número solo si el campo no está vacío
+    const desempenoNum = desempeno === "" ? null : parseFloat(desempeno);
+    const areaNum = area === "" ? null : parseFloat(area);
+
+    // Validar que los valores estén dentro del rango (solo si no son null)
+    if ((desempenoNum !== null && (desempenoNum < 0 || desempenoNum > 100))) {
+        alert('El valor de Desempeño debe estar entre 0% y 100%.');
+        return;
     }
-
-    // Validar que el año no sea anterior al actual
-    const selectedYear = parseInt(month.split('-')[1], 10) + 2000; // Convertir "25" a 2025
-    if (selectedYear < new Date().getFullYear()) {
-      alert('No se pueden ingresar datos para años anteriores.');
-      return;
+    if ((areaNum !== null && (areaNum < 0 || areaNum > 100))) {
+        alert('El valor de Área de Cumplimiento debe estar entre 0% y 100%.');
+        return;
     }
 
     // Enviar los datos al servidor
     axios.post('/rotacion-gic/store', {
-      mes: month,
-      desempeno: performance,
-      area_cumplimiento: area,
+        mes: mesSeleccionado,
+        desempeno: desempenoNum,
+        area_cumplimiento: areaNum,
     })
-    .then(response => {
-      if (response.data.success) {
-        // Actualizar los datos del gráfico
-        const index = dataLabelsRotacionGIC.indexOf(month);
-        if (index !== -1) {
-          rotacionDataGIC[index] = performance;
-          referenciaDataGIC[index] = area;
-          rotationChartGIC.update(); // Actualizar el gráfico 1
+    .then(respuesta => {
+        if (respuesta.data.success) {
+            // Actualizar los datos del segundo gráfico (el vacío)
+            const indice2 = dataLabelsRotacionGIC2.indexOf(mesSeleccionado);
+            if (indice2 !== -1) {
+                if (desempenoNum !== null) rotacionData2GIC[indice2] = desempenoNum;
+                if (areaNum !== null) referenciaData2GIC[indice2] = areaNum;
+                rotationChartGIC2.update(); // Actualizar el gráfico 2
+            }
         } else {
-          const index2 = dataLabelsRotacionGIC2.indexOf(month);
-          if (index2 !== -1) {
-            rotacionData2GIC[index2] = performance;
-            referenciaData2GIC[index2] = area;
-            rotationChartGIC2.update(); // Actualizar el gráfico 2
-          }
+            console.error('Error en la respuesta del servidor:', respuesta.data);
         }
-      } else {
-        console.error('Error en la respuesta del servidor:', response.data);
-      }
     })
     .catch(error => {
-      console.error('Error al guardar los datos:', error.response ? error.response.data : error.message);
+        console.error('Error al guardar los datos:', error.response ? error.response.data : error.message);
     });
-  });
+});
 
   // Obtener los datos actualizados del servidor
   function fetchDataRotacionGIC() {
@@ -957,10 +935,10 @@
   <select id="monthPermanenciaGIC" name="monthPermanenciaGIC"></select><br><br>
   @can('admin.update')
   <label for="performancePermanenciaGIC">Desempeño (%):</label>
-  <input type="number" id="performancePermanenciaGIC" name="performancePermanenciaGIC" min="0" max="100" step="0.01" required><br><br>
+  <input type="number" id="performancePermanenciaGIC" name="performancePermanenciaGIC" min="0" max="100" step="0.01" ><br><br>
   @endcan
   <label for="areaPermanenciaGIC">Área de cumplimiento (%):</label>
-  <input type="number" id="areaPermanenciaGIC" name="areaPermanenciaGIC" min="0" max="100" step="0.01" required><br><br>
+  <input type="number" id="areaPermanenciaGIC" name="areaPermanenciaGIC" min="0" max="100" step="0.01" ><br><br>
 
   <button type="submit" class="button">Actualizar Gráfico</button>
 </form>
@@ -1128,56 +1106,50 @@
   monthSelectPermanenciaGIC.value = currentMonthYearPermanenciaGIC;
 
   // Validar y actualizar el gráfico
-  document.getElementById('dataFormPermanenciaGIC').addEventListener('submit', (event) => {
-    event.preventDefault();
+  document.getElementById('dataFormPermanenciaGIC').addEventListener('submit', (evento) => {
+    evento.preventDefault();
 
-    const month = monthSelectPermanenciaGIC.value;
-    const performance = parseFloat(document.getElementById('performancePermanenciaGIC').value);
-    const area = parseFloat(document.getElementById('areaPermanenciaGIC').value);
+    const mesSeleccionado = monthSelectPermanenciaGIC.value;
+    const desempeno = document.getElementById('performancePermanenciaGIC').value;
+    const area = document.getElementById('areaPermanenciaGIC').value;
 
-    // Validar que los valores estén dentro del rango
-    if (performance < 0 || performance > 100 || area < 0 || area > 100) {
-      alert('Los valores deben estar entre 0% y 100%.');
-      return;
+    // Convertir a número solo si el campo no está vacío
+    const desempenoNum = desempeno === "" ? null : parseFloat(desempeno);
+    const areaNum = area === "" ? null : parseFloat(area);
+
+    // Validar que los valores estén dentro del rango (solo si no son null)
+    if ((desempenoNum !== null && (desempenoNum < 0 || desempenoNum > 100))) {
+        alert('El valor de Desempeño debe estar entre 0% y 100%.');
+        return;
     }
-
-    // Validar que el año no sea anterior al actual
-    const selectedYear = parseInt(month.split('-')[1], 10) + 2000; // Convertir "25" a 2025
-    if (selectedYear < new Date().getFullYear()) {
-      alert('No se pueden ingresar datos para años anteriores.');
-      return;
+    if ((areaNum !== null && (areaNum < 0 || areaNum > 100))) {
+        alert('El valor de Área de Cumplimiento debe estar entre 0% y 100%.');
+        return;
     }
 
     // Enviar los datos al servidor
     axios.post('/permanencia-gic/store', {
-      mes: month,
-      desempeno: performance,
-      area_cumplimiento: area,
+        mes: mesSeleccionado,
+        desempeno: desempenoNum,
+        area_cumplimiento: areaNum,
     })
-    .then(response => {
-      if (response.data.success) {
-        // Actualizar los datos del gráfico
-        const index = dataLabelsPermanenciaGIC.indexOf(month);
-        if (index !== -1) {
-          permanenciaDataGIC[index] = performance;
-          fondoDataGIC[index] = area;
-          permanenceChartGIC.update(); // Actualizar el gráfico 1
+    .then(respuesta => {
+        if (respuesta.data.success) {
+            // Actualizar los datos del segundo gráfico (el vacío)
+            const indice2 = dataLabelsPermanenciaGIC2.indexOf(mesSeleccionado);
+            if (indice2 !== -1) {
+                if (desempenoNum !== null) permanenciaData2GIC[indice2] = desempenoNum;
+                if (areaNum !== null) fondoData2GIC[indice2] = areaNum;
+                permanenceChartGIC2.update(); // Actualizar el gráfico 2
+            }
         } else {
-          const index2 = dataLabelsPermanenciaGIC2.indexOf(month);
-          if (index2 !== -1) {
-            permanenciaData2GIC[index2] = performance;
-            fondoData2GIC[index2] = area;
-            permanenceChartGIC2.update(); // Actualizar el gráfico 2
-          }
+            console.error('Error en la respuesta del servidor:', respuesta.data);
         }
-      } else {
-        console.error('Error en la respuesta del servidor:', response.data);
-      }
     })
     .catch(error => {
-      console.error('Error al guardar los datos:', error.response ? error.response.data : error.message);
+        console.error('Error al guardar los datos:', error.response ? error.response.data : error.message);
     });
-  });
+});
 
   // Obtener los datos actualizados del servidor
   function fetchDataPermanenciaGIC() {

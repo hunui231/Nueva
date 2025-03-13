@@ -19,8 +19,8 @@ class InventarioController extends Controller
     {
         $request->validate([
             'mes' => 'required|string',
-            'desempeno' => 'required|numeric|between:0,100', // Cambiado 'tendencia' a 'desempeno'
-            'area_cumplimiento' => 'required|numeric|between:0,100', // Cambiado 'area' a 'area_cumplimiento'
+            'desempeno' => 'nullable|numeric|between:0,100', // Cambiado 'tendencia' a 'desempeno'
+            'area_cumplimiento' => 'nullable|numeric|between:0,100', // Cambiado 'area' a 'area_cumplimiento'
         ]);
 
         // Actualizar o crear un registro

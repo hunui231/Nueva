@@ -50,7 +50,7 @@
 <h2 class="maspudo">Operacion MM</h2>
 
 <br>
-<h2>SCRAP Donaldson</h2>
+<h2 class="box-title">SCRAP Donaldson</h2>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -68,12 +68,10 @@
 <form id="formScrap1">
     <label for="monthScrap1">Mes:</label>
     <select id="monthScrap1" name="monthScrap1"></select><br><br>
-    @can('admin.update')
     <label for="desempeno1">Desempeño (%):</label>
-    <input type="number" id="desempeno1" name="desempeno1" min="0" max="100" step="0.01" required><br><br>
-    @endcan
+    <input type="number" id="desempeno1" name="desempeno1" min="0" max="100" step="0.01" ><br><br>
     <label for="areaCumplimiento1">Área de Cumplimiento (%):</label>
-    <input type="number" id="areaCumplimiento1" name="areaCumplimiento1" min="0" max="100" step="0.01" required><br><br>
+    <input type="number" id="areaCumplimiento1" name="areaCumplimiento1" min="0" max="100" step="0.01"><br><br>
 
     <button type="submit" class="button">Actualizar Gráfico</button>
 </form>
@@ -223,46 +221,44 @@
         }
     });
 
-    // Validar y actualizar el gráfico
     document.getElementById('formScrap1').addEventListener('submit', (event) => {
-        event.preventDefault();
+    event.preventDefault();
 
-        const month = monthSelectScrap1.value;
-        const desempeno = parseFloat(document.getElementById('desempeno1').value);
-        const areaCumplimiento = parseFloat(document.getElementById('areaCumplimiento1').value);
+    const month = document.getElementById('monthScrap1').value;
+    const desempeno = document.getElementById('desempeno1').value; // Obtener el valor como string
+    const areaCumplimiento = document.getElementById('areaCumplimiento1').value; // Obtener el valor como string
 
-        // Validar que los valores estén dentro del rango
-        if (desempeno < 0 || desempeno > 100 || areaCumplimiento < 0 || areaCumplimiento > 100) {
-            alert('Los valores deben estar entre 0% y 100%.');
-            return;
-        }
+    // Convertir a número solo si el campo no está vacío
+    const desempenoNum = desempeno === "" ? null : parseFloat(desempeno);
+    const areaCumplimientoNum = areaCumplimiento === "" ? null : parseFloat(areaCumplimiento);
 
-        // Enviar los datos al servidor
-        axios.post('/scrap-donaldson/store', {
-            mes: month,
-            desempeno: desempeno,
-            area_cumplimiento: areaCumplimiento,
-        })
-        .then(response => {
-            if (response.data.success) {
-                // Actualizar los datos del gráfico activo
-                const index = allMonths.indexOf(month);
-                if (currentChart === 1) {
-                    scrapChart1.data.datasets[0].data[index] = desempeno;
-                    scrapChart1.update();
-                } else {
-                    scrapChart2.data.datasets[0].data[index - 24] = desempeno; // Ajustar índice para el segundo gráfico
-                    scrapChart2.update();
-                }
+    // Enviar los datos al servidor (incluso si uno de los campos es null)
+    axios.post('/scrap-donaldson/store', {
+        mes: month,
+        desempeno: desempenoNum,
+        area_cumplimiento: areaCumplimientoNum,
+    })
+    .then(response => {
+        if (response.data.success) {
+            // Actualizar los datos del gráfico activo
+            const index = allMonths.indexOf(month);
+            if (currentChart === 1) {
+                if (desempenoNum !== null) scrapChart1.data.datasets[0].data[index] = desempenoNum;
+                if (areaCumplimientoNum !== null) scrapChart1.data.datasets[1].data[index] = areaCumplimientoNum;
+                scrapChart1.update();
             } else {
-                console.error('Error en la respuesta del servidor:', response.data);
+                if (desempenoNum !== null) scrapChart2.data.datasets[0].data[index - 24] = desempenoNum;
+                if (areaCumplimientoNum !== null) scrapChart2.data.datasets[1].data[index - 24] = areaCumplimientoNum;
+                scrapChart2.update();
             }
-        })
-        .catch(error => {
-            console.error('Error al guardar los datos:', error.response ? error.response.data : error.message);
-        });
+        } else {
+            console.error('Error en la respuesta del servidor:', response.data);
+        }
+    })
+    .catch(error => {
+        console.error('Error al guardar los datos:', error.response ? error.response.data : error.message);
     });
-
+});
     // Cargar los datos iniciales al cargar la página
     axios.get('/scrap-donaldson/get-data')
         .then(response => {
@@ -332,13 +328,12 @@
 <form id="formScrapTaller">
     <label for="monthScrapTaller">Mes:</label>
     <select id="monthScrapTaller" name="monthScrapTaller"></select><br><br>
-    @can('admin.update')
     <label for="desempenoTaller">Desempeño (%):</label>
-    <input type="number" id="desempenoTaller" name="desempenoTaller" min="0" max="100" step="0.01" required><br><br>
-    @endcan
+    <input type="number" id="desempenoTaller" name="desempenoTaller" min="0" max="100" step="0.01"><br><br>
+    @can('admin.update')
     <label for="areaCumplimientoTaller">Área de Cumplimiento (%):</label>
-    <input type="number" id="areaCumplimientoTaller" name="areaCumplimientoTaller" min="0" max="100" step="0.01" required><br><br>
-
+    <input type="number" id="areaCumplimientoTaller" name="areaCumplimientoTaller" min="0" max="100" step="0.01"><br><br>
+     @endcan
     <button type="submit" class="button">Actualizar Gráfico</button>
 </form>
 @endcan
@@ -351,7 +346,7 @@
     function generateMonthOptions() {
         const currentDate = new Date();
         const currentYear = currentDate.getFullYear();
-        const currentMontht = currentDate.getMonth();
+        const currentMonth2 = currentDate.getMonth();
 
         const monthSelect = document.getElementById('monthScrapTaller');
         monthSelect.innerHTML = ''; // Limpiar opciones anteriores
@@ -374,17 +369,21 @@
     const ctxTaller1 = document.getElementById('scrapChartTaller1').getContext('2d');
     const ctxTaller2 = document.getElementById('scrapChartTaller2').getContext('2d');
 
-    const monthsScrapTaller = ["ene-23", "feb-23", "mar-23", "abr-23", "may-23", "jun-23", "jul-23", "ago-23", "sep-23", "oct-23", "nov-23", "dic-23", "ene-24", "feb-24", "mar-24", "abr-24", "may-24", "jun-24", "jul-24", "ago-24", "sep-24", "oct-24", "nov-24", "dic-24"];
+    // Array original para el primer gráfico
+    const monthsScrapTaller1 = ["ene-23", "feb-23", "mar-23", "abr-23", "may-23", "jun-23", "jul-23", "ago-23", "sep-23", "oct-23", "nov-23", "dic-23", "ene-24", "feb-24", "mar-24", "abr-24", "may-24", "jun-24", "jul-24", "ago-24", "sep-24", "oct-24", "nov-24", "dic-24"];
+
+    // Array nuevo para el segundo gráfico
+    const monthsScrapTaller2 = ["ene-25", "feb-25", "mar-25", "abr-25", "may-25", "jun-25", "jul-25", "ago-25", "sep-25", "oct-25", "nov-25", "dic-25"];
 
     // Datos iniciales para ambos gráficos
     let scrapDataTaller1 = Array(24).fill(null); // Datos para el gráfico 1
-    let scrapDataTaller2 = Array(24).fill(0); // Datos para el gráfico 2
+    let scrapDataTaller2 = Array(12).fill(0); // Datos para el gráfico 2
 
     // Configuración del gráfico 1
     const scrapChartTaller1 = new Chart(ctxTaller1, {
         type: 'line',
         data: {
-            labels: monthsScrapTaller,
+            labels: monthsScrapTaller1,
             datasets: [
                 {
                     label: "Scrap %",
@@ -434,7 +433,7 @@
     const scrapChartTaller2 = new Chart(ctxTaller2, {
         type: 'line',
         data: {
-            labels: monthsScrapTaller,
+            labels: monthsScrapTaller2,
             datasets: [
                 {
                     label: "Scrap %",
@@ -446,7 +445,7 @@
                 },
                 {
                     label: "Límite",
-                    data: Array(24).fill(3.0), // Línea roja fija en 3.0%
+                    data: Array(12).fill(3.0), // Línea roja fija en 3.0%
                     borderColor: "red",
                     borderWidth: 2,
                     pointRadius: 0.1
@@ -492,61 +491,73 @@
     }
 
     // Seleccionar el mes actual en el formulario
-    const currentMontht = getCurrentMonth();
-    document.getElementById('monthScrapTaller').value = currentMontht;
+    const currentMonth2 = getCurrentMonth();
+    document.getElementById('monthScrapTaller').value = currentMonth2;
 
-    // Validar y actualizar el gráfico
     document.getElementById('formScrapTaller').addEventListener('submit', (event) => {
-        event.preventDefault();
+    event.preventDefault();
 
-        const month = document.getElementById('monthScrapTaller').value;
-        const desempeno = parseFloat(document.getElementById('desempenoTaller').value);
-        const areaCumplimiento = parseFloat(document.getElementById('areaCumplimientoTaller').value);
+    const month = document.getElementById('monthScrapTaller').value;
+    const desempeno = document.getElementById('desempenoTaller').value; // Obtener el valor como string
+    const areaCumplimiento = document.getElementById('areaCumplimientoTaller').value; // Obtener el valor como string
 
-        // Validar que los valores estén dentro del rango
-        if (desempeno < 0 || desempeno > 100 || areaCumplimiento < 0 || areaCumplimiento > 100) {
-            alert('Los valores deben estar entre 0% y 100%.');
-            return;
-        }
+    // Convertir a número solo si el campo no está vacío
+    const desempenoNum = desempeno === "" ? null : parseFloat(desempeno);
+    const areaCumplimientoNum = areaCumplimiento === "" ? null : parseFloat(areaCumplimiento);
 
-        // Enviar los datos al servidor
-        axios.post('/scrap-taller/store', {
-            mes: month,
-            desempeno: desempeno,
-            area_cumplimiento: areaCumplimiento,
-        })
-        .then(response => {
-            if (response.data.success) {
-                // Actualizar los datos del gráfico activo
-                const index = monthsScrapTaller.indexOf(month);
-                if (currentChartTaller === 1) {
-                    scrapChartTaller1.data.datasets[0].data[index] = desempeno;
-                    scrapChartTaller1.update();
-                } else {
-                    scrapChartTaller2.data.datasets[0].data[index] = desempeno;
-                    scrapChartTaller2.update();
-                }
+    // Validar que los valores estén dentro del rango (solo si no son null)
+    if ((desempenoNum !== null && (isNaN(desempenoNum) || desempenoNum < 0 || desempenoNum > 100))) {
+        alert('El valor de Desempeño debe estar entre 0% y 100%.');
+        return;
+    }
+    if ((areaCumplimientoNum !== null && (isNaN(areaCumplimientoNum) || areaCumplimientoNum < 0 || areaCumplimientoNum > 100))) {
+        alert('El valor de Área de Cumplimiento debe estar entre 0% y 100%.');
+        return;
+    }
+
+    // Enviar los datos al servidor (incluso si uno de los campos es null)
+    axios.post('/scrap-taller/store', {
+        mes: month,
+        desempeno: desempenoNum,
+        area_cumplimiento: areaCumplimientoNum,
+    })
+    .then(response => {
+        if (response.data.success) {
+            // Actualizar los datos del gráfico activo
+            const index = currentChartTaller === 1 ? monthsScrapTaller1.indexOf(month) : monthsScrapTaller2.indexOf(month);
+            if (currentChartTaller === 1) {
+                if (desempenoNum !== null) scrapChartTaller1.data.datasets[0].data[index] = desempenoNum;
+                if (areaCumplimientoNum !== null) scrapChartTaller1.data.datasets[1].data[index] = areaCumplimientoNum;
+                scrapChartTaller1.update();
             } else {
-                console.error('Error en la respuesta del servidor:', response.data);
+                if (desempenoNum !== null) scrapChartTaller2.data.datasets[0].data[index] = desempenoNum;
+                if (areaCumplimientoNum !== null) scrapChartTaller2.data.datasets[1].data[index] = areaCumplimientoNum;
+                scrapChartTaller2.update();
             }
-        })
-        .catch(error => {
-            console.error('Error al guardar los datos:', error.response ? error.response.data : error.message);
-        });
+        } else {
+            console.error('Error en la respuesta del servidor:', response.data);
+        }
+    })
+    .catch(error => {
+        console.error('Error al guardar los datos:', error.response ? error.response.data : error.message);
     });
-
+});
     // Cargar los datos iniciales al cargar la página
     axios.get('/scrap-taller/get-data')
         .then(response => {
             const data = response.data;
             data.forEach(item => {
-                const index = monthsScrapTaller.indexOf(item.mes);
-                if (index !== -1) {
-                    scrapChartTaller1.data.datasets[0].data[index] = item.desempeno;
-                    scrapChartTaller1.data.datasets[1].data[index] = item.area_cumplimiento;
+                const index1 = monthsScrapTaller1.indexOf(item.mes);
+                const index2 = monthsScrapTaller2.indexOf(item.mes);
+                if (index1 !== -1) {
+                    scrapChartTaller1.data.datasets[0].data[index1] = item.desempeno;
+                }
+                if (index2 !== -1) {
+                    scrapChartTaller2.data.datasets[0].data[index2] = item.desempeno;
                 }
             });
-            scrapChartTaller1.update(); // Actualizar el gráfico
+            scrapChartTaller1.update(); // Actualizar el gráfico 1
+            scrapChartTaller2.update(); // Actualizar el gráfico 2
         })
         .catch(error => {
             console.error('Error al obtener los datos:', error.response ? error.response.data : error.message);
@@ -579,6 +590,8 @@
     });
 </script>
 
+<p></p>
+
 <br><br>
 <h2 class="box-title">SCRAP Forjas</h2>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -598,13 +611,13 @@
 <form id="formScrapForjas">
     <label for="monthScrapForjas">Mes:</label>
     <select id="monthScrapForjas" name="monthScrapForjas"></select><br><br>
-    @can('admin.update')
+    
     <label for="desempenoForjas">Desempeño (%):</label>
-    <input type="number" id="desempenoForjas" name="desempenoForjas" min="0" max="100" step="0.01" required><br><br>
-    @endcan
+    <input type="number" id="desempenoForjas" name="desempenoForjas" min="0" max="100" step="0.01" ><br><br>
+    @can('admin.update')
     <label for="areaCumplimientoForjas">Área de Cumplimiento (%):</label>
-    <input type="number" id="areaCumplimientoForjas" name="areaCumplimientoForjas" min="0" max="100" step="0.01" required><br><br>
-
+    <input type="number" id="areaCumplimientoForjas" name="areaCumplimientoForjas" min="0" max="100" step="0.01" ><br><br>
+    @endcan
     <button type="submit" class="button">Actualizar Gráfico</button>
 </form>
 @endcan
@@ -756,45 +769,54 @@
         });
 
         // Validar y actualizar el gráfico
-        document.getElementById('formScrapForjas').addEventListener('submit', (event) => {
-            event.preventDefault();
+document.getElementById('formScrapForjas').addEventListener('submit', (event) => {
+    event.preventDefault();
 
-            const month = monthSelectForjas.value;
-            const desempeno = parseFloat(document.getElementById('desempenoForjas').value);
-            const areaCumplimiento = parseFloat(document.getElementById('areaCumplimientoForjas').value);
+    const month = monthSelectForjas.value;
+    const desempeno = document.getElementById('desempenoForjas').value; // Obtener el valor como string
+    const areaCumplimiento = document.getElementById('areaCumplimientoForjas').value; // Obtener el valor como string
 
-            // Validar que los valores estén dentro del rango
-            if (desempeno < 0 || desempeno > 100 || areaCumplimiento < 0 || areaCumplimiento > 100) {
-                alert('Los valores deben estar entre 0% y 100%.');
-                return;
+    // Convertir a número solo si el campo no está vacío
+    const desempenoNum = desempeno === "" ? null : parseFloat(desempeno);
+    const areaCumplimientoNum = areaCumplimiento === "" ? null : parseFloat(areaCumplimiento);
+
+    // Validar que los valores estén dentro del rango (solo si no son null)
+    if ((desempenoNum !== null && (isNaN(desempenoNum) || desempenoNum < 0 || desempenoNum > 100))) {
+        alert('El valor de Desempeño debe estar entre 0% y 100%.');
+        return;
+    }
+    if ((areaCumplimientoNum !== null && (isNaN(areaCumplimientoNum) || areaCumplimientoNum < 0 || areaCumplimientoNum > 100))) {
+        alert('El valor de Área de Cumplimiento debe estar entre 0% y 100%.');
+        return;
+    }
+
+    // Enviar los datos al servidor (incluso si uno de los campos es null)
+    axios.post('/scrap-forjas/store', {
+        mes: month,
+        desempeno: desempenoNum,
+        area_cumplimiento: areaCumplimientoNum,
+    })
+    .then(response => {
+        if (response.data.success) {
+            // Actualizar los datos del gráfico activo
+            const index = allMonths.indexOf(month);
+            if (currentChartForjas === 1) {
+                if (desempenoNum !== null) scrapChartForjas1.data.datasets[0].data[index] = desempenoNum;
+                if (areaCumplimientoNum !== null) scrapChartForjas1.data.datasets[1].data[index] = areaCumplimientoNum;
+                scrapChartForjas1.update();
+            } else {
+                if (desempenoNum !== null) scrapChartForjas2.data.datasets[0].data[index - 24] = desempenoNum;
+                if (areaCumplimientoNum !== null) scrapChartForjas2.data.datasets[1].data[index - 24] = areaCumplimientoNum;
+                scrapChartForjas2.update();
             }
-
-            // Enviar los datos al servidor
-            axios.post('/scrap-forjas/store', {
-                mes: month,
-                desempeno: desempeno,
-                area_cumplimiento: areaCumplimiento,
-            })
-            .then(response => {
-                if (response.data.success) {
-                    // Actualizar los datos del gráfico activo
-                    const index = allMonths.indexOf(month);
-                    if (currentChartForjas === 1) {
-                        scrapChartForjas1.data.datasets[0].data[index] = desempeno;
-                        scrapChartForjas1.update();
-                    } else {
-                        scrapChartForjas2.data.datasets[0].data[index - 24] = desempeno; // Ajustar índice para el segundo gráfico
-                        scrapChartForjas2.update();
-                    }
-                } else {
-                    console.error('Error en la respuesta del servidor:', response.data);
-                }
-            })
-            .catch(error => {
-                console.error('Error al guardar los datos:', error.response ? error.response.data : error.message);
-            });
-        });
-
+        } else {
+            console.error('Error en la respuesta del servidor:', response.data);
+        }
+    })
+    .catch(error => {
+        console.error('Error al guardar los datos:', error.response ? error.response.data : error.message);
+    });
+});
         // Cargar los datos iniciales al cargar la página
         axios.get('/scrap-forjas/get-data')
             .then(response => {
@@ -846,7 +868,7 @@
     })(); // Fin de la encapsulación
 </script>
 <br><br>
-<h2>Cumplimiento Plan de Producción Taller</h2>
+<h2 class="box-title">Cumplimiento Plan de Producción Taller</h2>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -865,13 +887,12 @@
 <form id="dataForm">
     <label for="monthSelect">Mes:</label>
     <select id="monthSelect" name="monthSelect"></select><br><br>
-    @can('admin.update')
     <label for="performanceInput">Desempeño (%):</label>
-    <input type="number" id="performanceInput" name="performanceInput" min="0" max="100" step="0.01" required><br><br>
-    @endcan
+    <input type="number" id="performanceInput" name="performanceInput" min="0" max="100" step="0.01" ><br><br>
+    @can('admin.update')
     <label for="complianceInput">Área de Cumplimiento (%):</label>
-    <input type="number" id="complianceInput" name="complianceInput" min="0" max="100" step="0.01" required><br><br>
-
+    <input type="number" id="complianceInput" name="complianceInput" min="0" max="100" step="0.01" ><br><br>
+    @endcan
     <button type="submit" class="button">Actualizar Gráfico</button>
 </form>
 @endcan
@@ -954,9 +975,11 @@
             const currentYear = new Date().getFullYear();
             const currentMonth = new Date().getMonth();
 
+            monthSelect.innerHTML = ''; // Limpiar opciones anteriores
+
+            // Generar meses desde el año actual hasta dos años en el futuro
             for (let year = currentYear; year <= currentYear + 2; year++) {
                 for (let month = 0; month < 12; month++) {
-                    if (year === currentYear && month < currentMonth) continue; // Skip past months
                     const date = new Date(year, month);
                     const monthName = date.toLocaleString('default', { month: 'short' });
                     const option = document.createElement('option');
@@ -970,41 +993,45 @@
         generateMonthOptions();
 
         document.getElementById('dataForm').addEventListener('submit', (event) => {
-            event.preventDefault();
+    event.preventDefault();
 
-            const month = monthSelect.value;
-            const performance = parseFloat(document.getElementById('performanceInput').value);
-            const compliance = parseFloat(document.getElementById('complianceInput').value);
+    const month = document.getElementById('monthSelect').value;
+    const performance = document.getElementById('performanceInput').value; // Obtener el valor como string
+    const compliance = document.getElementById('complianceInput').value; // Obtener el valor como string
 
-            if (performance < 0 || performance > 100 || compliance < 0 || compliance > 100) {
-                alert('Los valores deben estar entre 0% y 100%.');
-                return;
+    // Convertir a número solo si el campo no está vacío
+    const performanceNum = performance === "" ? null : parseFloat(performance);
+    const complianceNum = compliance === "" ? null : parseFloat(compliance);
+
+    console.log('Datos a enviar:', { month, performanceNum, complianceNum }); // Depuración
+
+    axios.post('/cumplimiento-taller/store', {
+        mes: month,
+        desempeno: performanceNum,
+        area_cumplimiento: complianceNum,
+    })
+    .then(response => {
+        if (response.data.success) {
+            // Actualizar los datos del gráfico activo
+            if (monthsChart1.includes(month)) {
+                const index = monthsChart1.indexOf(month);
+                if (performanceNum !== null) chart1.data.datasets[0].data[index] = performanceNum;
+                if (complianceNum !== null) chart1.data.datasets[1].data[index] = complianceNum;
+                chart1.update();
+            } else if (monthsChart2.includes(month)) {
+                const index = monthsChart2.indexOf(month);
+                if (performanceNum !== null) chart2.data.datasets[0].data[index] = performanceNum;
+                if (complianceNum !== null) chart2.data.datasets[1].data[index] = complianceNum;
+                chart2.update();
             }
-
-            axios.post('/cumplimiento-taller/store', {
-                mes: month,
-                desempeno: performance,
-                area_cumplimiento: compliance,
-            })
-            .then(response => {
-                if (response.data.success) {
-                    if (monthsChart1.includes(month)) {
-                        const index = monthsChart1.indexOf(month);
-                        chart1.data.datasets[0].data[index] = performance;
-                        chart1.update();
-                    } else if (monthsChart2.includes(month)) {
-                        const index = monthsChart2.indexOf(month);
-                        chart2.data.datasets[0].data[index] = performance;
-                        chart2.update();
-                    }
-                } else {
-                    console.error('Error en la respuesta del servidor:', response.data);
-                }
-            })
-            .catch(error => {
-                console.error('Error al guardar los datos:', error.response ? error.response.data : error.message);
-            });
-        });
+        } else {
+            console.error('Error en la respuesta del servidor:', response.data);
+        }
+    })
+    .catch(error => {
+        console.error('Error al guardar los datos:', error.response ? error.response.data : error.message);
+    });
+});
 
         axios.get('/cumplimiento-taller/get-data')
             .then(response => {
@@ -1046,7 +1073,7 @@
     })();
 </script>
 <br>
-<h2>Cumplimiento al Plan de Producción<br>Maquinados Forjas</h2>
+<h2 class="box-title">Cumplimiento al Plan de Producción<br>Maquinados Forjas</h2>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -1065,13 +1092,13 @@
 <form id="formForjasProduccion">
     <label for="monthForjasProduccion">Mes:</label>
     <select id="monthForjasProduccion" name="monthForjasProduccion"></select><br><br>
-    @can('admin.update')
+ 
     <label for="forjasProduccion">Desempeño (%):</label>
-    <input type="number" id="forjasProduccion" name="forjasProduccion" min="0" max="100" step="0.01" required><br><br>
-    @endcan
+    <input type="number" id="forjasProduccion" name="forjasProduccion" min="0" max="100" step="0.01" ><br><br>
+    @can('admin.update')
     <label for="forjasCumplimiento">Área de Cumplimiento (%):</label>
-    <input type="number" id="forjasCumplimiento" name="forjasCumplimiento" min="0" max="100" step="0.01" required><br><br>
-
+    <input type="number" id="forjasCumplimiento" name="forjasCumplimiento" min="0" max="100" step="0.01" ><br><br>
+    @endcan
     <button type="submit" class="button">Actualizar Gráfico</button>
 </form>
 @endcan
@@ -1213,67 +1240,79 @@
 
         // Función para generar opciones de meses dinámicamente
         function generateMonthOptions() {
-            const monthSelectForjasProduccion = document.getElementById('monthForjasProduccion');
-            const currentYear = new Date().getFullYear();
-            const currentMonth = new Date().getMonth();
+    const monthSelect = document.getElementById('monthForjasProduccion');
+    const currentYear = new Date().getFullYear();
+    const currentMonth = new Date().getMonth();
 
-            for (let year = currentYear; year <= currentYear + 2; year++) {
-                for (let month = 0; month < 12; month++) {
-                    if (year === currentYear && month < currentMonth) continue; // Saltar meses pasados
-                    const date = new Date(year, month);
-                    const monthName = date.toLocaleString('default', { month: 'short' });
-                    const option = document.createElement('option');
-                    option.value = `${monthName}-${year.toString().slice(-2)}`;
-                    option.textContent = `${monthName}-${year.toString().slice(-2)}`;
-                    monthSelectForjasProduccion.appendChild(option);
-                }
-            }
+    monthSelect.innerHTML = ''; // Limpiar opciones anteriores
+
+    // Generar meses desde el año actual hasta dos años en el futuro
+    for (let year = currentYear; year <= currentYear + 2; year++) {
+        for (let month = 0; month < 12; month++) {
+            const date = new Date(year, month);
+            const monthName = date.toLocaleString('default', { month: 'short' });
+            const option = document.createElement('option');
+            option.value = `${monthName}-${year.toString().slice(-2)}`;
+            option.textContent = `${monthName}-${year.toString().slice(-2)}`;
+            monthSelect.appendChild(option);
         }
+    }
+}
+        
 
         // Generar las opciones de meses en el formulario
         generateMonthOptions();
 
         // Validar y actualizar el gráfico
         document.getElementById('formForjasProduccion').addEventListener('submit', (event) => {
-            event.preventDefault();
+    event.preventDefault();
 
-            const month = document.getElementById('monthForjasProduccion').value;
-            const desempeno = parseFloat(document.getElementById('forjasProduccion').value);
-            const areaCumplimiento = parseFloat(document.getElementById('forjasCumplimiento').value);
+    const month = document.getElementById('monthForjasProduccion').value;
+    const desempeno = document.getElementById('forjasProduccion').value; // Obtener el valor como string
+    const areaCumplimiento = document.getElementById('forjasCumplimiento').value; // Obtener el valor como string
 
-            // Validar que los valores estén dentro del rango
-            if (desempeno < 0 || desempeno > 100 || areaCumplimiento < 0 || areaCumplimiento > 100) {
-                alert('Los valores deben estar entre 0% y 100%.');
-                return;
+    // Convertir a número solo si el campo no está vacío
+    const desempenoNum = desempeno === "" ? null : parseFloat(desempeno);
+    const areaCumplimientoNum = areaCumplimiento === "" ? null : parseFloat(areaCumplimiento);
+
+    // Validar que los valores estén dentro del rango (solo si no son null)
+    if ((desempenoNum !== null && (isNaN(desempenoNum) || desempenoNum < 0 || desempenoNum > 100))) {
+        alert('El valor de Desempeño debe estar entre 0% y 100%.');
+        return;
+    }
+    if ((areaCumplimientoNum !== null && (isNaN(areaCumplimientoNum) || areaCumplimientoNum < 0 || areaCumplimientoNum > 100))) {
+        alert('El valor de Área de Cumplimiento debe estar entre 0% y 100%.');
+        return;
+    }
+
+    // Enviar los datos al servidor (incluso si uno de los campos es null)
+    axios.post('/forjas-produccion/store', {
+        mes: month,
+        desempeno: desempenoNum,
+        area_cumplimiento: areaCumplimientoNum,
+    })
+    .then(response => {
+        if (response.data.success) {
+            // Actualizar los datos del gráfico activo
+            if (currentChartForjasProduccion === 1) {
+                const index = monthsForjasProduccion1.indexOf(month);
+                if (desempenoNum !== null) forjasProduccionChart1.data.datasets[0].data[index] = desempenoNum;
+                if (areaCumplimientoNum !== null) forjasProduccionChart1.data.datasets[1].data[index] = areaCumplimientoNum;
+                forjasProduccionChart1.update();
+            } else {
+                const index2 = monthsForjasProduccion2.indexOf(month);
+                if (desempenoNum !== null) forjasProduccionChart2.data.datasets[0].data[index2] = desempenoNum;
+                if (areaCumplimientoNum !== null) forjasProduccionChart2.data.datasets[1].data[index2] = areaCumplimientoNum;
+                forjasProduccionChart2.update();
             }
-
-            // Enviar los datos al servidor
-            axios.post('/forjas-produccion/store', {
-                mes: month,
-                desempeno: desempeno,
-                area_cumplimiento: areaCumplimiento,
-            })
-            .then(response => {
-                if (response.data.success) {
-                    // Actualizar los datos del gráfico activo
-                    const index = monthsForjasProduccion1.indexOf(month);
-                    if (currentChartForjasProduccion === 1) {
-                        forjasProduccionChart1.data.datasets[0].data[index] = desempeno;
-                        forjasProduccionChart1.update();
-                    } else {
-                        const index2 = monthsForjasProduccion2.indexOf(month);
-                        forjasProduccionChart2.data.datasets[0].data[index2] = desempeno;
-                        forjasProduccionChart2.update();
-                    }
-                } else {
-                    console.error('Error en la respuesta del servidor:', response.data);
-                }
-            })
-            .catch(error => {
-                console.error('Error al guardar los datos:', error.response ? error.response.data : error.message);
-            });
-        });
-
+        } else {
+            console.error('Error en la respuesta del servidor:', response.data);
+        }
+    })
+    .catch(error => {
+        console.error('Error al guardar los datos:', error.response ? error.response.data : error.message);
+    });
+});
         // Cargar los datos iniciales al cargar la página
         axios.get('/forjas-produccion/get-data')
             .then(response => {

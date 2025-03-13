@@ -21,7 +21,6 @@
     background-color: #45a049;
 
 }
-<style>
   .box-title {
     font-size: 28px;
     font-weight: bold;
@@ -52,13 +51,12 @@
   <label for="monthEntregaMateriales">Mes:</label>
   <select id="monthEntregaMateriales" name="monthEntregaMateriales">
   </select><br><br>
+  <label for="desempenoEntregaMateriales">Área de cumplimiento (%):</label>
+  <input type="number" id="desempenoEntregaMateriales" name="desempenoEntregaMateriales" min="0" max="100" step="0.01"><br><br>
   @can('admin.update')
-  <label for="desempenoEntregaMateriales">Desempeño (%):</label>
-  <input type="number" id="desempenoEntregaMateriales" name="desempenoEntregaMateriales" min="0" max="100" step="0.01" required><br><br>
- @endcan
-  <label for="areaCumplimientoEntregaMateriales">Área de cumplimiento (%):</label>
-  <input type="number" id="areaCumplimientoEntregaMateriales" name="areaCumplimientoEntregaMateriales" min="0" max="100" step="0.01" required><br><br>
-
+  <label for="areaCumplimientoEntregaMateriales">Desempeño (%):</label>
+  <input type="number" id="areaCumplimientoEntregaMateriales" name="areaCumplimientoEntregaMateriales" min="0" max="100" step="0.01" ><br><br>
+   @endcan
   <button type="submit" class="button">Actualizar Gráfico</button>
 </form>
 @endcan
@@ -93,8 +91,8 @@
   let desempenoData = Array(24).fill(100); // Datos iniciales para el gráfico 1
   let areaCumplimientoData = Array(24).fill(100); // Datos iniciales para el gráfico 1
 
-  let desempenoData2 = Array(12).fill(100); // Datos iniciales para el gráfico 2
-  let areaCumplimientoData2 = Array(12).fill(100); // Datos iniciales para el gráfico 2
+  let desempenoData2 = Array(12).fill(0); // Datos iniciales para el gráfico 2
+  let areaCumplimientoData2 = Array(12).fill(0); // Datos iniciales para el gráfico 2
 
   // Configuración del gráfico 1
   const grafico = new Chart(ctx, {
@@ -116,6 +114,7 @@
           borderColor: 'red',
           borderWidth: 2,
           pointRadius: 0,
+          spanGaps: true,
         },
       ],
     },
@@ -223,50 +222,50 @@
   monthSelectEntregaMateriales.value = currentMonthYear;
 
   // Validar y actualizar el gráfico
-  document.getElementById('dataFormEntregaMateriales').addEventListener('submit', (event) => {
-    event.preventDefault();
+  document.getElementById('dataFormEntregaMateriales').addEventListener('submit', (evento) => {
+    evento.preventDefault();
 
-    const month = monthSelectEntregaMateriales.value;
-    const desempeno = parseFloat(document.getElementById('desempenoEntregaMateriales').value);
-    const areaCumplimiento = parseFloat(document.getElementById('areaCumplimientoEntregaMateriales').value);
+    const mesSeleccionado = monthSelectEntregaMateriales.value;
+    const desempeno = document.getElementById('desempenoEntregaMateriales').value;
+    const areaCumplimiento = document.getElementById('areaCumplimientoEntregaMateriales').value;
 
-    // Validar que los valores estén dentro del rango
-    if (desempeno < 0 || desempeno > 100 || areaCumplimiento < 0 || areaCumplimiento > 100) {
-      alert('Los valores deben estar entre 0% y 100%.');
-      return;
+    // Convertir a número solo si el campo no está vacío
+    const desempenoNum = desempeno === "" ? null : parseFloat(desempeno);
+    const areaCumplimientoNum = areaCumplimiento === "" ? null : parseFloat(areaCumplimiento);
+
+    // Validar que los valores estén dentro del rango (solo si no son null)
+    if ((desempenoNum !== null && (desempenoNum < 0 || desempenoNum > 100))) {
+        alert('El valor de Desempeño debe estar entre 0% y 100%.');
+        return;
+    }
+    if ((areaCumplimientoNum !== null && (areaCumplimientoNum < 0 || areaCumplimientoNum > 100))) {
+        alert('El valor de Área de Cumplimiento debe estar entre 0% y 100%.');
+        return;
     }
 
     // Enviar los datos al servidor
     axios.post('/entrega-materiales/store', {
-      mes: month,
-      desempeno: desempeno,
-      area_cumplimiento: areaCumplimiento,
+        mes: mesSeleccionado,
+        desempeno: desempenoNum,
+        area_cumplimiento: areaCumplimientoNum,
     })
-    .then(response => {
-      if (response.data.success) {
-        // Actualizar los datos del gráfico
-        const index = dataLabels.indexOf(month);
-        if (index !== -1) {
-          desempenoData[index] = desempeno;
-          areaCumplimientoData[index] = areaCumplimiento;
-          grafico.update(); // Actualizar el gráfico 1
+    .then(respuesta => {
+        if (respuesta.data.success) {
+            // Actualizar los datos del segundo gráfico (el vacío)
+            const indice2 = dataLabels2.indexOf(mesSeleccionado);
+            if (indice2 !== -1) {
+                if (desempenoNum !== null) desempenoData2[indice2] = desempenoNum;
+                if (areaCumplimientoNum !== null) areaCumplimientoData2[indice2] = areaCumplimientoNum;
+                grafico2.update(); // Actualizar el gráfico 2
+            }
         } else {
-          const index2 = dataLabels2.indexOf(month);
-          if (index2 !== -1) {
-            desempenoData2[index2] = desempeno;
-            areaCumplimientoData2[index2] = areaCumplimiento;
-            grafico2.update(); // Actualizar el gráfico 2
-          }
+            console.error('Error en la respuesta del servidor:', respuesta.data);
         }
-      } else {
-        console.error('Error en la respuesta del servidor:', response.data);
-      }
     })
     .catch(error => {
-      console.error('Error al guardar los datos:', error.response ? error.response.data : error.message);
+        console.error('Error al guardar los datos:', error.response ? error.response.data : error.message);
     });
-  });
-
+});
   // Obtener los datos actualizados del servidor
   function fetchData() {
     axios.get('/entrega-materiales/get-data')
@@ -323,7 +322,7 @@
   });
 </script>
 <br><br>
-<h2>Información de Inventarios</h2>
+<h2 class="box-title">Información de Inventarios</h2>
 <canvas id="inventarioChart"></canvas>
 <canvas id="inventarioChart2" style="display: none;"></canvas> <!-- Nuevo gráfico oculto inicialmente -->
 
@@ -332,18 +331,17 @@
   <button id="nextChartInventario" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">Siguiente ▶</button>
 </div>
 
-<h2 class="box-title">Ingresar Datos - Inventarios</h2>
+<h2 >Ingresar Datos - Inventarios</h2>
 @can('logistica.update')
 <form id="dataFormInventario">
   <label for="monthInventario">Mes:</label>
   <select id="monthInventario" name="monthInventario"></select><br><br>
+  <label for="desempenoInventario">Área de Cumplimiento (%):</label>
+  <input type="number" id="desempenoInventario" name="desempenoInventario" min="0" max="100" step="0.01"><br><br>
   @can('admin.update')
-  <label for="desempenoInventario">Desempeño Inventario (%):</label>
-  <input type="number" id="desempenoInventario" name="desempenoInventario" min="0" max="100" step="0.01" required><br><br>
-  @endcan
-  <label for="areaCumplimientoInventario">Área de Cumplimiento (%):</label>
-  <input type="number" id="areaCumplimientoInventario" name="areaCumplimientoInventario" min="0" max="100" step="0.01" required><br><br>
-
+  <label for="areaCumplimientoInventario">Desempeño Inventario (%):</label>
+  <input type="number" id="areaCumplimientoInventario" name="areaCumplimientoInventario" min="0" max="100" step="0.01" ><br><br>
+   @endcan
   <button type="submit" class="button">Actualizar Gráfico</button>
 </form>
 @endcan
@@ -522,45 +520,46 @@
     evento.preventDefault();
 
     const mesSeleccionado = selectorMesInventario.value;
-    const desempeno = parseFloat(document.getElementById('desempenoInventario').value);
-    const areaCumplimiento = parseFloat(document.getElementById('areaCumplimientoInventario').value);
+    const desempeno = document.getElementById('desempenoInventario').value;
+    const areaCumplimiento = document.getElementById('areaCumplimientoInventario').value;
 
-    // Validar que los valores estén dentro del rango
-    if (desempeno < 0 || desempeno > 100 || areaCumplimiento < 0 || areaCumplimiento > 100) {
-      alert('Los valores deben estar entre 0% y 100%.');
-      return;
+    // Convertir a número solo si el campo no está vacío
+    const desempenoNum = desempeno === "" ? null : parseFloat(desempeno);
+    const areaCumplimientoNum = areaCumplimiento === "" ? null : parseFloat(areaCumplimiento);
+
+    // Validar que los valores estén dentro del rango (solo si no son null)
+    if ((desempenoNum !== null && (desempenoNum < 0 || desempenoNum > 100))) {
+        alert('El valor de Desempeño debe estar entre 0% y 100%.');
+        return;
+    }
+    if ((areaCumplimientoNum !== null && (areaCumplimientoNum < 0 || areaCumplimientoNum > 100))) {
+        alert('El valor de Área de Cumplimiento debe estar entre 0% y 100%.');
+        return;
     }
 
     // Enviar los datos al servidor
     axios.post('/inventario/store', {
-      mes: mesSeleccionado,
-      desempeno: desempeno,
-      area_cumplimiento: areaCumplimiento,
+        mes: mesSeleccionado,
+        desempeno: desempenoNum,
+        area_cumplimiento: areaCumplimientoNum,
     })
     .then(respuesta => {
-      if (respuesta.data.success) {
-        // Actualizar los datos del gráfico
-        const indice = dataLabelsInventario.indexOf(mesSeleccionado);
-        if (indice !== -1) {
-          desempenoDataInventario[indice] = desempeno;
-          areaCumplimientoDataInventario[indice] = areaCumplimiento;
-          inventarioChart.update(); // Actualizar el gráfico 1
+        if (respuesta.data.success) {
+            // Actualizar los datos del segundo gráfico (el vacío)
+            const indice2 = dataLabelsInventario2.indexOf(mesSeleccionado);
+            if (indice2 !== -1) {
+                if (desempenoNum !== null) desempenoDataInventario2[indice2] = desempenoNum;
+                if (areaCumplimientoNum !== null) areaCumplimientoDataInventario2[indice2] = areaCumplimientoNum;
+                inventarioChart2.update(); // Actualizar el gráfico 2
+            }
         } else {
-          const indice2 = dataLabelsInventario2.indexOf(mesSeleccionado);
-          if (indice2 !== -1) {
-            desempenoDataInventario2[indice2] = desempeno;
-            areaCumplimientoDataInventario2[indice2] = areaCumplimiento;
-            inventarioChart2.update(); // Actualizar el gráfico 2
-          }
+            console.error('Error en la respuesta del servidor:', respuesta.data);
         }
-      } else {
-        console.error('Error en la respuesta del servidor:', respuesta.data);
-      }
     })
     .catch(error => {
-      console.error('Error al guardar los datos:', error.response ? error.response.data : error.message);
+        console.error('Error al guardar los datos:', error.response ? error.response.data : error.message);
     });
-  });
+});
 
   // Obtener los datos actualizados del servidor
   function obtenerDatosInventario() {

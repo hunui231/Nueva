@@ -35,12 +35,12 @@
     <label for="monthScrap">Mes:</label>
     <select id="monthScrap" name="monthScrap"></select><br><br>
 
-    <label for="performanceScrap">Desempeño (%):</label>
-    <input type="number" id="performanceScrap" name="performanceScrap" min="0" max="100" step="0.01" required><br><br>
-
-    <label for="areaScrap">Área de cumplimiento (%):</label>
-    <input type="number" id="areaScrap" name="areaScrap" min="0" max="100" step="0.01" required><br><br>
-
+    <label for="performanceScrap">Área de cumplimiento (%):</label>
+    <input type="number" id="performanceScrap" name="performanceScrap" min="0" max="100" step="0.01" ><br><br>
+    @can('admin.update')
+    <label for="areaScrap">Desempeño (%): </label>
+    <input type="number" id="areaScrap" name="areaScrap" min="0" max="100" step="0.01"><br><br>
+    @endcan
     <button type="submit" class="button">Actualizar Gráfico</button>
 </form>
 @endcan
@@ -207,50 +207,53 @@
     // Establecer el valor predeterminado como el mes actual
     selectorMesScrap.value = mesAnioActual;
 
-    // Validar y actualizar el gráfico
-    document.getElementById('dataFormScrap').addEventListener('submit', (evento) => {
-        evento.preventDefault();
+    let currentScrapChart
 
-        const mesSeleccionado = selectorMesScrap.value;
-        const desempeno = parseFloat(document.getElementById('performanceScrap').value);
-        const area = parseFloat(document.getElementById('areaScrap').value);
+ // Validar y actualizar el gráfico
+document.getElementById('dataFormScrap').addEventListener('submit', (evento) => {
+    evento.preventDefault();
 
-        // Validar que los valores estén dentro del rango
-        if (desempeno < 0 || desempeno > 100 || area < 0 || area > 100) {
-            alert('Los valores deben estar entre 0% y 100%.');
-            return;
-        }
+    const mesSeleccionado = selectorMesScrap.value;
+    const desempeno = document.getElementById('performanceScrap').value; // Obtener el valor como string
+    const area = document.getElementById('areaScrap').value; // Obtener el valor como string
 
-        // Enviar los datos al servidor
-        axios.post('/scrap/store', {
-            mes: mesSeleccionado,
-            desempeno: desempeno,
-            area_cumplimiento: area,
-        })
-        .then(respuesta => {
-            if (respuesta.data.success) {
-                // Actualizar los datos del gráfico activo
+    // Convertir a número solo si el campo no está vacío
+    const desempenoNum = desempeno === "" ? null : parseFloat(desempeno);
+    const areaNum = area === "" ? null : parseFloat(area);
+
+
+    // Enviar los datos al servidor (incluso si uno de los campos es null)
+    axios.post('/scrap/store', {
+        mes: mesSeleccionado,
+        desempeno: desempenoNum,
+        area_cumplimiento: areaNum,
+    })
+    .then(respuesta => {
+        if (respuesta.data.success) {
+            // Actualizar los datos del gráfico activo
+            if (currentScrapChart === 1) {
                 const indice = dataLabelsScrap.indexOf(mesSeleccionado);
-                if (currentScrapChart === 1) {
-                    desempenoDataScrap1[indice] = desempeno;
-                    areaDataScrap1[indice] = area;
+                if (indice !== -1) {
+                    if (desempenoNum !== null) desempenoDataScrap1[indice] = desempenoNum;
+                    if (areaNum !== null) areaDataScrap1[indice] = areaNum;
                     scrapChart.update();
-                } else {
-                    const indice2 = dataLabelsScrap2.indexOf(mesSeleccionado);
-                    if (indice2 !== -1) {
-                        desempenoDataScrap2[indice2] = desempeno;
-                        areaDataScrap2[indice2] = area;
-                        scrapChart2.update();
-                    }
                 }
             } else {
-                console.error('Error en la respuesta del servidor:', respuesta.data);
+                const indice2 = dataLabelsScrap2.indexOf(mesSeleccionado);
+                if (indice2 !== -1) {
+                    if (desempenoNum !== null) desempenoDataScrap2[indice2] = desempenoNum;
+                    if (areaNum !== null) areaDataScrap2[indice2] = areaNum;
+                    scrapChart2.update();
+                }
             }
-        })
-        .catch(error => {
-            console.error('Error al guardar los datos:', error.response ? error.response.data : error.message);
-        });
+        } else {
+            console.error('Error en la respuesta del servidor:', respuesta.data);
+        }
+    })
+    .catch(error => {
+        console.error('Error al guardar los datos:', error.response ? error.response.data : error.message);
     });
+});
 
     // Cargar los datos iniciales al cargar la página
     function obtenerDatosScrap() {
@@ -316,19 +319,18 @@
   <button id="prevChartRendimiento" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">◀ Anterior</button>
   <button id="nextChartRendimiento" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">Siguiente ▶</button>
 </div>
-
 <h2>Actualizar Datos de Rendimiento Operacional CI</h2>
 @can('produccion.update')
 <form id="dataFormRendimiento">
     <label for="monthRendimiento">Mes:</label>
     <select id="monthRendimiento" name="monthRendimiento"></select><br><br>
 
-    <label for="performanceRendimiento">Desempeño (%):</label>
-    <input type="number" id="performanceRendimiento" name="performanceRendimiento" min="0" max="100" step="0.01" required><br><br>
-
-    <label for="areaRendimiento">Área de cumplimiento (%):</label>
-    <input type="number" id="areaRendimiento" name="areaRendimiento" min="0" max="100" step="0.01" required><br><br>
-
+    <label for="performanceRendimiento">Área de cumplimiento (%):</label>
+    <input type="number" id="performanceRendimiento" name="performanceRendimiento" min="0" max="100" step="0.01" ><br><br>
+    @can('admin.update')
+    <label for="areaRendimiento">Desempeño (%):</label>
+    <input type="number" id="areaRendimiento" name="areaRendimiento" min="0" max="100" step="0.01" ><br><br>
+     @endcan
     <button type="submit" class="button">Actualizar Gráfico</button>
 </form>
 @endcan
@@ -429,19 +431,20 @@
           data: desempenoDataRend2,
           borderColor: '#007bff',
           backgroundColor: '#007bff',
-          fill: false,
+          fill: true,
           tension: 0.3,
-          spanGaps: true, // Permitir dibujar líneas incluso si hay gaps
+          spanGaps: true, 
+      
         },
         {
           label: 'Área de cumplimiento',
           data: areaDataRend2,
           borderColor: 'red',
           backgroundColor: 'red',
-          fill: false,
+          fill: true,
           borderWidth: 2,
           tension: 0.1,
-          spanGaps: true, // Permitir dibujar líneas incluso si hay gaps
+          spanGaps: true, 
         }
       ]
     },
@@ -495,50 +498,42 @@
   // Establecer el valor predeterminado como el mes actual
   selectorMesRend.value = mesAnioActualRend;
 
-  // Validar y actualizar el gráfico
+  let currentChartRendimiento=1;
   document.getElementById('dataFormRendimiento').addEventListener('submit', (evento) => {
     evento.preventDefault();
 
     const mesSeleccionado = selectorMesRend.value;
-    const desempeno = parseFloat(document.getElementById('performanceRendimiento').value);
-    const area = parseFloat(document.getElementById('areaRendimiento').value);
+    const desempeno = document.getElementById('performanceRendimiento').value;
+    const area = document.getElementById('areaRendimiento').value;
 
-    // Validar que los valores estén dentro del rango
-    if (desempeno < 0 || desempeno > 100 || area < 0 || area > 100) {
-      alert('Los valores deben estar entre 0% y 100%.');
-      return;
-    }
+    // Convertir a número solo si el campo no está vacío
+    const desempenoNum = desempeno === "" ? null : parseFloat(desempeno);
+    const areaNum = area === "" ? null : parseFloat(area);
 
+    
     // Enviar los datos al servidor
     axios.post('/rendimiento/store', {
-      mes: mesSeleccionado,
-      desempeno: desempeno,
-      area_cumplimiento: area,
+        mes: mesSeleccionado,
+        desempeno: desempenoNum,
+        area_cumplimiento: areaNum,
     })
     .then(respuesta => {
-      if (respuesta.data.success) {
-        // Actualizar los datos del gráfico activo
-        const indice = dataLabelsRend.indexOf(mesSeleccionado);
-        if (currentChartRendimiento === 1) {
-          desempenoDataRend[indice] = desempeno;
-          areaDataRend[indice] = area;
-          rendimientoChart.update();
+        if (respuesta.data.success) {
+            // Actualizar los datos del segundo gráfico (el vacío)
+            const indice2 = dataLabelsRend2.indexOf(mesSeleccionado);
+            if (indice2 !== -1) {
+                if (desempenoNum !== null) desempenoDataRend2[indice2] = desempenoNum;
+                if (areaNum !== null) areaDataRend2[indice2] = areaNum;
+                rendimientoChart2.update(); // Actualizar el gráfico 2
+            }
         } else {
-          const indice2 = dataLabelsRend2.indexOf(mesSeleccionado);
-          if (indice2 !== -1) {
-            desempenoDataRend2[indice2] = desempeno;
-            areaDataRend2[indice2] = area;
-            rendimientoChart2.update();
-          }
+            console.error('Error en la respuesta del servidor:', respuesta.data);
         }
-      } else {
-        console.error('Error en la respuesta del servidor:', respuesta.data);
-      }
     })
     .catch(error => {
-      console.error('Error al guardar los datos:', error.response ? error.response.data : error.message);
+        console.error('Error al guardar los datos:', error.response ? error.response.data : error.message);
     });
-  });
+});
 
   // Cargar los datos iniciales al cargar la página
   function obtenerDatosRendimiento() {
@@ -614,12 +609,12 @@
     <label for="monthProduccion">Mes:</label>
     <select id="monthProduccion" name="monthProduccion"></select><br><br>
 
-    <label for="performanceProduccion">Desempeño (%):</label>
-    <input type="number" id="performanceProduccion" name="performanceProduccion" min="0" max="100" step="0.01" required><br><br>
-
-    <label for="areaProduccion">Área de cumplimiento (%):</label>
-    <input type="number" id="areaProduccion" name="areaProduccion" min="0" max="100" step="0.01" required><br><br>
-
+    <label for="performanceProduccion">Área de cumplimiento (%):</label>
+    <input type="number" id="performanceProduccion" name="performanceProduccion" min="0" max="100" step="0.01"><br><br>
+    @can('admin.update')
+    <label for="areaProduccion">Desempeño (%):</label>
+    <input type="number" id="areaProduccion" name="areaProduccion" min="0" max="100" step="0.01"><br><br>
+    @endcan
     <button type="submit" class="button">Actualizar Gráfico</button>
 </form>
 @endcan
@@ -715,20 +710,20 @@
                 {
                     label: 'Cumplimiento',
                     data: cumplimientoDataProd2,
-                    borderColor: 'red',
+                    borderColor: '#007bff',
                     backgroundColor: 'transparent',
                     tension: 0.3,
-                    pointBackgroundColor: 'red',
+                    pointBackgroundColor: '#007bff',
                     fill: false,
                     spanGaps: true, // Permitir dibujar líneas incluso si hay gaps
                 },
                 {
                     label: 'Meta',
                     data: metaDataProd2,
-                    borderColor: '#007bff',
-                    backgroundColor: '#007bff',
+                    borderColor: 'red',
+                    backgroundColor: '#red',
                     tension: 0.1,
-                    pointBackgroundColor: '#007bff',
+                    pointBackgroundColor: '#red',
                     fill: false,
                     spanGaps: true, // Permitir dibujar líneas incluso si hay gaps
                 }
@@ -782,51 +777,42 @@
     // Establecer el valor predeterminado como el mes actual
     selectorMesProduccion.value = mesAnioActualProd;
 
-    // Validar y actualizar el gráfico
     document.getElementById('dataFormProduccion').addEventListener('submit', (evento) => {
-        evento.preventDefault();
+    evento.preventDefault();
 
-        const mesSeleccionado = selectorMesProduccion.value;
-        const desempeno = parseFloat(document.getElementById('performanceProduccion').value);
-        const area = parseFloat(document.getElementById('areaProduccion').value);
+    const mesSeleccionado = selectorMesProduccion.value;
+    const desempeno = document.getElementById('performanceProduccion').value;
+    const area = document.getElementById('areaProduccion').value;
 
-        // Validar que los valores estén dentro del rango
-        if (desempeno < 0 || desempeno > 100 || area < 0 || area > 100) {
-            alert('Los valores deben estar entre 0% y 100%.');
-            return;
-        }
+    // Convertir a número solo si el campo no está vacío
+    const desempenoNum = desempeno === "" ? null : parseFloat(desempeno);
+    const areaNum = area === "" ? null : parseFloat(area);
 
-        // Enviar los datos al servidor
-        axios.post('/produccion/store', {
-            mes: mesSeleccionado,
-            desempeno: desempeno,
-            area_cumplimiento: area,
-        })
-        .then(respuesta => {
-            if (respuesta.data.success) {
-                // Actualizar los datos del gráfico activo
-                const indice = dataLabelsProduccion.indexOf(mesSeleccionado);
-                if (currentChartProduccion === 1) {
-                    cumplimientoDataProd[indice] = desempeno;
-                    metaDataProd[indice] = area;
-                    productionChart.update();
-                } else {
-                    const indice2 = dataLabelsProduccion2.indexOf(mesSeleccionado);
-                    if (indice2 !== -1) {
-                        cumplimientoDataProd2[indice2] = desempeno;
-                        metaDataProd2[indice2] = area;
-                        productionChart2.update();
-                    }
-                }
-            } else {
-                console.error('Error en la respuesta del servidor:', respuesta.data);
+    
+
+    // Enviar los datos al servidor
+    axios.post('/produccion/store', {
+        mes: mesSeleccionado,
+        desempeno: desempenoNum,
+        area_cumplimiento: areaNum,
+    })
+    .then(respuesta => {
+        if (respuesta.data.success) {
+            // Actualizar los datos del segundo gráfico (el vacío)
+            const indice2 = dataLabelsProduccion2.indexOf(mesSeleccionado);
+            if (indice2 !== -1) {
+                if (desempenoNum !== null) cumplimientoDataProd2[indice2] = desempenoNum;
+                if (areaNum !== null) metaDataProd2[indice2] = areaNum;
+                productionChart2.update(); // Actualizar el gráfico 2
             }
-        })
-        .catch(error => {
-            console.error('Error al guardar los datos:', error.response ? error.response.data : error.message);
-        });
+        } else {
+            console.error('Error en la respuesta del servidor:', respuesta.data);
+        }
+    })
+    .catch(error => {
+        console.error('Error al guardar los datos:', error.response ? error.response.data : error.message);
     });
-
+});
     // Cargar los datos iniciales al cargar la página
     function obtenerDatosProduccion() {
         axios.get('/produccion/get-data')

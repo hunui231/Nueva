@@ -33,22 +33,19 @@
 <form id="dataFormClientes">
   <label for="monthClientes">Mes:</label>
   <select id="monthClientes" name="monthClientes"></select><br><br>
+  <label for="performanceClientes">Área de cumplimiento (%):</label>
+  <input type="number" id="performanceClientes" name="performanceClientes" min="0" max="100" step="0.01" ><br><br>
   @can('admin.update')
-  <label for="performanceClientes">Desempeño (%):</label>
-  <input type="number" id="performanceClientes" name="performanceClientes" min="0" max="100" step="0.01" required><br><br>
+  <label for="areaClientes">Desempeño (%): </label>
+  <input type="number" id="areaClientes" name="areaClientes" min="0" max="100" step="0.01" ><br><br>
   @endcan
-  <label for="areaClientes">Área de cumplimiento (%):</label>
-  <input type="number" id="areaClientes" name="areaClientes" min="0" max="100" step="0.01" required><br><br>
-
   <button type="submit" class="button">Actualizar Gráfico</button>
 </form>
 @endcan
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
-  // Configurar el token CSRF en Axios
   axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-
-  // Datos iniciales del gráfico 1
+  
   const ctxClientes = document.getElementById('clientesChart').getContext('2d');
   const ctxClientes2 = document.getElementById('clientesChart2').getContext('2d');
 
@@ -64,10 +61,9 @@
   let datosClientes1 = [10, 12, 9, 11, 8, 14, 13, 17, 12, 15, 6, 3, 10, 14, 7, 9, 6, 10, 7, 9, 8, 7, 10, 18];
   let datosMeta1 = [4, 4, 4, 4, 4, 6, 6, 6, 6, 6, 6, 6, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7];
 
-  let datosClientes2 = [12, 14, 10, 13, 9, 15, 14, 18, 13, 16, 7, 4];
-  let datosMeta2 = [8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8];
+  let datosClientes2 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+  let datosMeta2 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
-  // Configuración del gráfico 1
   const graficoClientes1 = new Chart(ctxClientes, {
     type: 'line',
     data: {
@@ -180,7 +176,7 @@
     opcion.value = mes;
     opcion.textContent = mes;
     if (mes !== mesAnioActual) {
-      opcion.disabled = true; // Deshabilitar meses que no sean el actual
+      opcion.disabled = false; // Deshabilitar meses que no sean el actual
     }
     selectorMes.appendChild(opcion);
   });
@@ -192,46 +188,53 @@
     evento.preventDefault();
 
     const mesSeleccionado = selectorMes.value;
-    const desempeno = parseFloat(document.getElementById('performanceClientes').value);
-    const area = parseFloat(document.getElementById('areaClientes').value);
+    const desempeno = document.getElementById('performanceClientes').value; // Obtener el valor como string
+    const area = document.getElementById('areaClientes').value; // Obtener el valor como string
 
-    // Validar que los valores estén dentro del rango
-    if (desempeno < 0 || desempeno > 100 || area < 0 || area > 100) {
-      alert('Los valores deben estar entre 0% y 100%.');
-      return;
+    // Convertir a número solo si el campo no está vacío
+    const desempenoNum = desempeno === "" ? null : parseFloat(desempeno);
+    const areaNum = area === "" ? null : parseFloat(area);
+
+    // Validar que los valores estén dentro del rango (solo si no son null)
+    if ((desempenoNum !== null && (isNaN(desempenoNum) || desempenoNum < 0 || desempenoNum > 100))) {
+        alert('El valor de Desempeño debe estar entre 0% y 100%.');
+        return;
+    }
+    if ((areaNum !== null && (isNaN(areaNum) || areaNum < 0 || areaNum > 100))) {
+        alert('El valor de Área de Cumplimiento debe estar entre 0% y 100%.');
+        return;
     }
 
-    // Enviar los datos al servidor
+    // Enviar los datos al servidor (incluso si uno de los campos es null)
     axios.post('/clientes-nuevos/store', {
-      mes: mesSeleccionado,
-      desempeno: desempeno,
-      area_cumplimiento: area,
+        mes: mesSeleccionado,
+        desempeno: desempenoNum,
+        area_cumplimiento: areaNum,
     })
     .then(respuesta => {
-      if (respuesta.data.success) {
-        // Actualizar los datos del gráfico activo
-        const indice = mesesClientes1.indexOf(mesSeleccionado);
-        if (graficoActual === 1) {
-          datosClientes1[indice] = desempeno;
-          datosMeta1[indice] = area;
-          graficoClientes1.update();
+        if (respuesta.data.success) {
+            // Actualizar los datos del gráfico activo
+            if (graficoActual === 1) {
+                const indice = mesesClientes1.indexOf(mesSeleccionado);
+                if (desempenoNum !== null) datosClientes1[indice] = desempenoNum;
+                if (areaNum !== null) datosMeta1[indice] = areaNum;
+                graficoClientes1.update();
+            } else {
+                const indice2 = mesesClientes2.indexOf(mesSeleccionado);
+                if (indice2 !== -1) {
+                    if (desempenoNum !== null) datosClientes2[indice2] = desempenoNum;
+                    if (areaNum !== null) datosMeta2[indice2] = areaNum;
+                    graficoClientes2.update();
+                }
+            }
         } else {
-          const indice2 = mesesClientes2.indexOf(mesSeleccionado);
-          if (indice2 !== -1) {
-            datosClientes2[indice2] = desempeno;
-            datosMeta2[indice2] = area;
-            graficoClientes2.update();
-          }
+            console.error('Error en la respuesta del servidor:', respuesta.data);
         }
-      } else {
-        console.error('Error en la respuesta del servidor:', respuesta.data);
-      }
     })
     .catch(error => {
-      console.error('Error al guardar los datos:', error.response ? error.response.data : error.message);
+        console.error('Error al guardar los datos:', error.response ? error.response.data : error.message);
     });
-  });
-
+});
   // Cargar los datos iniciales al cargar la página
   function cargarDatos() {
     axios.get('/clientes-nuevos/get-data')
@@ -302,13 +305,12 @@
 <form id="dataFormVentas">
   <label for="monthVentas">Mes:</label>
   <select id="monthVentas" name="monthVentas"></select><br><br>
+  <label for="performanceVentas">Área de cumplimiento (%):</label>
+  <input type="number" id="performanceVentas" name="performanceVentas" min="0" step="0.01" ><br><br>
   @can('admin.update')
-  <label for="performanceVentas">Desempeño (%):</label>
-  <input type="number" id="performanceVentas" name="performanceVentas" min="0" max="100" step="0.01" required><br><br>
- @endcan
-  <label for="areaVentas">Área de cumplimiento (%):</label>
-  <input type="number" id="areaVentas" name="areaVentas" min="0" max="100" step="0.01" required><br><br>
-
+  <label for="areaVentas"> Desempeño (%):</label>
+  <input type="number" id="areaVentas" name="areaVentas" min="0" step="0.01" ><br><br>
+  @endcan
   <button type="submit" class="button">Actualizar Gráfico</button>
 </form>
 @endcan
@@ -454,7 +456,7 @@
         option.textContent = fullLabel;
 
         if (year === currentYear && month < currentMonth) {
-          option.disabled = true; // Deshabilitar meses pasados
+          option.disabled = false; // Deshabilitar meses pasados
         }
 
         monthSelectVentas.appendChild(option);
@@ -472,38 +474,55 @@
     event.preventDefault();
 
     const month = monthSelectVentas.value;
-    const performance = parseFloat(document.getElementById('performanceVentas').value);
-    const area = parseFloat(document.getElementById('areaVentas').value);
+    const performance = document.getElementById('performanceVentas').value; // Obtener el valor como string
+    const area = document.getElementById('areaVentas').value; // Obtener el valor como string
 
-    // Validar que los valores estén dentro del rango
-    if (performance < 0 || performance > 100 || area < 0 || area > 100) {
-      alert('Los valores deben estar entre 0% y 100%.');
-      return;
+    // Convertir a número solo si el campo no está vacío
+    const performanceNum = performance === "" ? null : parseFloat(performance);
+    const areaNum = area === "" ? null : parseFloat(area);
+
+    // Validar que los valores no sean negativos (solo si no son null)
+    if ((performanceNum !== null && performanceNum < 0)) {
+        alert('El valor de Desempeño no puede ser negativo.');
+        return;
+    }
+    if ((areaNum !== null && areaNum < 0)) {
+        alert('El valor de Área de Cumplimiento no puede ser negativo.');
+        return;
     }
 
-    // Enviar los datos al servidor
+    // Enviar los datos al servidor (incluso si uno de los campos es null)
     axios.post('/ventas/store', {
-      mes: month,
-      desempeno: performance,
-      area_cumplimiento: area,
+        mes: month,
+        desempeno: performanceNum,
+        area_cumplimiento: areaNum,
     })
     .then(response => {
-      if (response.data.success) {
-        // Actualizar los datos del gráfico
-        const index = months.indexOf(month);
-        if (index !== -1) {
-          salesChart.data.datasets[0].data[index] = performance;
-          salesChart.update(); // Actualizar el gráfico
+        if (response.data.success) {
+            // Actualizar los datos del gráfico activo
+            if (currentChartVentas === 1) {
+                const index = months.indexOf(month);
+                if (index !== -1) {
+                    if (performanceNum !== null) salesChart.data.datasets[0].data[index] = performanceNum;
+                    if (areaNum !== null) salesChart.data.datasets[1].data[index] = areaNum;
+                    salesChart.update();
+                }
+            } else {
+                const index2 = months2.indexOf(month);
+                if (index2 !== -1) {
+                    if (performanceNum !== null) salesChart2.data.datasets[0].data[index2] = performanceNum;
+                    if (areaNum !== null) salesChart2.data.datasets[1].data[index2] = areaNum;
+                    salesChart2.update();
+                }
+            }
+        } else {
+            console.error('Error en la respuesta del servidor:', response.data);
         }
-      } else {
-        console.error('Error en la respuesta del servidor:', response.data);
-      }
     })
     .catch(error => {
-      console.error('Error al guardar los datos:', error.response ? error.response.data : error.message);
+        console.error('Error al guardar los datos:', error.response ? error.response.data : error.message);
     });
-  });
-
+});
   // Cargar los datos iniciales al cargar la página
   axios.get('/ventas/get-data')
     .then(response => {
