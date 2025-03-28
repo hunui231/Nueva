@@ -56,7 +56,7 @@
   @can('admin.update')
   <label for="areaCumplimientoEntregaMateriales">Desempeño (%):</label>
   <input type="number" id="areaCumplimientoEntregaMateriales" name="areaCumplimientoEntregaMateriales" min="0" max="100" step="0.01" ><br><br>
-   @endcan
+  @endcan
   <button type="submit" class="button">Actualizar Gráfico</button>
 </form>
 @endcan
@@ -251,12 +251,11 @@
     })
     .then(respuesta => {
         if (respuesta.data.success) {
-            // Actualizar los datos del segundo gráfico (el vacío)
             const indice2 = dataLabels2.indexOf(mesSeleccionado);
             if (indice2 !== -1) {
                 if (desempenoNum !== null) desempenoData2[indice2] = desempenoNum;
                 if (areaCumplimientoNum !== null) areaCumplimientoData2[indice2] = areaCumplimientoNum;
-                grafico2.update(); // Actualizar el gráfico 2
+                grafico2.update(); 
             }
         } else {
             console.error('Error en la respuesta del servidor:', respuesta.data);
@@ -266,7 +265,6 @@
         console.error('Error al guardar los datos:', error.response ? error.response.data : error.message);
     });
 });
-  // Obtener los datos actualizados del servidor
   function fetchData() {
     axios.get('/entrega-materiales/get-data')
       .then(response => {
@@ -330,18 +328,20 @@
   <button id="prevChartInventario" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">◀ Anterior</button>
   <button id="nextChartInventario" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">Siguiente ▶</button>
 </div>
+<div id="ultimaActualizacionInventario" style="margin-top: 5px; font-size: 12px;"></div>
+</div>
 
 <h2 >Ingresar Datos - Inventarios</h2>
 @can('logistica.update')
 <form id="dataFormInventario">
   <label for="monthInventario">Mes:</label>
   <select id="monthInventario" name="monthInventario"></select><br><br>
-  <label for="desempenoInventario">Área de Cumplimiento (%):</label>
+  <label for="desempenoInventario"> Desempeño Inventario (%):</label>
   <input type="number" id="desempenoInventario" name="desempenoInventario" min="0" max="100" step="0.01"><br><br>
   @can('admin.update')
-  <label for="areaCumplimientoInventario">Desempeño Inventario (%):</label>
+  <label for="areaCumplimientoInventario">Área de Cumplimiento (%):</label>
   <input type="number" id="areaCumplimientoInventario" name="areaCumplimientoInventario" min="0" max="100" step="0.01" ><br><br>
-   @endcan
+  @endcan
   <button type="submit" class="button">Actualizar Gráfico</button>
 </form>
 @endcan
@@ -365,7 +365,6 @@
         opciones.push(`${mes}-${anio.toString().slice(-2)}`);
       });
     }
-
     return opciones;
   }
 
@@ -396,7 +395,7 @@
           pointRadius: 4,
           fill: false,
           tension: 0.3,
-          spanGaps: true, // Permitir dibujar líneas incluso si hay gaps
+          spanGaps: true, 
         },
         {
           label: "Área de Cumplimiento",
@@ -506,90 +505,182 @@
   // Formatear el mes abreviado (ej: "Feb")
   const mesActual = fechaActual.toLocaleString('default', { month: 'short' }).toLowerCase();
 
-  // Formatear el año en dos dígitos (ej: "25")
   const anioActual = fechaActual.getFullYear().toString().slice(-2);
 
-  // Crear el formato "MMM-AA" (ej: "Feb-25")
   const mesAnioActual = `${mesActual}-${anioActual}`;
 
-  // Establecer el valor predeterminado como el mes actual
   selectorMesInventario.value = mesAnioActual;
 
-  // Validar y actualizar el gráfico
-  document.getElementById('dataFormInventario').addEventListener('submit', (evento) => {
-    evento.preventDefault();
+ // Función para mostrar última actualización
+function mostrarUltimaActualizacion() {
+  const ahora = new Date();
+  const fechaHora = ahora.toLocaleString('es-ES', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+  document.getElementById('ultimaActualizacionInventario').textContent = `Última actualización gráfico: ${fechaHora}`;
+}
 
-    const mesSeleccionado = selectorMesInventario.value;
-    const desempeno = document.getElementById('desempenoInventario').value;
-    const areaCumplimiento = document.getElementById('areaCumplimientoInventario').value;
-
-    // Convertir a número solo si el campo no está vacío
-    const desempenoNum = desempeno === "" ? null : parseFloat(desempeno);
-    const areaCumplimientoNum = areaCumplimiento === "" ? null : parseFloat(areaCumplimiento);
-
-    // Validar que los valores estén dentro del rango (solo si no son null)
-    if ((desempenoNum !== null && (desempenoNum < 0 || desempenoNum > 100))) {
-        alert('El valor de Desempeño debe estar entre 0% y 100%.');
-        return;
+// Función para actualizar el gráfico y registrar el momento
+function actualizarGraficoConRegistro(grafico, datosDesempeno, datosArea, mes, desempeno, area) {
+  const indice = grafico.data.labels.indexOf(mes);
+  if (indice !== -1) {
+    // Solo actualizar si los datos son diferentes
+    if (datosDesempeno[indice] !== desempeno || (area !== null && datosArea[indice] !== area)) {
+      datosDesempeno[indice] = desempeno;
+      if (area !== null) {
+        datosArea[indice] = area;
+      }
+      grafico.update();
+      // Registrar la actualización del gráfico
+      mostrarUltimaActualizacion();
+      return true; // Indica que hubo actualización
     }
-    if ((areaCumplimientoNum !== null && (areaCumplimientoNum < 0 || areaCumplimientoNum > 100))) {
-        alert('El valor de Área de Cumplimiento debe estar entre 0% y 100%.');
-        return;
+  }
+  return false; // Indica que no hubo cambios
+}
+
+document.getElementById('dataFormInventario').addEventListener('submit', async (evento) => {
+  evento.preventDefault();
+
+  try {
+    // 1. Obtener elementos del formulario de manera segura
+    const form = document.getElementById('dataFormInventario');
+    const mesSeleccionado = form.querySelector('#monthInventario')?.value;
+    const desempenoInput = form.querySelector('#desempenoInventario');
+    
+    // Verificar existencia de elementos críticos
+    if (!mesSeleccionado || !desempenoInput) {
+      throw new Error('Elementos básicos del formulario no encontrados');
     }
 
-    // Enviar los datos al servidor
-    axios.post('/inventario/store', {
-        mes: mesSeleccionado,
-        desempeno: desempenoNum,
-        area_cumplimiento: areaCumplimientoNum,
-    })
-    .then(respuesta => {
-        if (respuesta.data.success) {
-            // Actualizar los datos del segundo gráfico (el vacío)
-            const indice2 = dataLabelsInventario2.indexOf(mesSeleccionado);
-            if (indice2 !== -1) {
-                if (desempenoNum !== null) desempenoDataInventario2[indice2] = desempenoNum;
-                if (areaCumplimientoNum !== null) areaCumplimientoDataInventario2[indice2] = areaCumplimientoNum;
-                inventarioChart2.update(); // Actualizar el gráfico 2
-            }
-        } else {
-            console.error('Error en la respuesta del servidor:', respuesta.data);
-        }
-    })
-    .catch(error => {
-        console.error('Error al guardar los datos:', error.response ? error.response.data : error.message);
-    });
+    // 2. Obtener valores con comprobación de nulidad
+    const desempeno = desempenoInput.value;
+    const areaCumplimientoInput = form.querySelector('#areaCumplimientoInventario');
+    const areaCumplimiento = areaCumplimientoInput ? areaCumplimientoInput.value : null;
+
+    // 3. Convertir y validar datos
+    const desempenoNum = desempeno !== "" ? parseFloat(desempeno) : null;
+    const areaCumplimientoNum = areaCumplimiento !== null && areaCumplimiento !== "" ? parseFloat(areaCumplimiento) : null;
+
+    // Validaciones básicas
+    if (desempenoNum === null || isNaN(desempenoNum)) {
+      throw new Error('El campo Área de Cumplimiento es obligatorio');
+    }
+
+    if (desempenoNum < 0 || desempenoNum > 100) {
+      throw new Error('El valor de Área de Cumplimiento debe estar entre 0% y 100%');
+    }
+
+    if (areaCumplimientoInput) {
+      if (areaCumplimientoNum === null || isNaN(areaCumplimientoNum)) {
+        throw new Error('El campo Desempeño Inventario es obligatorio');
+      }
+      if (areaCumplimientoNum < 0 || areaCumplimientoNum > 100) {
+        throw new Error('El valor de Desempeño Inventario debe estar entre 0% y 100%');
+      }
+    }
+
+    // 4. Preparar datos para enviar al servidor
+    const datos = {
+      mes: mesSeleccionado,
+      area_cumplimiento: desempenoNum
+    };
+
+    if (areaCumplimientoInput && areaCumplimientoNum !== null) {
+      datos.desempeno = areaCumplimientoNum;
+    }
+
+    // 5. Enviar datos al servidor
+    const respuesta = await axios.post('/inventario/store', datos);
+
+    if (!respuesta.data.success) {
+      throw new Error(respuesta.data.message || 'Error al guardar los datos');
+    }
+
+    // 6. Actualizar ambos gráficos donde corresponda
+    const actualizoGrafico1 = actualizarGraficoConRegistro(
+      inventarioChart, 
+      desempenoDataInventario, 
+      areaCumplimientoDataInventario,
+      mesSeleccionado,
+      desempenoNum,
+      areaCumplimientoNum
+    );
+
+    const actualizoGrafico2 = actualizarGraficoConRegistro(
+      inventarioChart2, 
+      desempenoDataInventario2, 
+      areaCumplimientoDataInventario2,
+      mesSeleccionado,
+      desempenoNum,
+      areaCumplimientoNum
+    );
+
+    // 7. Feedback visual
+    const btn = form.querySelector('button[type="submit"]');
+    if (btn) {
+      const originalText = btn.textContent;
+      btn.textContent = actualizoGrafico1 || actualizoGrafico2 ? '✓ Actualizado' : 'Sin cambios';
+      btn.disabled = true;
+      
+      setTimeout(() => {
+        btn.textContent = originalText;
+        btn.disabled = false;
+      }, 2000);
+    }
+
+  } catch (error) {
+    console.error('Error en el formulario:', error);
+    alert(error.message || 'Ocurrió un error al procesar el formulario');
+  }
 });
 
-  // Obtener los datos actualizados del servidor
-  function obtenerDatosInventario() {
-    axios.get('/inventario/get-data')
-      .then(respuesta => {
-        const datos = respuesta.data;
-        datos.forEach(item => {
-          const indice = dataLabelsInventario.indexOf(item.mes);
-          if (indice !== -1) {
+// Obtener los datos actualizados del servidor
+function obtenerDatosInventario() {
+  axios.get('/inventario/get-data')
+    .then(respuesta => {
+      const datos = respuesta.data;
+      let huboCambios = false;
+      
+      datos.forEach(item => {
+        const indice = dataLabelsInventario.indexOf(item.mes);
+        if (indice !== -1) {
+          if (desempenoDataInventario[indice] !== item.desempeno || 
+              areaCumplimientoDataInventario[indice] !== item.area_cumplimiento) {
             desempenoDataInventario[indice] = item.desempeno;
             areaCumplimientoDataInventario[indice] = item.area_cumplimiento;
-          } else {
-            const indice2 = dataLabelsInventario2.indexOf(item.mes);
-            if (indice2 !== -1) {
+            huboCambios = true;
+          }
+        } else {
+          const indice2 = dataLabelsInventario2.indexOf(item.mes);
+          if (indice2 !== -1) {
+            if (desempenoDataInventario2[indice2] !== item.desempeno || 
+                areaCumplimientoDataInventario2[indice2] !== item.area_cumplimiento) {
               desempenoDataInventario2[indice2] = item.desempeno;
               areaCumplimientoDataInventario2[indice2] = item.area_cumplimiento;
+              huboCambios = true;
             }
           }
-        });
-        inventarioChart.update(); // Actualizar el gráfico 1
-        inventarioChart2.update(); // Actualizar el gráfico 2
-      })
-      .catch(error => {
-        console.error('Error al obtener los datos:', error.response ? error.response.data : error.message);
+        }
       });
-  }
+      
+      if (huboCambios) {
+        inventarioChart.update();
+        inventarioChart2.update();
+        mostrarUltimaActualizacion();
+      }
+    })
+    .catch(error => {
+      console.error('Error al obtener los datos:', error.response ? error.response.data : error.message);
+    });
+}
 
-  // Cargar los datos iniciales al cargar la página
-  obtenerDatosInventario();
-
+// Cargar los datos iniciales al cargar la página
+obtenerDatosInventario();
   // Alternar entre gráficos
   let graficoActualInventario = 1;
   document.getElementById('nextChartInventario').addEventListener('click', () => {
@@ -615,6 +706,7 @@
       graficoActualInventario = 1;
     }
   });
+  
 </script>
 
 @endsection

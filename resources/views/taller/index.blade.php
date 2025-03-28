@@ -68,11 +68,15 @@
 <form id="formScrap1">
     <label for="monthScrap1">Mes:</label>
     <select id="monthScrap1" name="monthScrap1"></select><br><br>
+    
     <label for="desempeno1">Desempeño (%):</label>
-    <input type="number" id="desempeno1" name="desempeno1" min="0" max="100" step="0.01" ><br><br>
+    <input type="number" id="desempeno1" name="desempeno1" min="0" max="100" step="0.01" required><br><br>
+    
+    @can('admin.update')
     <label for="areaCumplimiento1">Área de Cumplimiento (%):</label>
     <input type="number" id="areaCumplimiento1" name="areaCumplimiento1" min="0" max="100" step="0.01"><br><br>
-
+    @endcan
+    
     <button type="submit" class="button">Actualizar Gráfico</button>
 </form>
 @endcan
@@ -225,14 +229,32 @@
     event.preventDefault();
 
     const month = document.getElementById('monthScrap1').value;
-    const desempeno = document.getElementById('desempeno1').value; // Obtener el valor como string
-    const areaCumplimiento = document.getElementById('areaCumplimiento1').value; // Obtener el valor como string
+    const desempeno = document.getElementById('desempeno1').value;
+    
+    // Manejo seguro del campo restringido
+    const areaCumplimientoInput = document.getElementById('areaCumplimiento1');
+    const areaCumplimiento = areaCumplimientoInput ? areaCumplimientoInput.value : null;
 
-    // Convertir a número solo si el campo no está vacío
+    // Convertir a número (permite null si está vacío o no existe)
     const desempenoNum = desempeno === "" ? null : parseFloat(desempeno);
-    const areaCumplimientoNum = areaCumplimiento === "" ? null : parseFloat(areaCumplimiento);
+    const areaCumplimientoNum = areaCumplimiento === null || areaCumplimiento === "" ? null : parseFloat(areaCumplimiento);
 
-    // Enviar los datos al servidor (incluso si uno de los campos es null)
+    // Validación mínima - solo requiere desempeño
+    if (desempenoNum === null) {
+        alert('Debe ingresar al menos el valor de Desempeño');
+        return;
+    }
+
+    // Validar rangos
+    if (desempenoNum !== null && (desempenoNum < 0 || desempenoNum > 100)) {
+        alert('El valor de Desempeño debe estar entre 0% y 100%');
+        return;
+    }
+    if (areaCumplimientoNum !== null && (areaCumplimientoNum < 0 || areaCumplimientoNum > 100)) {
+        alert('El valor de Área de Cumplimiento debe estar entre 0% y 100%');
+        return;
+    }
+
     axios.post('/scrap-donaldson/store', {
         mes: month,
         desempeno: desempenoNum,
@@ -240,23 +262,34 @@
     })
     .then(response => {
         if (response.data.success) {
-            // Actualizar los datos del gráfico activo
+            // Actualizar ambos gráficos según corresponda
             const index = allMonths.indexOf(month);
-            if (currentChart === 1) {
-                if (desempenoNum !== null) scrapChart1.data.datasets[0].data[index] = desempenoNum;
-                if (areaCumplimientoNum !== null) scrapChart1.data.datasets[1].data[index] = areaCumplimientoNum;
+            
+            // Actualizar gráfico 1 (2023-2024)
+            if (index < 24) {
+                scrapChart1.data.datasets[0].data[index] = desempenoNum;
+                if (areaCumplimientoNum !== null) {
+                    scrapChart1.data.datasets[1].data[index] = areaCumplimientoNum;
+                }
                 scrapChart1.update();
-            } else {
-                if (desempenoNum !== null) scrapChart2.data.datasets[0].data[index - 24] = desempenoNum;
-                if (areaCumplimientoNum !== null) scrapChart2.data.datasets[1].data[index - 24] = areaCumplimientoNum;
+            }
+            
+            // Actualizar gráfico 2 (2025)
+            if (index >= 24) {
+                scrapChart2.data.datasets[0].data[index - 24] = desempenoNum;
+                if (areaCumplimientoNum !== null) {
+                    scrapChart2.data.datasets[1].data[index - 24] = areaCumplimientoNum;
+                }
                 scrapChart2.update();
             }
         } else {
-            console.error('Error en la respuesta del servidor:', response.data);
+            console.error('Error en la respuesta:', response.data);
+            alert('Error al actualizar los datos');
         }
     })
     .catch(error => {
-        console.error('Error al guardar los datos:', error.response ? error.response.data : error.message);
+        console.error('Error:', error.response ? error.response.data : error.message);
+        alert('Error al enviar los datos al servidor');
     });
 });
     // Cargar los datos iniciales al cargar la página
@@ -498,24 +531,32 @@
     event.preventDefault();
 
     const month = document.getElementById('monthScrapTaller').value;
-    const desempeno = document.getElementById('desempenoTaller').value; // Obtener el valor como string
-    const areaCumplimiento = document.getElementById('areaCumplimientoTaller').value; // Obtener el valor como string
+    const desempeno = document.getElementById('desempenoTaller').value;
+    
+    // Manejo seguro del campo restringido
+    const areaCumplimientoInput = document.getElementById('areaCumplimientoTaller');
+    const areaCumplimiento = areaCumplimientoInput ? areaCumplimientoInput.value : null;
 
-    // Convertir a número solo si el campo no está vacío
+    // Convertir a número (permite null si está vacío o no existe)
     const desempenoNum = desempeno === "" ? null : parseFloat(desempeno);
-    const areaCumplimientoNum = areaCumplimiento === "" ? null : parseFloat(areaCumplimiento);
+    const areaCumplimientoNum = areaCumplimiento === null || areaCumplimiento === "" ? null : parseFloat(areaCumplimiento);
 
-    // Validar que los valores estén dentro del rango (solo si no son null)
-    if ((desempenoNum !== null && (isNaN(desempenoNum) || desempenoNum < 0 || desempenoNum > 100))) {
-        alert('El valor de Desempeño debe estar entre 0% y 100%.');
-        return;
-    }
-    if ((areaCumplimientoNum !== null && (isNaN(areaCumplimientoNum) || areaCumplimientoNum < 0 || areaCumplimientoNum > 100))) {
-        alert('El valor de Área de Cumplimiento debe estar entre 0% y 100%.');
+    // Validación mínima - solo requiere desempeño
+    if (desempenoNum === null) {
+        alert('Debe ingresar al menos el valor de Desempeño');
         return;
     }
 
-    // Enviar los datos al servidor (incluso si uno de los campos es null)
+    // Validar rangos
+    if (desempenoNum !== null && (desempenoNum < 0 || desempenoNum > 100)) {
+        alert('El valor de Desempeño debe estar entre 0% y 100%');
+        return;
+    }
+    if (areaCumplimientoNum !== null && (areaCumplimientoNum < 0 || areaCumplimientoNum > 100)) {
+        alert('El valor de Área de Cumplimiento debe estar entre 0% y 100%');
+        return;
+    }
+
     axios.post('/scrap-taller/store', {
         mes: month,
         desempeno: desempenoNum,
@@ -523,23 +564,39 @@
     })
     .then(response => {
         if (response.data.success) {
-            // Actualizar los datos del gráfico activo
-            const index = currentChartTaller === 1 ? monthsScrapTaller1.indexOf(month) : monthsScrapTaller2.indexOf(month);
-            if (currentChartTaller === 1) {
-                if (desempenoNum !== null) scrapChartTaller1.data.datasets[0].data[index] = desempenoNum;
-                if (areaCumplimientoNum !== null) scrapChartTaller1.data.datasets[1].data[index] = areaCumplimientoNum;
+            // Actualizar ambos gráficos según corresponda
+            const index1 = monthsScrapTaller1.indexOf(month);
+            const index2 = monthsScrapTaller2.indexOf(month);
+            
+            // Actualizar gráfico 1 (2023-2024)
+            if (index1 !== -1) {
+                scrapChartTaller1.data.datasets[0].data[index1] = desempenoNum;
+                if (areaCumplimientoNum !== null) {
+                    scrapChartTaller1.data.datasets[1].data[index1] = areaCumplimientoNum;
+                }
                 scrapChartTaller1.update();
-            } else {
-                if (desempenoNum !== null) scrapChartTaller2.data.datasets[0].data[index] = desempenoNum;
-                if (areaCumplimientoNum !== null) scrapChartTaller2.data.datasets[1].data[index] = areaCumplimientoNum;
+            }
+            
+            // Actualizar gráfico 2 (2025)
+            if (index2 !== -1) {
+                scrapChartTaller2.data.datasets[0].data[index2] = desempenoNum;
+                if (areaCumplimientoNum !== null) {
+                    scrapChartTaller2.data.datasets[1].data[index2] = areaCumplimientoNum;
+                }
                 scrapChartTaller2.update();
             }
+            
+            // Feedback visual opcional (sin alert)
+            const btn = event.target.querySelector('button[type="submit"]');
+            const originalText = btn.textContent;
+            btn.textContent = '✓';
+            setTimeout(() => { btn.textContent = originalText; }, 1000);
         } else {
-            console.error('Error en la respuesta del servidor:', response.data);
+            console.error('Error en la respuesta:', response.data);
         }
     })
     .catch(error => {
-        console.error('Error al guardar los datos:', error.response ? error.response.data : error.message);
+        console.error('Error:', error.response ? error.response.data : error.message);
     });
 });
     // Cargar los datos iniciales al cargar la página
@@ -768,29 +825,36 @@
             }
         });
 
-        // Validar y actualizar el gráfico
 document.getElementById('formScrapForjas').addEventListener('submit', (event) => {
     event.preventDefault();
 
     const month = monthSelectForjas.value;
-    const desempeno = document.getElementById('desempenoForjas').value; // Obtener el valor como string
-    const areaCumplimiento = document.getElementById('areaCumplimientoForjas').value; // Obtener el valor como string
+    const desempeno = document.getElementById('desempenoForjas').value;
+    
+    // Manejo seguro del campo restringido
+    const areaCumplimientoInput = document.getElementById('areaCumplimientoForjas');
+    const areaCumplimiento = areaCumplimientoInput ? areaCumplimientoInput.value : null;
 
-    // Convertir a número solo si el campo no está vacío
+    // Convertir a número (permite null si está vacío o no existe)
     const desempenoNum = desempeno === "" ? null : parseFloat(desempeno);
-    const areaCumplimientoNum = areaCumplimiento === "" ? null : parseFloat(areaCumplimiento);
+    const areaCumplimientoNum = areaCumplimiento === null || areaCumplimiento === "" ? null : parseFloat(areaCumplimiento);
 
-    // Validar que los valores estén dentro del rango (solo si no son null)
-    if ((desempenoNum !== null && (isNaN(desempenoNum) || desempenoNum < 0 || desempenoNum > 100))) {
-        alert('El valor de Desempeño debe estar entre 0% y 100%.');
-        return;
-    }
-    if ((areaCumplimientoNum !== null && (isNaN(areaCumplimientoNum) || areaCumplimientoNum < 0 || areaCumplimientoNum > 100))) {
-        alert('El valor de Área de Cumplimiento debe estar entre 0% y 100%.');
+    // Validación mínima - solo requiere desempeño
+    if (desempenoNum === null) {
+        alert('Debe ingresar al menos el valor de Desempeño');
         return;
     }
 
-    // Enviar los datos al servidor (incluso si uno de los campos es null)
+    // Validar rangos
+    if (desempenoNum !== null && (desempenoNum < 0 || desempenoNum > 100)) {
+        alert('El valor de Desempeño debe estar entre 0% y 100%');
+        return;
+    }
+    if (areaCumplimientoNum !== null && (areaCumplimientoNum < 0 || areaCumplimientoNum > 100)) {
+        alert('El valor de Área de Cumplimiento debe estar entre 0% y 100%');
+        return;
+    }
+
     axios.post('/scrap-forjas/store', {
         mes: month,
         desempeno: desempenoNum,
@@ -798,23 +862,39 @@ document.getElementById('formScrapForjas').addEventListener('submit', (event) =>
     })
     .then(response => {
         if (response.data.success) {
-            // Actualizar los datos del gráfico activo
-            const index = allMonths.indexOf(month);
-            if (currentChartForjas === 1) {
-                if (desempenoNum !== null) scrapChartForjas1.data.datasets[0].data[index] = desempenoNum;
-                if (areaCumplimientoNum !== null) scrapChartForjas1.data.datasets[1].data[index] = areaCumplimientoNum;
+            // Actualizar ambos gráficos según corresponda
+            const index1 = monthsForjas1.indexOf(month);
+            const index2 = monthsForjas2.indexOf(month);
+            
+            // Actualizar gráfico 1 (2023-2024)
+            if (index1 !== -1) {
+                scrapChartForjas1.data.datasets[0].data[index1] = desempenoNum;
+                if (areaCumplimientoNum !== null) {
+                    scrapChartForjas1.data.datasets[1].data[index1] = areaCumplimientoNum;
+                }
                 scrapChartForjas1.update();
-            } else {
-                if (desempenoNum !== null) scrapChartForjas2.data.datasets[0].data[index - 24] = desempenoNum;
-                if (areaCumplimientoNum !== null) scrapChartForjas2.data.datasets[1].data[index - 24] = areaCumplimientoNum;
+            }
+            
+            // Actualizar gráfico 2 (2025)
+            if (index2 !== -1) {
+                scrapChartForjas2.data.datasets[0].data[index2] = desempenoNum;
+                if (areaCumplimientoNum !== null) {
+                    scrapChartForjas2.data.datasets[1].data[index2] = areaCumplimientoNum;
+                }
                 scrapChartForjas2.update();
             }
+            
+            // Feedback visual opcional (sin alert)
+            const btn = event.target.querySelector('button[type="submit"]');
+            const originalText = btn.textContent;
+            btn.textContent = '✓';
+            setTimeout(() => { btn.textContent = originalText; }, 1000);
         } else {
-            console.error('Error en la respuesta del servidor:', response.data);
+            console.error('Error en la respuesta:', response.data);
         }
     })
     .catch(error => {
-        console.error('Error al guardar los datos:', error.response ? error.response.data : error.message);
+        console.error('Error:', error.response ? error.response.data : error.message);
     });
 });
         // Cargar los datos iniciales al cargar la página
@@ -996,14 +1076,31 @@ document.getElementById('formScrapForjas').addEventListener('submit', (event) =>
     event.preventDefault();
 
     const month = document.getElementById('monthSelect').value;
-    const performance = document.getElementById('performanceInput').value; // Obtener el valor como string
-    const compliance = document.getElementById('complianceInput').value; // Obtener el valor como string
+    const performance = document.getElementById('performanceInput').value;
+    
+    // Manejo seguro del campo restringido
+    const complianceInput = document.getElementById('complianceInput');
+    const compliance = complianceInput ? complianceInput.value : null;
 
-    // Convertir a número solo si el campo no está vacío
+    // Convertir a número (permite null si está vacío o no existe)
     const performanceNum = performance === "" ? null : parseFloat(performance);
-    const complianceNum = compliance === "" ? null : parseFloat(compliance);
+    const complianceNum = compliance === null || compliance === "" ? null : parseFloat(compliance);
 
-    console.log('Datos a enviar:', { month, performanceNum, complianceNum }); // Depuración
+    // Validación mínima - solo requiere performance
+    if (performanceNum === null) {
+        alert('Debe ingresar al menos el valor de Desempeño');
+        return;
+    }
+
+    // Validar rangos
+    if (performanceNum !== null && (performanceNum < 0 || performanceNum > 100)) {
+        alert('El valor de Desempeño debe estar entre 0% y 100%');
+        return;
+    }
+    if (complianceNum !== null && (complianceNum < 0 || complianceNum > 100)) {
+        alert('El valor de Área de Cumplimiento debe estar entre 0% y 100%');
+        return;
+    }
 
     axios.post('/cumplimiento-taller/store', {
         mes: month,
@@ -1012,24 +1109,35 @@ document.getElementById('formScrapForjas').addEventListener('submit', (event) =>
     })
     .then(response => {
         if (response.data.success) {
-            // Actualizar los datos del gráfico activo
-            if (monthsChart1.includes(month)) {
-                const index = monthsChart1.indexOf(month);
-                if (performanceNum !== null) chart1.data.datasets[0].data[index] = performanceNum;
-                if (complianceNum !== null) chart1.data.datasets[1].data[index] = complianceNum;
+            // Actualizar ambos gráficos según corresponda
+            const index1 = monthsChart1.indexOf(month);
+            const index2 = monthsChart2.indexOf(month);
+            
+            // Actualizar gráfico 1 (2023-2024)
+            if (index1 !== -1) {
+                if (performanceNum !== null) chart1.data.datasets[0].data[index1] = performanceNum;
+                if (complianceNum !== null) chart1.data.datasets[1].data[index1] = complianceNum;
                 chart1.update();
-            } else if (monthsChart2.includes(month)) {
-                const index = monthsChart2.indexOf(month);
-                if (performanceNum !== null) chart2.data.datasets[0].data[index] = performanceNum;
-                if (complianceNum !== null) chart2.data.datasets[1].data[index] = complianceNum;
+            }
+            
+            // Actualizar gráfico 2 (2025)
+            if (index2 !== -1) {
+                if (performanceNum !== null) chart2.data.datasets[0].data[index2] = performanceNum;
+                if (complianceNum !== null) chart2.data.datasets[1].data[index2] = complianceNum;
                 chart2.update();
             }
+            
+            // Feedback visual discreto
+            const btn = event.target.querySelector('button[type="submit"]');
+            const originalText = btn.textContent;
+            btn.textContent = '✓';
+            setTimeout(() => { btn.textContent = originalText; }, 1000);
         } else {
-            console.error('Error en la respuesta del servidor:', response.data);
+            console.error('Error en la respuesta:', response.data);
         }
     })
     .catch(error => {
-        console.error('Error al guardar los datos:', error.response ? error.response.data : error.message);
+        console.error('Error:', error.response ? error.response.data : error.message);
     });
 });
 
@@ -1268,24 +1376,32 @@ document.getElementById('formScrapForjas').addEventListener('submit', (event) =>
     event.preventDefault();
 
     const month = document.getElementById('monthForjasProduccion').value;
-    const desempeno = document.getElementById('forjasProduccion').value; // Obtener el valor como string
-    const areaCumplimiento = document.getElementById('forjasCumplimiento').value; // Obtener el valor como string
+    const desempeno = document.getElementById('forjasProduccion').value;
+    
+    // Manejo seguro del campo restringido
+    const areaCumplimientoInput = document.getElementById('forjasCumplimiento');
+    const areaCumplimiento = areaCumplimientoInput ? areaCumplimientoInput.value : null;
 
-    // Convertir a número solo si el campo no está vacío
+    // Convertir a número (permite null si está vacío o no existe)
     const desempenoNum = desempeno === "" ? null : parseFloat(desempeno);
-    const areaCumplimientoNum = areaCumplimiento === "" ? null : parseFloat(areaCumplimiento);
+    const areaCumplimientoNum = areaCumplimiento === null || areaCumplimiento === "" ? null : parseFloat(areaCumplimiento);
 
-    // Validar que los valores estén dentro del rango (solo si no son null)
-    if ((desempenoNum !== null && (isNaN(desempenoNum) || desempenoNum < 0 || desempenoNum > 100))) {
-        alert('El valor de Desempeño debe estar entre 0% y 100%.');
-        return;
-    }
-    if ((areaCumplimientoNum !== null && (isNaN(areaCumplimientoNum) || areaCumplimientoNum < 0 || areaCumplimientoNum > 100))) {
-        alert('El valor de Área de Cumplimiento debe estar entre 0% y 100%.');
+    // Validación mínima - solo requiere desempeño
+    if (desempenoNum === null) {
+        alert('Debe ingresar al menos el valor de Desempeño');
         return;
     }
 
-    // Enviar los datos al servidor (incluso si uno de los campos es null)
+    // Validar rangos
+    if (desempenoNum !== null && (desempenoNum < 0 || desempenoNum > 100)) {
+        alert('El valor de Desempeño debe estar entre 0% y 100%');
+        return;
+    }
+    if (areaCumplimientoNum !== null && (areaCumplimientoNum < 0 || areaCumplimientoNum > 100)) {
+        alert('El valor de Área de Cumplimiento debe estar entre 0% y 100%');
+        return;
+    }
+
     axios.post('/forjas-produccion/store', {
         mes: month,
         desempeno: desempenoNum,
@@ -1293,24 +1409,35 @@ document.getElementById('formScrapForjas').addEventListener('submit', (event) =>
     })
     .then(response => {
         if (response.data.success) {
-            // Actualizar los datos del gráfico activo
-            if (currentChartForjasProduccion === 1) {
-                const index = monthsForjasProduccion1.indexOf(month);
-                if (desempenoNum !== null) forjasProduccionChart1.data.datasets[0].data[index] = desempenoNum;
-                if (areaCumplimientoNum !== null) forjasProduccionChart1.data.datasets[1].data[index] = areaCumplimientoNum;
+            // Actualizar ambos gráficos según corresponda
+            const index1 = monthsForjasProduccion1.indexOf(month);
+            const index2 = monthsForjasProduccion2.indexOf(month);
+            
+            // Actualizar gráfico 1 (2023-2024)
+            if (index1 !== -1) {
+                if (desempenoNum !== null) forjasProduccionChart1.data.datasets[0].data[index1] = desempenoNum;
+                if (areaCumplimientoNum !== null) forjasProduccionChart1.data.datasets[1].data[index1] = areaCumplimientoNum;
                 forjasProduccionChart1.update();
-            } else {
-                const index2 = monthsForjasProduccion2.indexOf(month);
+            }
+            
+            // Actualizar gráfico 2 (2025)
+            if (index2 !== -1) {
                 if (desempenoNum !== null) forjasProduccionChart2.data.datasets[0].data[index2] = desempenoNum;
                 if (areaCumplimientoNum !== null) forjasProduccionChart2.data.datasets[1].data[index2] = areaCumplimientoNum;
                 forjasProduccionChart2.update();
             }
+            
+            // Feedback visual discreto
+            const btn = event.target.querySelector('button[type="submit"]');
+            const originalText = btn.textContent;
+            btn.textContent = '✓';
+            setTimeout(() => { btn.textContent = originalText; }, 1000);
         } else {
-            console.error('Error en la respuesta del servidor:', response.data);
+            console.error('Error en la respuesta:', response.data);
         }
     })
     .catch(error => {
-        console.error('Error al guardar los datos:', error.response ? error.response.data : error.message);
+        console.error('Error:', error.response ? error.response.data : error.message);
     });
 });
         // Cargar los datos iniciales al cargar la página

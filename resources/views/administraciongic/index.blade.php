@@ -49,11 +49,11 @@
   <select id="monthKPI_GIC" name="monthKPI_GIC"></select><br><br>
 
   <label for="performanceKPI_GIC">Desempeño (%):</label>
-  <input type="number" id="performanceKPI_GIC" name="performanceKPI_GIC" min="0" max="100" step="0.01" required><br><br>
-
+  <input type="number" id="performanceKPI_GIC" name="performanceKPI_GIC" min="0" max="100" step="0.01"><br><br>
+  @can('admin.update')
   <label for="areaKPI_GIC">Área de cumplimiento (%):</label>
-  <input type="number" id="areaKPI_GIC" name="areaKPI_GIC" min="0" max="100" step="0.01" required><br><br>
-
+  <input type="number" id="areaKPI_GIC" name="areaKPI_GIC" min="0" max="100" step="0.01" ><br><br>
+@endcan
   <button type="submit" class="button">Actualizar Gráfico</button>
 </form>
 @endcan
@@ -212,58 +212,57 @@
   // Establecer el valor predeterminado como el mes actual
   monthSelectKPI_GIC.value = currentMonthYear;
 
-  // Validar y actualizar el gráfico GIC
   document.getElementById('dataFormKPI_GIC').addEventListener('submit', (event) => {
     event.preventDefault();
 
+    // 1. Obtención de valores (forma segura)
     const month = monthSelectKPI_GIC.value;
-    const performance = parseFloat(document.getElementById('performanceKPI_GIC').value);
-    const area = parseFloat(document.getElementById('areaKPI_GIC').value);
+    const performance = document.getElementById('performanceKPI_GIC').value;
+    const area = document.getElementById('areaKPI_GIC').value;
 
-    // Validar que los valores estén dentro del rango
-    if (performance < 0 || performance > 100 || area < 0 || area > 100) {
-      alert('Los valores deben estar entre 0% y 100%');
-      return;
-    }
+    // 2. Conversión a números (manejando vacíos)
+    const performanceNum = performance === "" ? null : parseFloat(performance);
+    const areaNum = area === "" ? null : parseFloat(area);
 
-    // Validar que el año no sea anterior al actual
-    const selectedYear = parseInt(month.split('-')[1], 10) + 2000; // Convertir "25" a 2025
+    // 3. Validación de año
+    const selectedYear = 2000 + parseInt(month.split('-')[1], 10);
     if (selectedYear < new Date().getFullYear()) {
-      alert('No se pueden ingresar datos para años anteriores.');
-      return;
+        alert('No se pueden ingresar datos para años anteriores.');
+        return;
     }
 
-    // Enviar los datos al servidor
+    // 4. Envío al servidor
     axios.post('/proveedores-gic/store', {
-      mes: month,
-      desempeno: performance,
-      area_cumplimiento: area,
+        mes: month,
+        desempeno: performanceNum,
+        area_cumplimiento: areaNum,
     })
     .then(response => {
-      if (response.data.success) {
-        // Actualizar los datos del gráfico
-        const index = dataLabelsKPI_GIC.indexOf(month);
-        if (index !== -1) {
-          performanceDataKPI_GIC[index] = performance;
-          areaDataKPI_GIC[index] = area;
-          kpiChartGIC.update(); // Actualizar el gráfico 1
+        if (response.data.success) {
+            // 5. Actualización SOLO del gráfico 2 (sin afectar el 1)
+            const index = dataLabelsKPI_GIC2.indexOf(month);
+            if (index !== -1) {
+                // Actualizamos solo los datos del gráfico 2
+                if (performanceNum !== null) performanceDataKPI_GIC2[index] = performanceNum;
+                if (areaNum !== null) areaDataKPI_GIC2[index] = areaNum;
+                
+                // Actualizamos solo el gráfico 2
+                kpiChartGIC2.update();
+                
+                // Feedback visual
+                event.target.querySelector('button[type="submit"]').textContent = '✓ Actualizado';
+                setTimeout(() => {
+                    event.target.querySelector('button[type="submit"]').textContent = 'Actualizar Gráfico';
+                }, 2000);
+            }
         } else {
-          const index2 = dataLabelsKPI_GIC2.indexOf(month);
-          if (index2 !== -1) {
-            performanceDataKPI_GIC2[index2] = performance;
-            areaDataKPI_GIC2[index2] = area;
-            kpiChartGIC2.update(); // Actualizar el gráfico 2
-          }
+            console.error('Error en el servidor:', response.data);
         }
-      } else {
-        console.error('Error en la respuesta del servidor:', response.data);
-      }
     })
     .catch(error => {
-      console.error('Error al guardar los datos:', error.response ? error.response.data : error.message);
+        console.error('Error de conexión:', error);
     });
-  });
-
+});
   // Obtener los datos actualizados del servidor
   function fetchDataKPI_GIC() {
     axios.get('/proveedores-gic/get-data')
@@ -337,11 +336,11 @@
   <select id="monthCompras_GIC" name="monthCompras_GIC"></select><br><br>
 
   <label for="performanceCompras_GIC">Desempeño (%):</label>
-  <input type="number" id="performanceCompras_GIC" name="performanceCompras_GIC" min="0" max="100" step="0.01" required><br><br>
-
+  <input type="number" id="performanceCompras_GIC" name="performanceCompras_GIC" min="0" max="100" step="0.01"><br><br>
+  @can('admin.update')
   <label for="areaCompras_GIC">Área de cumplimiento (%):</label>
-  <input type="number" id="areaCompras_GIC" name="areaCompras_GIC" min="0" max="100" step="0.01" required><br><br>
-
+  <input type="number" id="areaCompras_GIC" name="areaCompras_GIC" min="0" max="100" step="0.01"><br><br>
+   @endcan
   <button type="submit" class="button">Actualizar Gráfico</button>
 </form>
 @endcan
@@ -499,56 +498,73 @@
 
   // Validar y actualizar el gráfico
   document.getElementById('dataFormCompras_GIC').addEventListener('submit', (event) => {
-    event.preventDefault();
+  event.preventDefault();
 
-    const month = monthSelectCompras_GIC.value;
-    const performance = parseFloat(document.getElementById('performanceCompras_GIC').value);
-    const area = parseFloat(document.getElementById('areaCompras_GIC').value);
+  // 1. Obtención SEGURA de elementos
+  const monthSelect = document.getElementById('monthCompras_GIC');
+  const performanceInput = document.getElementById('performanceCompras_GIC');
+  const areaInput = document.getElementById('areaCompras_GIC'); // Puede ser null
 
-    // Validar que los valores estén dentro del rango
-    if (performance < 0 || performance > 100 || area < 0 || area > 100) {
-      alert('Los valores deben estar entre 0% y 100%.');
-      return;
-    }
+  // Verificación básica de elementos requeridos
+  if (!monthSelect || !performanceInput) {
+    console.error('Elementos requeridos no encontrados');
+    return;
+  }
 
-    // Validar que el año no sea anterior al actual
-    const selectedYear = parseInt(month.split('-')[1], 10) + 2000; // Convertir "25" a 2025
+  // 2. Obtención de valores
+  const month = monthSelect.value;
+  const performance = performanceInput.value;
+  const area = areaInput ? areaInput.value : null;
+    // 3. Conversión a números (con manejo de nulos como en tu primer código)
+    const performanceNum = performance === "" ? null : parseFloat(performance);
+    const areaNum = area === "" ? null : parseFloat(area);
+
+    // 4. Validación de año (igual que tu versión)
+    const selectedYear = parseInt(month.split('-')[1], 10) + 2000;
     if (selectedYear < new Date().getFullYear()) {
-      alert('No se pueden ingresar datos para años anteriores.');
-      return;
+        alert('No se pueden ingresar datos para años anteriores.');
+        return;
     }
 
-    // Enviar los datos al servidor
+    // 5. Envío al servidor (igual que tu versión)
     axios.post('/compras-gic/store', {
-      mes: month,
-      desempeno: performance,
-      area_cumplimiento: area,
+        mes: month,
+        desempeno: performanceNum,
+        area_cumplimiento: areaNum,
     })
     .then(response => {
-      if (response.data.success) {
-        // Actualizar los datos del gráfico
-        const index = dataLabelsCompras_GIC.indexOf(month);
-        if (index !== -1) {
-          performanceDataCompras_GIC[index] = performance;
-          areaDataCompras_GIC[index] = area;
-          comprasChartGIC.update(); // Actualizar el gráfico 1
+        if (response.data.success) {
+            // 6. Actualización de gráficos (optimizada)
+            const index = dataLabelsCompras_GIC.indexOf(month);
+            const index2 = dataLabelsCompras_GIC2.indexOf(month);
+            
+            if (index !== -1) {
+                if (performanceNum !== null) performanceDataCompras_GIC[index] = performanceNum;
+                if (areaNum !== null) areaDataCompras_GIC[index] = areaNum;
+                comprasChartGIC.update();
+            }
+            
+            if (index2 !== -1) {
+                if (performanceNum !== null) performanceDataCompras_GIC2[index2] = performanceNum;
+                if (areaNum !== null) areaDataCompras_GIC2[index2] = areaNum;
+                comprasChartGIC2.update();
+            }
+
+            // Feedback visual (mejorado pero discreto)
+            const submitBtn = event.target.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = '✓ Actualizado';
+            setTimeout(() => {
+                submitBtn.textContent = originalText;
+            }, 2000);
         } else {
-          const index2 = dataLabelsCompras_GIC2.indexOf(month);
-          if (index2 !== -1) {
-            performanceDataCompras_GIC2[index2] = performance;
-            areaDataCompras_GIC2[index2] = area;
-            comprasChartGIC2.update(); // Actualizar el gráfico 2
-          }
+            console.error('Error en el servidor:', response.data);
         }
-      } else {
-        console.error('Error en la respuesta del servidor:', response.data);
-      }
     })
     .catch(error => {
-      console.error('Error al guardar los datos:', error.response ? error.response.data : error.message);
+        console.error('Error de conexión:', error);
     });
-  });
-
+});
   // Obtener los datos actualizados del servidor
   function fetchDataCompras_GIC() {
     axios.get('/compras-gic/get-data')

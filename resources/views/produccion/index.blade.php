@@ -210,41 +210,54 @@
     let currentScrapChart
 
  // Validar y actualizar el gráfico
-document.getElementById('dataFormScrap').addEventListener('submit', (evento) => {
+ document.getElementById('dataFormScrap').addEventListener('submit', (evento) => {
     evento.preventDefault();
 
     const mesSeleccionado = selectorMesScrap.value;
-    const desempeno = document.getElementById('performanceScrap').value; // Obtener el valor como string
-    const area = document.getElementById('areaScrap').value; // Obtener el valor como string
+    const desempeno = document.getElementById('performanceScrap').value;
+    const area = document.getElementById('areaScrap')?.value; // Campo condicional
 
     // Convertir a número solo si el campo no está vacío
     const desempenoNum = desempeno === "" ? null : parseFloat(desempeno);
-    const areaNum = area === "" ? null : parseFloat(area);
+    const areaNum = (area === "" || area === undefined) ? null : parseFloat(area);
 
-
-    // Enviar los datos al servidor (incluso si uno de los campos es null)
+    // Enviar los datos al servidor
     axios.post('/scrap/store', {
         mes: mesSeleccionado,
-        desempeno: desempenoNum,
-        area_cumplimiento: areaNum,
+        desempeno: desempenoNum,       // Mantenemos la asignación original
+        area_cumplimiento: areaNum     // Mantenemos la asignación original
     })
     .then(respuesta => {
         if (respuesta.data.success) {
-            // Actualizar los datos del gráfico activo
-            if (currentScrapChart === 1) {
-                const indice = dataLabelsScrap.indexOf(mesSeleccionado);
-                if (indice !== -1) {
-                    if (desempenoNum !== null) desempenoDataScrap1[indice] = desempenoNum;
-                    if (areaNum !== null) areaDataScrap1[indice] = areaNum;
-                    scrapChart.update();
-                }
-            } else {
-                const indice2 = dataLabelsScrap2.indexOf(mesSeleccionado);
-                if (indice2 !== -1) {
-                    if (desempenoNum !== null) desempenoDataScrap2[indice2] = desempenoNum;
-                    if (areaNum !== null) areaDataScrap2[indice2] = areaNum;
-                    scrapChart2.update();
-                }
+            // Actualizar ambos gráficos donde corresponda
+            const indice = dataLabelsScrap.indexOf(mesSeleccionado);
+            const indice2 = dataLabelsScrap2.indexOf(mesSeleccionado);
+            
+            // Gráfico 1 (Histórico) - Asignación ORIGINAL
+            if (indice !== -1) {
+                if (desempenoNum !== null) desempenoDataScrap1[indice] = desempenoNum;
+                if (areaNum !== null) areaDataScrap1[indice] = areaNum;
+                scrapChart.update();
+            }
+            
+            // Gráfico 2 (Actual) - Asignación ORIGINAL
+            if (indice2 !== -1) {
+                if (desempenoNum !== null) desempenoDataScrap2[indice2] = desempenoNum;
+                if (areaNum !== null) areaDataScrap2[indice2] = areaNum;
+                scrapChart2.update();
+            }
+
+            // Feedback visual
+            const btn = evento.target.querySelector('button[type="submit"]');
+            if (btn) {
+                const originalText = btn.textContent;
+                btn.textContent = '✓ Actualizado';
+                btn.disabled = true;
+                
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.disabled = false;
+                }, 2000);
             }
         } else {
             console.error('Error en la respuesta del servidor:', respuesta.data);
@@ -254,7 +267,6 @@ document.getElementById('dataFormScrap').addEventListener('submit', (evento) => 
         console.error('Error al guardar los datos:', error.response ? error.response.data : error.message);
     });
 });
-
     // Cargar los datos iniciales al cargar la página
     function obtenerDatosScrap() {
         axios.get('/scrap/get-data')
@@ -504,13 +516,12 @@ document.getElementById('dataFormScrap').addEventListener('submit', (evento) => 
 
     const mesSeleccionado = selectorMesRend.value;
     const desempeno = document.getElementById('performanceRendimiento').value;
-    const area = document.getElementById('areaRendimiento').value;
+    const area = document.getElementById('areaRendimiento')?.value; // Campo condicional seguro
 
     // Convertir a número solo si el campo no está vacío
     const desempenoNum = desempeno === "" ? null : parseFloat(desempeno);
-    const areaNum = area === "" ? null : parseFloat(area);
+    const areaNum = (area === "" || area === undefined) ? null : parseFloat(area);
 
-    
     // Enviar los datos al servidor
     axios.post('/rendimiento/store', {
         mes: mesSeleccionado,
@@ -519,22 +530,41 @@ document.getElementById('dataFormScrap').addEventListener('submit', (evento) => 
     })
     .then(respuesta => {
         if (respuesta.data.success) {
-            // Actualizar los datos del segundo gráfico (el vacío)
+            // Actualizar ambos gráficos donde corresponda
+            const indice = dataLabelsRend.indexOf(mesSeleccionado);
             const indice2 = dataLabelsRend2.indexOf(mesSeleccionado);
+            
+            // Gráfico histórico (si aplica)
+            if (indice !== -1) {
+                if (desempenoNum !== null) desempenoDataRend[indice] = desempenoNum;
+                if (areaNum !== null) areaDataRend[indice] = areaNum;
+                rendimientoChart.update();
+            }
+            
+            // Gráfico actual (siempre)
             if (indice2 !== -1) {
                 if (desempenoNum !== null) desempenoDataRend2[indice2] = desempenoNum;
                 if (areaNum !== null) areaDataRend2[indice2] = areaNum;
-                rendimientoChart2.update(); // Actualizar el gráfico 2
+                rendimientoChart2.update();
+            }
+
+            // Feedback visual opcional (puedes eliminarlo si no lo necesitas)
+            const btn = evento.target.querySelector('button[type="submit"]');
+            if (btn) {
+                const originalText = btn.textContent;
+                btn.textContent = '✓ Actualizado';
+                setTimeout(() => btn.textContent = originalText, 2000);
             }
         } else {
             console.error('Error en la respuesta del servidor:', respuesta.data);
+            alert(respuesta.data.message || 'Error al guardar datos');
         }
     })
     .catch(error => {
         console.error('Error al guardar los datos:', error.response ? error.response.data : error.message);
+        alert('Error de conexión: ' + (error.response?.data?.message || error.message));
     });
 });
-
   // Cargar los datos iniciales al cargar la página
   function obtenerDatosRendimiento() {
     axios.get('/rendimiento/get-data')
@@ -780,15 +810,24 @@ document.getElementById('dataFormScrap').addEventListener('submit', (evento) => 
     document.getElementById('dataFormProduccion').addEventListener('submit', (evento) => {
     evento.preventDefault();
 
-    const mesSeleccionado = selectorMesProduccion.value;
-    const desempeno = document.getElementById('performanceProduccion').value;
-    const area = document.getElementById('areaProduccion').value;
+    // Acceso seguro a elementos del formulario
+    const form = document.getElementById('dataFormProduccion');
+    const mesSeleccionado = form.querySelector('#monthProduccion')?.value;
+    const desempenoInput = form.querySelector('#performanceProduccion');
+    const areaInput = form.querySelector('#areaProduccion');
+
+    // Verificar que los elementos requeridos existen
+    if (!mesSeleccionado || !desempenoInput) {
+        console.error('Elementos del formulario no encontrados');
+        return;
+    }
+
+    const desempeno = desempenoInput.value;
+    const area = areaInput?.value; // Campo condicional
 
     // Convertir a número solo si el campo no está vacío
     const desempenoNum = desempeno === "" ? null : parseFloat(desempeno);
-    const areaNum = area === "" ? null : parseFloat(area);
-
-    
+    const areaNum = area === "" || area === undefined ? null : parseFloat(area);
 
     // Enviar los datos al servidor
     axios.post('/produccion/store', {
@@ -798,12 +837,20 @@ document.getElementById('dataFormScrap').addEventListener('submit', (evento) => 
     })
     .then(respuesta => {
         if (respuesta.data.success) {
-            // Actualizar los datos del segundo gráfico (el vacío)
+            // Actualizar ambos gráficos
+            const indice1 = dataLabelsProduccion.indexOf(mesSeleccionado);
             const indice2 = dataLabelsProduccion2.indexOf(mesSeleccionado);
+            
+            if (indice1 !== -1) {
+                if (desempenoNum !== null) cumplimientoDataProd[indice1] = desempenoNum;
+                if (areaNum !== null) metaDataProd[indice1] = areaNum;
+                productionChart.update();
+            }
+            
             if (indice2 !== -1) {
                 if (desempenoNum !== null) cumplimientoDataProd2[indice2] = desempenoNum;
                 if (areaNum !== null) metaDataProd2[indice2] = areaNum;
-                productionChart2.update(); // Actualizar el gráfico 2
+                productionChart2.update();
             }
         } else {
             console.error('Error en la respuesta del servidor:', respuesta.data);

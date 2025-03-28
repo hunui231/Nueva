@@ -521,10 +521,10 @@ updateChartVisibilityGIC();
   <select id="monthKPI2" name="monthKPI2"></select><br><br>
 
   <label for="performanceKPI2">Desempeño (%):</label>
-  <input type="number" id="performanceKPI2" name="performanceKPI2" min="0" max="100" step="0.01" required><br><br>
+  <input type="number" id="performanceKPI2" name="performanceKPI2" min="0" max="100" step="0.01"><br><br>
 
   <label for="areaKPI2">Área de cumplimiento (%):</label>
-  <input type="number" id="areaKPI2" name="areaKPI2" min="0" max="100" step="0.01" required><br><br>
+  <input type="number" id="areaKPI2" name="areaKPI2" min="0" max="100" step="0.01"><br><br>
 
   <button type="submit" class="button">Actualizar Gráfico</button>
 </form>
@@ -697,60 +697,65 @@ updateChartVisibilityGIC();
   const currentMonthLabel = `${currentMonth}-${currentYear}`;
   monthSelectKPI2.value = currentMonthLabel;
 
-  // Validar y actualizar el gráfico
-  document.getElementById('dataFormKPI2').addEventListener('submit', (event) => {
-    event.preventDefault();
 
-    const month = monthSelectKPI2.value;
-    const performance = parseFloat(document.getElementById('performanceKPI2').value);
-    const area = parseFloat(document.getElementById('areaKPI2').value);
+  // Validar y actualizar SOLO el gráfico 2 (2025)
+document.getElementById('dataFormKPI2').addEventListener('submit', (event) => {
+  event.preventDefault();
 
-    // Validar que los valores estén dentro del rango
-    if (performance < 0 || performance > 100 || area < 0 || area > 100) {
-      alert('Los valores deben estar entre 0% y 100%.');
-      return;
-    }
+  const month = monthSelectKPI2.value;
+  const performance = parseFloat(document.getElementById('performanceKPI2').value);
+  const area = parseFloat(document.getElementById('areaKPI2').value);
 
-    // Enviar los datos al servidor
-    axios.post('/proveedores-ci/store', {
-      mes: month,
-      desempeno: performance,
-      area_cumplimiento: area,
-    })
-    .then(response => {
-      if (response.data.success) {
-        // Actualizar los datos del gráfico
-        const index = dataLabelsKPI2.indexOf(month);
-        if (index !== -1) {
-          performanceDataKPI2[index] = performance;
-          areaDataKPI2[index] = area;
-          kpiChart2.update(); // Actualizar el gráfico
-        }
-      } else {
-        console.error('Error en la respuesta del servidor:', response.data);
+  // Enviar los datos al servidor
+  axios.post('/proveedores-ci/store', {
+    mes: month,
+    desempeno: performance,
+    area_cumplimiento: area,
+  })
+  .then(response => {
+    if (response.data.success) {
+      // Actualizar SOLO el gráfico 2 (2025)
+      const index = dataLabelsKPI3.indexOf(month);
+      
+      if (index !== -1) {
+        performanceDataKPI3[index] = performance;
+        areaDataKPI3[index] = area;
+        kpiChart3.update();
       }
-    })
-    .catch(error => {
-      console.error('Error al guardar los datos:', error.response ? error.response.data : error.message);
-    });
-  });
 
-  // Cargar los datos iniciales al cargar la página
-  axios.get('/proveedores-ci/get-data')
-    .then(response => {
-      const data = response.data;
-      data.forEach(item => {
-        const index = dataLabelsKPI2.indexOf(item.mes);
-        if (index !== -1) {
-          performanceDataKPI2[index] = item.desempeno;
-          areaDataKPI2[index] = item.area_cumplimiento;
-        }
-      });
-      kpiChart2.update();
-    })
-    .catch(error => {
-      console.error('Error al obtener los datos:', error.response ? error.response.data : error.message);
+      // Feedback visual
+      const submitBtn = event.target.querySelector('button[type="submit"]');
+      const originalText = submitBtn.textContent;
+      submitBtn.textContent = '✓ Guardado';
+      setTimeout(() => {
+        submitBtn.textContent = originalText;
+      }, 2000);
+    } else {
+      console.error('Error en la respuesta del servidor:', response.data);
+    }
+  })
+  .catch(error => {
+    console.error('Error al guardar los datos:', error.response ? error.response.data : error.message);
+  });
+});
+
+// Cargar datos iniciales SOLO para el gráfico 2 (2025)
+axios.get('/proveedores-ci/get-data')
+  .then(response => {
+    const data = response.data;
+    data.forEach(item => {
+      const index = dataLabelsKPI3.indexOf(item.mes);
+      
+      if (index !== -1) {
+        performanceDataKPI3[index] = item.desempeno;
+        areaDataKPI3[index] = item.area_cumplimiento;
+      }
     });
+    kpiChart3.update();
+  })
+  .catch(error => {
+    console.error('Error al obtener los datos:', error.response ? error.response.data : error.message);
+  });
 
   // Alternar entre gráficos
   let currentChart = 1;
@@ -795,10 +800,10 @@ updateChartVisibilityGIC();
   <select id="monthComprasIC" name="monthComprasIC"></select><br><br>
 
   <label for="performanceComprasIC">Desempeño (%):</label>
-  <input type="number" id="performanceComprasIC" name="performanceComprasIC" min="0" max="100" step="0.01" required><br><br>
+  <input type="number" id="performanceComprasIC" name="performanceComprasIC" min="0" max="100" step="0.01" ><br><br>
 
   <label for="areaComprasIC">Área de cumplimiento (%):</label>
-  <input type="number" id="areaComprasIC" name="areaComprasIC" min="0" max="100" step="0.01" required><br><br>
+  <input type="number" id="areaComprasIC" name="areaComprasIC" min="0" max="100" step="0.01"><br><br>
 
   <button type="submit" class="button">Actualizar Gráfico</button>
 </form>
@@ -896,54 +901,63 @@ updateChartVisibilityGIC();
       },
     },
   });
-
-  // Configuración del gráfico 2
-  const comprasChartIC2 = new Chart(ctxComprasIC2, {
-    type: 'line',
-    data: {
-      labels: dataLabelsComprasIC2,
-      datasets: [
-        {
-          label: 'Desempeño (%)',
-          data: performanceDataComprasIC2,
-          borderColor: '#87CEEB',
-          backgroundColor: 'transparent',
-          tension: 0.2,
-        },
-        {
-          label: 'Área de cumplimiento',
-          data: areaDataComprasIC2,
-          backgroundColor: 'rgba(255, 0, 0, 0.97)',
-          borderWidth: 0,
-          fill: true,
-        },
-      ],
-    },
-    options: {
-      responsive: true,
-      plugins: {
-        legend: { display: false },
-        tooltip: {
-          callbacks: {
-            label: function(tooltipItem) {
-              return tooltipItem.dataset.label + ': ' + tooltipItem.raw.toFixed(2) + '%';
-            },
-          },
-        },
+// Configuración del gráfico 2 (2025) - Versión corregida
+const comprasChartIC2 = new Chart(ctxComprasIC2, {
+  type: 'line',
+  data: {
+    labels: dataLabelsComprasIC2,
+    datasets: [
+      {
+        label: 'Desempeño (%)',
+        data: performanceDataComprasIC2,
+        borderColor: '#0066cc', // Azul más oscuro
+        backgroundColor: 'transparent',
+        borderWidth: 3, // Línea más gruesa
+        tension: 0.2,
+        pointBackgroundColor: '#0066cc',
+        pointRadius: 5,
+        pointHoverRadius: 7,
+        pointBorderWidth: 2,
+        order: 1 // Se dibuja primero
       },
-      scales: {
-        y: {
-          min: 60,
-          max: 100,
-          ticks: {
-            callback: function(value) {
-              return value + '%';
-            },
-          },
-        },
+      {
+        label: 'Área de cumplimiento',
+        data: areaDataComprasIC2,
+        backgroundColor: 'rgb(255, 0, 0)', // Rojo más transparente
+        borderWidth: 0,
+        fill: true,
+        order: 2 // Se dibuja después
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      legend: { 
+        display: true, // Temporalmente visible para diagnóstico
+        position: 'top'
       },
+      tooltip: {
+        callbacks: {
+          label: function(tooltipItem) {
+            return tooltipItem.dataset.label + ': ' + tooltipItem.raw.toFixed(2) + '%';
+          }
+        }
+      }
     },
-  });
+    scales: {
+      y: {
+        min: 60,
+        max: 100,
+        ticks: {
+          callback: function(value) {
+            return value + '%';
+          }
+        }
+      }
+    }
+  }
+});
 
   // Configurar el token CSRF en Axios
   axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
@@ -983,61 +997,86 @@ updateChartVisibilityGIC();
   const currentMonthLabel2 = `${currentMonthl}-${currentYearl}`;
   monthSelectComprasIC.value = currentMonthLabel2;
 
-  // Validar y actualizar el gráfico
   document.getElementById('dataFormComprasIC').addEventListener('submit', (event) => {
-    event.preventDefault();
+  event.preventDefault();
 
-    const month = monthSelectComprasIC.value;
-    const performance = parseFloat(document.getElementById('performanceComprasIC').value);
-    const area = parseFloat(document.getElementById('areaComprasIC').value);
+  const month = monthSelectComprasIC.value;
+  const performance = parseFloat(document.getElementById('performanceComprasIC').value);
+  const area = parseFloat(document.getElementById('areaComprasIC').value);
 
-    // Validar que los valores estén dentro del rango
-    if (performance < 0 || performance > 100 || area < 0 || area > 100) {
-      alert('Los valores deben estar entre 0% y 100%.');
-      return;
-    }
+  // Validación
+  if (performance < 0 || performance > 100 || area < 0 || area > 100) {
+    alert('Los valores deben estar entre 0% y 100%.');
+    return;
+  }
 
-    // Enviar los datos al servidor
-    axios.post('/cumplimiento-compras-ic/store', {
-      mes: month,
-      desempeno: performance,
-      area_cumplimiento: area,
-    })
-    .then(response => {
-      if (response.data.success) {
-        // Actualizar los datos del gráfico
+  // Determinar qué gráfico está visible
+  const isChart2Visible = document.getElementById('comprasChartIC2').style.display !== 'none';
+
+  // Enviar datos al servidor
+  axios.post('/cumplimiento-compras-ic/store', {
+    mes: month,
+    desempeno: performance,
+    area_cumplimiento: area,
+  })
+  .then(response => {
+    if (response.data.success) {
+      // Actualizar el gráfico correspondiente
+      if (isChart2Visible) {
+        const index = dataLabelsComprasIC2.indexOf(month);
+        if (index !== -1) {
+          performanceDataComprasIC2[index] = performance;
+          areaDataComprasIC2[index] = area;
+          comprasChartIC2.update();
+        }
+      } else {
         const index = dataLabelsComprasIC.indexOf(month);
         if (index !== -1) {
           performanceDataComprasIC[index] = performance;
           areaDataComprasIC[index] = area;
-          comprasChartIC.update(); // Actualizar el gráfico
+          comprasChartIC.update();
         }
-      } else {
-        console.error('Error en la respuesta del servidor:', response.data);
       }
-    })
-    .catch(error => {
-      console.error('Error al guardar los datos:', error.response ? error.response.data : error.message);
-    });
+      
+      // Feedback visual
+      const submitBtn = event.target.querySelector('button[type="submit"]');
+      const originalText = submitBtn.textContent;
+      submitBtn.textContent = '✓ Guardado';
+      setTimeout(() => {
+        submitBtn.textContent = originalText;
+      }, 2000);
+    }
+  })
+  .catch(error => {
+    console.error('Error:', error);
   });
+});
 
-  // Cargar los datos iniciales al cargar la página
-  axios.get('/cumplimiento-compras-ic/get-data')
-    .then(response => {
-      const data = response.data;
-      data.forEach(item => {
-        const index = dataLabelsComprasIC.indexOf(item.mes);
-        if (index !== -1) {
-          performanceDataComprasIC[index] = item.desempeno;
-          areaDataComprasIC[index] = item.area_cumplimiento;
-        }
-      });
-      comprasChartIC.update();
-    })
-    .catch(error => {
-      console.error('Error al obtener los datos:', error.response ? error.response.data : error.message);
+// Cargar datos iniciales para 2025 - Versión corregida
+axios.get('/cumplimiento-compras-ic/get-data')
+  .then(response => {
+    const data = response.data;
+    data.forEach(item => {
+      // Actualizar gráfico 1 (2023-2024)
+      const index1 = dataLabelsComprasIC.indexOf(item.mes);
+      if (index1 !== -1) {
+        performanceDataComprasIC[index1] = item.desempeno;
+        areaDataComprasIC[index1] = item.area_cumplimiento;
+      }
+      
+      // Actualizar gráfico 2 (2025)
+      const index2 = dataLabelsComprasIC2.indexOf(item.mes);
+      if (index2 !== -1) {
+        performanceDataComprasIC2[index2] = item.desempeno;
+        areaDataComprasIC2[index2] = item.area_cumplimiento;
+      }
     });
-
+    comprasChartIC.update();
+    comprasChartIC2.update();
+  })
+  .catch(error => {
+    console.error('Error:', error);
+  });
   // Alternar entre gráficos
   let currentChartComprasIC = 1;
   document.getElementById('nextChartComprasIC').addEventListener('click', () => {

@@ -58,7 +58,7 @@ class RolSeeder extends Seeder
 
 
       //Permiso Administracion
-      Permission::firstOrCreate(['name' => 'administracion.index'])->syncRoles([$admin, $Administracion, $manager, $calidad]);
+      Permission::firstOrCreate(['name' => 'administracion.index'])->syncRoles([$admin, $Administracion, $manager, $calidad, $AdministracionGIC]);
       Permission::firstOrCreate(['name' => 'adm.update'])->syncRoles([$Administracion, $AdministracionGIC, $admin]);
 
       Permission::firstOrCreate(['name' => 'Ventas.index'])->syncRoles([$admin, $Ventas, $manager]);

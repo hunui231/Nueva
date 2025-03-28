@@ -74,13 +74,12 @@
 <form id="dataFormRotacion">
   <label for="monthRotacion">Mes:</label>
   <select id="monthRotacion" name="monthRotacion"></select><br><br>
-  @can('admin.update')
   <label for="performanceRotacion">Desempeño (%):</label>
   <input type="number" id="performanceRotacion" name="performanceRotacion" min="0" max="100" step="0.01"><br><br>
-  @endcan
+  @can('admin.update')
   <label for="areaRotacion">Área de cumplimiento (%):</label>
   <input type="number" id="areaRotacion" name="areaRotacion" min="0" max="100" step="0.01" ><br><br>
-
+  @endcan
   <button type="submit" class="button">Actualizar Gráfico</button>
 </form>
 @endcan
@@ -242,49 +241,92 @@
   monthSelectRotacion.value = currentMonthYear;
 
   // Validar y actualizar el gráfico
-  document.getElementById('dataFormRotacion').addEventListener('submit', (evento) => {
+  document.getElementById('dataFormRotacion').addEventListener('submit', async (evento) => {
     evento.preventDefault();
 
-    const mesSeleccionado = monthSelectRotacion.value;
-    const desempeno = document.getElementById('performanceRotacion').value;
-    const area = document.getElementById('areaRotacion').value;
-
-    // Convertir a número solo si el campo no está vacío
-    const desempenoNum = desempeno === "" ? null : parseFloat(desempeno);
-    const areaNum = area === "" ? null : parseFloat(area);
-
-    // Validar que los valores estén dentro del rango (solo si no son null)
-    if ((desempenoNum !== null && (desempenoNum < 0 || desempenoNum > 100))) {
-        alert('El valor de Desempeño debe estar entre 0% y 100%.');
-        return;
-    }
-    if ((areaNum !== null && (areaNum < 0 || areaNum > 100))) {
-        alert('El valor de Área de Cumplimiento debe estar entre 0% y 100%.');
-        return;
-    }
-
-    // Enviar los datos al servidor
-    axios.post('/rotacion/store', {
-        mes: mesSeleccionado,
-        desempeno: desempenoNum,
-        area_cumplimiento: areaNum,
-    })
-    .then(respuesta => {
-        if (respuesta.data.success) {
-            // Actualizar los datos del segundo gráfico (el vacío)
-            const indice2 = dataLabelsRotacion2.indexOf(mesSeleccionado);
-            if (indice2 !== -1) {
-                if (desempenoNum !== null) rotacionData2[indice2] = desempenoNum;
-                if (areaNum !== null) metaData2[indice2] = areaNum;
-                rotacionChart2.update(); // Actualizar el gráfico 2
-            }
-        } else {
-            console.error('Error en la respuesta del servidor:', respuesta.data);
+    try {
+        // 1. Obtener datos del formulario de manera segura
+        const mesSeleccionado = document.getElementById('monthRotacion')?.value;
+        const desempenoInput = document.getElementById('performanceRotacion');
+        
+        // Verificar existencia de elementos críticos
+        if (!mesSeleccionado || !desempenoInput) {
+            throw new Error('Elementos del formulario no encontrados');
         }
-    })
-    .catch(error => {
-        console.error('Error al guardar los datos:', error.response ? error.response.data : error.message);
-    });
+
+        // 2. Obtener valores con comprobación de nulidad
+        const desempeno = desempenoInput.value;
+        const areaInput = document.getElementById('areaRotacion');
+        const area = areaInput ? areaInput.value : null; // Handle case where areaInput doesn't exist
+
+        // 3. Convertir y validar datos
+        const desempenoNum = desempeno !== "" ? parseFloat(desempeno) : null;
+        const areaNum = area !== null && area !== "" ? parseFloat(area) : null;
+
+        // Validaciones
+        if (desempenoNum === null || isNaN(desempenoNum)) {
+            throw new Error('El campo Desempeño es obligatorio');
+        }
+
+        if (desempenoNum < 0 || desempenoNum > 100) {
+            throw new Error('El valor de Desempeño debe estar entre 0% y 100%');
+        }
+
+        if (areaInput && (areaNum === null || isNaN(areaNum))) {
+            throw new Error('El campo Área de cumplimiento es obligatorio');
+        }
+
+        if (areaInput && (areaNum < 0 || areaNum > 100)) {
+            throw new Error('El valor de Área de Cumplimiento debe estar entre 0% y 100%');
+        }
+
+        // 4. Enviar datos al servidor
+        const respuesta = await axios.post('/rotacion/store', {
+            mes: mesSeleccionado,
+            desempeno: desempenoNum,
+            area_cumplimiento: areaNum
+        });
+
+        // Rest of your code remains the same...
+        if (!respuesta.data.success) {
+            throw new Error('Error al guardar los datos');
+        }
+
+        // 5. Actualizar gráficos
+        const indice = dataLabelsRotacion.indexOf(mesSeleccionado);
+        const indice2 = dataLabelsRotacion2.indexOf(mesSeleccionado);
+        
+        if (indice !== -1) {
+            rotacionData[indice] = desempenoNum;
+            if (areaNum !== null) metaData[indice] = areaNum;
+            rotacionChart.update();
+        }
+        
+        if (indice2 !== -1) {
+            rotacionData2[indice2] = desempenoNum;
+            if (areaNum !== null) metaData2[indice2] = areaNum;
+            rotacionChart2.update();
+        }
+
+        // 6. Feedback visual
+        const btn = evento.target.querySelector('button[type="submit"]');
+        if (btn) {
+            const originalText = btn.textContent;
+            btn.textContent = '✓ Actualizado';
+            btn.disabled = true;
+            
+            setTimeout(() => {
+                btn.textContent = originalText;
+                btn.disabled = false;
+            }, 2000);
+        }
+
+    } catch (error) {
+        console.error('Error en el formulario:', error);
+        if (error.message) {
+            alert(error.message);
+        }
+    }
 });
   // Obtener los datos actualizados del servidor
   function fetchDataRotacion() {
@@ -356,12 +398,12 @@
 <form id="dataFormPermanencia">
   <label for="monthPermanencia">Mes:</label>
   <select id="monthPermanencia" name="monthPermanencia"></select><br><br>
-  @can('admin.update')
   <label for="performancePermanencia">Desempeño (%):</label>
   <input type="number" id="performancePermanencia" name="performancePermanencia" min="0" max="100" step="0.01"><br><br>
- @endcan
+  @can('admin.update')
   <label for="areaPermanencia">Área de cumplimiento (%):</label>
   <input type="number" id="areaPermanencia" name="areaPermanencia" min="0" max="100" step="0.01" ><br><br>
+  @endcan
 
   <button type="submit" class="button">Actualizar Gráfico</button>
 </form>
@@ -528,49 +570,100 @@
   // Establecer el valor predeterminado como el mes actual
   monthSelectPermanencia.value = currentMonthYearPermanencia;
 
-  document.getElementById('dataFormPermanencia').addEventListener('submit', (evento) => {
+  document.getElementById('dataFormPermanencia').addEventListener('submit', async (evento) => {
     evento.preventDefault();
 
-    const mesSeleccionado = monthSelectPermanencia.value;
-    const desempeno = document.getElementById('performancePermanencia').value;
-    const area = document.getElementById('areaPermanencia').value;
-
-    // Convertir a número solo si el campo no está vacío
-    const desempenoNum = desempeno === "" ? null : parseFloat(desempeno);
-    const areaNum = area === "" ? null : parseFloat(area);
-
-    // Validar que los valores estén dentro del rango (solo si no son null)
-    if ((desempenoNum !== null && (desempenoNum < 0 || desempenoNum > 100))) {
-        alert('El valor de Desempeño debe estar entre 0% y 100%.');
-        return;
-    }
-    if ((areaNum !== null && (areaNum < 0 || areaNum > 100))) {
-        alert('El valor de Área de Cumplimiento debe estar entre 0% y 100%.');
-        return;
-    }
-
-    // Enviar los datos al servidor
-    axios.post('/permanencia/store', {
-        mes: mesSeleccionado,
-        desempeno: desempenoNum,
-        area_cumplimiento: areaNum,
-    })
-    .then(respuesta => {
-        if (respuesta.data.success) {
-            // Actualizar los datos del segundo gráfico (el vacío)
-            const indice2 = dataLabelsPermanencia2.indexOf(mesSeleccionado);
-            if (indice2 !== -1) {
-                if (desempenoNum !== null) permanenciaData2[indice2] = desempenoNum;
-                if (areaNum !== null) metaDataPermanencia2[indice2] = areaNum;
-                permanenciaChart2.update(); // Actualizar el gráfico 2
-            }
-        } else {
-            console.error('Error en la respuesta del servidor:', respuesta.data);
+    try {
+        // 1. Obtener elementos del formulario de manera segura
+        const mesSeleccionado = document.getElementById('monthPermanencia')?.value;
+        const performanceInput = document.getElementById('performancePermanencia');
+        const areaInput = document.getElementById('areaPermanencia'); // Campo condicional
+        
+        // Verificar existencia de elementos críticos
+        if (!mesSeleccionado || !performanceInput) {
+            throw new Error('Elementos del formulario no encontrados');
         }
-    })
-    .catch(error => {
-        console.error('Error al guardar los datos:', error.response ? error.response.data : error.message);
-    });
+
+        // 2. Obtener valores con comprobación de nulidad
+        const performance = performanceInput.value;
+        const area = areaInput ? areaInput.value : null;
+
+        // 3. Convertir y validar datos
+        const performanceNum = performance !== "" ? parseFloat(performance) : null;
+        const areaNum = area !== null && area !== "" ? parseFloat(area) : null;
+
+        // Validaciones básicas
+        if (performanceNum === null || isNaN(performanceNum)) {
+            throw new Error('El campo Desempeño es obligatorio');
+        }
+
+        if (performanceNum < 0 || performanceNum > 100) {
+            throw new Error('El valor de Desempeño debe estar entre 0% y 100%');
+        }
+
+        // Validaciones para el área (solo si existe el campo)
+        if (areaInput) {
+            if (areaNum === null || isNaN(areaNum)) {
+                throw new Error('El campo Área de cumplimiento es obligatorio');
+            }
+            if (areaNum < 0 || areaNum > 100) {
+                throw new Error('El valor de Área de Cumplimiento debe estar entre 0% y 100%');
+            }
+        }
+
+        // 4. Preparar datos para enviar al servidor
+        const datos = {
+            mes: mesSeleccionado,
+            desempeno: performanceNum
+        };
+
+        // Solo agregar area_cumplimiento si existe el campo
+        if (areaInput) {
+            datos.area_cumplimiento = areaNum;
+        }
+
+        // 5. Enviar datos al servidor
+        const respuesta = await axios.post('/permanencia/store', datos);
+
+        if (!respuesta.data.success) {
+            throw new Error('Error al guardar los datos');
+        }
+
+        // 6. Actualizar gráficos
+        const indice = dataLabelsPermanencia.indexOf(mesSeleccionado);
+        const indice2 = dataLabelsPermanencia2.indexOf(mesSeleccionado);
+        
+        if (indice !== -1) {
+            permanenciaData[indice] = performanceNum;
+            if (areaNum !== null) metaDataPermanencia[indice] = areaNum;
+            permanenciaChart.update();
+        }
+        
+        if (indice2 !== -1) {
+            permanenciaData2[indice2] = performanceNum;
+            if (areaNum !== null) metaDataPermanencia2[indice2] = areaNum;
+            permanenciaChart2.update();
+        }
+
+        // 7. Feedback visual
+        const btn = evento.target.querySelector('button[type="submit"]');
+        if (btn) {
+            const originalText = btn.textContent;
+            btn.textContent = '✓ Actualizado';
+            btn.disabled = true;
+            
+            setTimeout(() => {
+                btn.textContent = originalText;
+                btn.disabled = false;
+            }, 2000);
+        }
+
+    } catch (error) {
+        console.error('Error en el formulario:', error);
+        if (error.message) {
+            alert(error.message);
+        }
+    }
 });
   // Obtener los datos actualizados del servidor
   function fetchDataPermanencia() {
@@ -646,13 +739,12 @@
 <form id="dataFormRotacionGIC">
   <label for="monthRotacionGIC">Mes:</label>
   <select id="monthRotacionGIC" name="monthRotacionGIC"></select><br><br>
-  @can('admin.update')
   <label for="performanceRotacionGIC">Desempeño (%):</label>
   <input type="number" id="performanceRotacionGIC" name="performanceRotacionGIC" min="0" max="100" step="0.01"><br><br>
-  @endcan
+  @can('admin.update')
   <label for="areaRotacionGIC">Área de cumplimiento (%):</label>
   <input type="number" id="areaRotacionGIC" name="areaRotacionGIC" min="0" max="100" step="0.01" ><br><br>
-
+  @endcan
   <button type="submit" class="button">Actualizar Gráfico</button>
 </form>
 @endcan
@@ -817,51 +909,101 @@
   monthSelectRotacionGIC.value = currentMonthYearRotacionGIC;
 
   // Validar y actualizar el gráfico
-  document.getElementById('dataFormRotacionGIC').addEventListener('submit', (evento) => {
+  document.getElementById('dataFormRotacionGIC').addEventListener('submit', async (evento) => {
     evento.preventDefault();
 
-    const mesSeleccionado = monthSelectRotacionGIC.value;
-    const desempeno = document.getElementById('performanceRotacionGIC').value;
-    const area = document.getElementById('areaRotacionGIC').value;
-
-    // Convertir a número solo si el campo no está vacío
-    const desempenoNum = desempeno === "" ? null : parseFloat(desempeno);
-    const areaNum = area === "" ? null : parseFloat(area);
-
-    // Validar que los valores estén dentro del rango (solo si no son null)
-    if ((desempenoNum !== null && (desempenoNum < 0 || desempenoNum > 100))) {
-        alert('El valor de Desempeño debe estar entre 0% y 100%.');
-        return;
-    }
-    if ((areaNum !== null && (areaNum < 0 || areaNum > 100))) {
-        alert('El valor de Área de Cumplimiento debe estar entre 0% y 100%.');
-        return;
-    }
-
-    // Enviar los datos al servidor
-    axios.post('/rotacion-gic/store', {
-        mes: mesSeleccionado,
-        desempeno: desempenoNum,
-        area_cumplimiento: areaNum,
-    })
-    .then(respuesta => {
-        if (respuesta.data.success) {
-            // Actualizar los datos del segundo gráfico (el vacío)
-            const indice2 = dataLabelsRotacionGIC2.indexOf(mesSeleccionado);
-            if (indice2 !== -1) {
-                if (desempenoNum !== null) rotacionData2GIC[indice2] = desempenoNum;
-                if (areaNum !== null) referenciaData2GIC[indice2] = areaNum;
-                rotationChartGIC2.update(); // Actualizar el gráfico 2
-            }
-        } else {
-            console.error('Error en la respuesta del servidor:', respuesta.data);
+    try {
+        // 1. Obtener elementos del formulario de manera segura
+        const mesSeleccionado = document.getElementById('monthRotacionGIC')?.value;
+        const performanceInput = document.getElementById('performanceRotacionGIC');
+        const areaInput = document.getElementById('areaRotacionGIC'); // Campo condicional
+        
+        // Verificar existencia de elementos críticos
+        if (!mesSeleccionado || !performanceInput) {
+            throw new Error('Elementos del formulario no encontrados');
         }
-    })
-    .catch(error => {
-        console.error('Error al guardar los datos:', error.response ? error.response.data : error.message);
-    });
-});
 
+        // 2. Obtener valores con comprobación de nulidad
+        const performance = performanceInput.value;
+        const area = areaInput ? areaInput.value : null;
+
+        // 3. Convertir y validar datos
+        const performanceNum = performance !== "" ? parseFloat(performance) : null;
+        const areaNum = area !== null && area !== "" ? parseFloat(area) : null;
+
+        // Validaciones básicas
+        if (performanceNum === null || isNaN(performanceNum)) {
+            throw new Error('El campo Desempeño es obligatorio');
+        }
+
+        if (performanceNum < 0 || performanceNum > 100) {
+            throw new Error('El valor de Desempeño debe estar entre 0% y 100%');
+        }
+
+        // Validaciones para el área (solo si existe el campo)
+        if (areaInput) {
+            if (areaNum === null || isNaN(areaNum)) {
+                throw new Error('El campo Área de cumplimiento es obligatorio');
+            }
+            if (areaNum < 0 || areaNum > 100) {
+                throw new Error('El valor de Área de Cumplimiento debe estar entre 0% y 100%');
+            }
+        }
+
+        // 4. Preparar datos para enviar al servidor
+        const datos = {
+            mes: mesSeleccionado,
+            desempeno: performanceNum
+        };
+
+        // Solo agregar area_cumplimiento si existe el campo
+        if (areaInput) {
+            datos.area_cumplimiento = areaNum;
+        }
+
+        // 5. Enviar datos al servidor
+        const respuesta = await axios.post('/rotacion-gic/store', datos);
+
+        if (!respuesta.data.success) {
+            throw new Error('Error al guardar los datos');
+        }
+
+        // 6. Actualizar ambos gráficos donde corresponda
+        const indice = dataLabelsRotacionGIC.indexOf(mesSeleccionado);
+        const indice2 = dataLabelsRotacionGIC2.indexOf(mesSeleccionado);
+        
+        if (indice !== -1) {
+            rotacionDataGIC[indice] = performanceNum;
+            if (areaNum !== null) referenciaDataGIC[indice] = areaNum;
+            rotationChartGIC.update();
+        }
+        
+        if (indice2 !== -1) {
+            rotacionData2GIC[indice2] = performanceNum;
+            if (areaNum !== null) referenciaData2GIC[indice2] = areaNum;
+            rotationChartGIC2.update();
+        }
+
+        // 7. Feedback visual
+        const btn = evento.target.querySelector('button[type="submit"]');
+        if (btn) {
+            const originalText = btn.textContent;
+            btn.textContent = '✓ Actualizado';
+            btn.disabled = true;
+            
+            setTimeout(() => {
+                btn.textContent = originalText;
+                btn.disabled = false;
+            }, 2000);
+        }
+
+    } catch (error) {
+        console.error('Error en el formulario:', error);
+        if (error.message) {
+            alert(error.message);
+        }
+    }
+});
   // Obtener los datos actualizados del servidor
   function fetchDataRotacionGIC() {
     axios.get('/rotacion-gic/get-data')
@@ -933,13 +1075,13 @@
 <form id="dataFormPermanenciaGIC">
   <label for="monthPermanenciaGIC">Mes:</label>
   <select id="monthPermanenciaGIC" name="monthPermanenciaGIC"></select><br><br>
-  @can('admin.update')
+
   <label for="performancePermanenciaGIC">Desempeño (%):</label>
   <input type="number" id="performancePermanenciaGIC" name="performancePermanenciaGIC" min="0" max="100" step="0.01" ><br><br>
-  @endcan
+  @can('admin.update')
   <label for="areaPermanenciaGIC">Área de cumplimiento (%):</label>
   <input type="number" id="areaPermanenciaGIC" name="areaPermanenciaGIC" min="0" max="100" step="0.01" ><br><br>
-
+  @endcan
   <button type="submit" class="button">Actualizar Gráfico</button>
 </form>
 @endcan
@@ -1105,50 +1247,100 @@
   // Establecer el valor predeterminado como el mes actual
   monthSelectPermanenciaGIC.value = currentMonthYearPermanenciaGIC;
 
-  // Validar y actualizar el gráfico
-  document.getElementById('dataFormPermanenciaGIC').addEventListener('submit', (evento) => {
+  document.getElementById('dataFormPermanenciaGIC').addEventListener('submit', async (evento) => {
     evento.preventDefault();
 
-    const mesSeleccionado = monthSelectPermanenciaGIC.value;
-    const desempeno = document.getElementById('performancePermanenciaGIC').value;
-    const area = document.getElementById('areaPermanenciaGIC').value;
-
-    // Convertir a número solo si el campo no está vacío
-    const desempenoNum = desempeno === "" ? null : parseFloat(desempeno);
-    const areaNum = area === "" ? null : parseFloat(area);
-
-    // Validar que los valores estén dentro del rango (solo si no son null)
-    if ((desempenoNum !== null && (desempenoNum < 0 || desempenoNum > 100))) {
-        alert('El valor de Desempeño debe estar entre 0% y 100%.');
-        return;
-    }
-    if ((areaNum !== null && (areaNum < 0 || areaNum > 100))) {
-        alert('El valor de Área de Cumplimiento debe estar entre 0% y 100%.');
-        return;
-    }
-
-    // Enviar los datos al servidor
-    axios.post('/permanencia-gic/store', {
-        mes: mesSeleccionado,
-        desempeno: desempenoNum,
-        area_cumplimiento: areaNum,
-    })
-    .then(respuesta => {
-        if (respuesta.data.success) {
-            // Actualizar los datos del segundo gráfico (el vacío)
-            const indice2 = dataLabelsPermanenciaGIC2.indexOf(mesSeleccionado);
-            if (indice2 !== -1) {
-                if (desempenoNum !== null) permanenciaData2GIC[indice2] = desempenoNum;
-                if (areaNum !== null) fondoData2GIC[indice2] = areaNum;
-                permanenceChartGIC2.update(); // Actualizar el gráfico 2
-            }
-        } else {
-            console.error('Error en la respuesta del servidor:', respuesta.data);
+    try {
+        // 1. Obtener elementos del formulario de manera segura
+        const mesSeleccionado = document.getElementById('monthPermanenciaGIC')?.value;
+        const performanceInput = document.getElementById('performancePermanenciaGIC');
+        const areaInput = document.getElementById('areaPermanenciaGIC'); // Campo condicional
+        
+        // Verificar existencia de elementos críticos
+        if (!mesSeleccionado || !performanceInput) {
+            throw new Error('Elementos del formulario no encontrados');
         }
-    })
-    .catch(error => {
-        console.error('Error al guardar los datos:', error.response ? error.response.data : error.message);
-    });
+
+        // 2. Obtener valores con comprobación de nulidad
+        const performance = performanceInput.value;
+        const area = areaInput ? areaInput.value : null;
+
+        // 3. Convertir y validar datos
+        const performanceNum = performance !== "" ? parseFloat(performance) : null;
+        const areaNum = area !== null && area !== "" ? parseFloat(area) : null;
+
+        // Validaciones básicas
+        if (performanceNum === null || isNaN(performanceNum)) {
+            throw new Error('El campo Desempeño es obligatorio');
+        }
+
+        if (performanceNum < 0 || performanceNum > 100) {
+            throw new Error('El valor de Desempeño debe estar entre 0% y 100%');
+        }
+
+        // Validaciones para el área (solo si existe el campo)
+        if (areaInput) {
+            if (areaNum === null || isNaN(areaNum)) {
+                throw new Error('El campo Área de cumplimiento es obligatorio');
+            }
+            if (areaNum < 0 || areaNum > 100) {
+                throw new Error('El valor de Área de Cumplimiento debe estar entre 0% y 100%');
+            }
+        }
+
+        // 4. Preparar datos para enviar al servidor
+        const datos = {
+            mes: mesSeleccionado,
+            desempeno: performanceNum
+        };
+
+        // Solo agregar area_cumplimiento si existe el campo
+        if (areaInput) {
+            datos.area_cumplimiento = areaNum;
+        }
+
+        // 5. Enviar datos al servidor
+        const respuesta = await axios.post('/permanencia-gic/store', datos);
+
+        if (!respuesta.data.success) {
+            throw new Error('Error al guardar los datos');
+        }
+
+        // 6. Actualizar ambos gráficos donde corresponda
+        const indice = dataLabelsPermanenciaGIC.indexOf(mesSeleccionado);
+        const indice2 = dataLabelsPermanenciaGIC2.indexOf(mesSeleccionado);
+        
+        if (indice !== -1) {
+            permanenciaDataGIC[indice] = performanceNum;
+            if (areaNum !== null) fondoDataGIC[indice] = areaNum;
+            permanenceChartGIC.update();
+        }
+        
+        if (indice2 !== -1) {
+            permanenciaData2GIC[indice2] = performanceNum;
+            if (areaNum !== null) fondoData2GIC[indice2] = areaNum;
+            permanenceChartGIC2.update();
+        }
+
+        // 7. Feedback visual
+        const btn = evento.target.querySelector('button[type="submit"]');
+        if (btn) {
+            const originalText = btn.textContent;
+            btn.textContent = '✓ Actualizado';
+            btn.disabled = true;
+            
+            setTimeout(() => {
+                btn.textContent = originalText;
+                btn.disabled = false;
+            }, 2000);
+        }
+
+    } catch (error) {
+        console.error('Error en el formulario:', error);
+        if (error.message) {
+            alert(error.message);
+        }
+    }
 });
 
   // Obtener los datos actualizados del servidor
