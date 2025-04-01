@@ -221,49 +221,101 @@
   // Establecer el valor predeterminado como el mes actual
   monthSelectEntregaMateriales.value = currentMonthYear;
 
-  // Validar y actualizar el gráfico
-  document.getElementById('dataFormEntregaMateriales').addEventListener('submit', (evento) => {
+   // Validar y actualizar el gráfico
+   document.getElementById('dataFormEntregaMateriales').addEventListener('submit', async (evento) => {
     evento.preventDefault();
 
-    const mesSeleccionado = monthSelectEntregaMateriales.value;
-    const desempeno = document.getElementById('desempenoEntregaMateriales').value;
-    const areaCumplimiento = document.getElementById('areaCumplimientoEntregaMateriales').value;
-
-    // Convertir a número solo si el campo no está vacío
-    const desempenoNum = desempeno === "" ? null : parseFloat(desempeno);
-    const areaCumplimientoNum = areaCumplimiento === "" ? null : parseFloat(areaCumplimiento);
-
-    // Validar que los valores estén dentro del rango (solo si no son null)
-    if ((desempenoNum !== null && (desempenoNum < 0 || desempenoNum > 100))) {
-        alert('El valor de Desempeño debe estar entre 0% y 100%.');
-        return;
-    }
-    if ((areaCumplimientoNum !== null && (areaCumplimientoNum < 0 || areaCumplimientoNum > 100))) {
-        alert('El valor de Área de Cumplimiento debe estar entre 0% y 100%.');
-        return;
-    }
-
-    // Enviar los datos al servidor
-    axios.post('/entrega-materiales/store', {
-        mes: mesSeleccionado,
-        desempeno: desempenoNum,
-        area_cumplimiento: areaCumplimientoNum,
-    })
-    .then(respuesta => {
-        if (respuesta.data.success) {
-            const indice2 = dataLabels2.indexOf(mesSeleccionado);
-            if (indice2 !== -1) {
-                if (desempenoNum !== null) desempenoData2[indice2] = desempenoNum;
-                if (areaCumplimientoNum !== null) areaCumplimientoData2[indice2] = areaCumplimientoNum;
-                grafico2.update(); 
-            }
-        } else {
-            console.error('Error en la respuesta del servidor:', respuesta.data);
+    try {
+        // 1. Obtener elementos del formulario de manera segura
+        const mesSeleccionado = document.getElementById('monthEntregaMateriales')?.value;
+        const desempenoInput = document.getElementById('desempenoEntregaMateriales');
+        const areaCumplimientoInput = document.getElementById('areaCumplimientoEntregaMateriales'); // Campo condicional
+        
+        // Verificar existencia de elementos críticos
+        if (!mesSeleccionado || !desempenoInput) {
+            throw new Error('Elementos del formulario no encontrados');
         }
-    })
-    .catch(error => {
-        console.error('Error al guardar los datos:', error.response ? error.response.data : error.message);
-    });
+
+        // 2. Obtener valores con comprobación de nulidad
+        const desempeno = desempenoInput.value;
+        const areaCumplimiento = areaCumplimientoInput ? areaCumplimientoInput.value : null;
+
+        // 3. Convertir y validar datos
+        const desempenoNum = desempeno !== "" ? parseFloat(desempeno) : null;
+        const areaCumplimientoNum = areaCumplimiento !== null && areaCumplimiento !== "" ? parseFloat(areaCumplimiento) : null;
+
+        // Validaciones básicas
+        if (desempenoNum === null || isNaN(desempenoNum)) {
+            throw new Error('El campo Área de cumplimiento es obligatorio');
+        }
+
+        if (desempenoNum < 0 || desempenoNum > 100) {
+            throw new Error('El valor de Área de cumplimiento debe estar entre 0% y 100%');
+        }
+
+        // Validaciones para el área de cumplimiento (solo si existe el campo)
+        if (areaCumplimientoInput) {
+            if (areaCumplimientoNum === null || isNaN(areaCumplimientoNum)) {
+                throw new Error('El campo Desempeño es obligatorio');
+            }
+            if (areaCumplimientoNum < 0 || areaCumplimientoNum > 100) {
+                throw new Error('El valor de Desempeño debe estar entre 0% y 100%');
+            }
+        }
+
+        // 4. Preparar datos para enviar al servidor
+        const datos = {
+            mes: mesSeleccionado,
+            desempeno: desempenoNum
+        };
+
+        // Solo agregar area_cumplimiento si existe el campo
+        if (areaCumplimientoInput) {
+            datos.area_cumplimiento = areaCumplimientoNum;
+        }
+
+        // 5. Enviar datos al servidor
+        const respuesta = await axios.post('/entrega-materiales/store', datos);
+
+        if (!respuesta.data.success) {
+            throw new Error('Error al guardar los datos');
+        }
+
+        // 6. Actualizar ambos gráficos donde corresponda
+        const indice = dataLabels.indexOf(mesSeleccionado);
+        const indice2 = dataLabels2.indexOf(mesSeleccionado);
+        
+        if (indice !== -1) {
+            desempenoData[indice] = desempenoNum;
+            if (areaCumplimientoNum !== null) areaCumplimientoData[indice] = areaCumplimientoNum;
+            grafico.update();
+        }
+        
+        if (indice2 !== -1) {
+            desempenoData2[indice2] = desempenoNum;
+            if (areaCumplimientoNum !== null) areaCumplimientoData2[indice2] = areaCumplimientoNum;
+            grafico2.update();
+        }
+
+        // 7. Feedback visual
+        const btn = evento.target.querySelector('button[type="submit"]');
+        if (btn) {
+            const originalText = btn.textContent;
+            btn.textContent = '✓ Actualizado';
+            btn.disabled = true;
+            
+            setTimeout(() => {
+                btn.textContent = originalText;
+                btn.disabled = false;
+            }, 2000);
+        }
+
+    } catch (error) {
+        console.error('Error en el formulario:', error);
+        if (error.message) {
+            alert(error.message);
+        }
+    }
 });
   function fetchData() {
     axios.get('/entrega-materiales/get-data')
@@ -402,6 +454,8 @@
           data: areaCumplimientoDataInventario,
           backgroundColor: 'rgba(255, 0, 0, 0.85)', 
           borderWidth: 0,
+
+          
           fill: true,
         },
       ],

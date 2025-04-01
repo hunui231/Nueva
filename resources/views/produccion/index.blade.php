@@ -35,10 +35,10 @@
     <label for="monthScrap">Mes:</label>
     <select id="monthScrap" name="monthScrap"></select><br><br>
 
-    <label for="performanceScrap">Área de cumplimiento (%):</label>
+    <label for="performanceScrap">Desempeño (%):</label>
     <input type="number" id="performanceScrap" name="performanceScrap" min="0" max="100" step="0.01" ><br><br>
     @can('admin.update')
-    <label for="areaScrap">Desempeño (%): </label>
+    <label for="areaScrap">Área de cumplimiento (%):</label>
     <input type="number" id="areaScrap" name="areaScrap" min="0" max="100" step="0.01"><br><br>
     @endcan
     <button type="submit" class="button">Actualizar Gráfico</button>
@@ -337,10 +337,10 @@
     <label for="monthRendimiento">Mes:</label>
     <select id="monthRendimiento" name="monthRendimiento"></select><br><br>
 
-    <label for="performanceRendimiento">Área de cumplimiento (%):</label>
+    <label for="performanceRendimiento">Desempeño (%):</label>
     <input type="number" id="performanceRendimiento" name="performanceRendimiento" min="0" max="100" step="0.01" ><br><br>
     @can('admin.update')
-    <label for="areaRendimiento">Desempeño (%):</label>
+    <label for="areaRendimiento">Área de cumplimiento (%):</label>
     <input type="number" id="areaRendimiento" name="areaRendimiento" min="0" max="100" step="0.01" ><br><br>
      @endcan
     <button type="submit" class="button">Actualizar Gráfico</button>
@@ -639,10 +639,10 @@
     <label for="monthProduccion">Mes:</label>
     <select id="monthProduccion" name="monthProduccion"></select><br><br>
 
-    <label for="performanceProduccion">Área de cumplimiento (%):</label>
+    <label for="performanceProduccion">Desempeño (%):</label>
     <input type="number" id="performanceProduccion" name="performanceProduccion" min="0" max="100" step="0.01"><br><br>
     @can('admin.update')
-    <label for="areaProduccion">Desempeño (%):</label>
+    <label for="areaProduccion">Área de cumplimiento (%):</label>
     <input type="number" id="areaProduccion" name="areaProduccion" min="0" max="100" step="0.01"><br><br>
     @endcan
     <button type="submit" class="button">Actualizar Gráfico</button>

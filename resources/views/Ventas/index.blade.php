@@ -33,10 +33,10 @@
 <form id="dataFormClientes">
   <label for="monthClientes">Mes:</label>
   <select id="monthClientes" name="monthClientes"></select><br><br>
-  <label for="performanceClientes">Área de cumplimiento (%):</label>
+  <label for="performanceClientes">Desempeño (%): </label>
   <input type="number" id="performanceClientes" name="performanceClientes" min="0" max="100" step="0.01" ><br><br>
   @can('admin.update')
-  <label for="areaClientes">Desempeño (%): </label>
+  <label for="areaClientes">Área de cumplimiento (%): </label>
   <input type="number" id="areaClientes" name="areaClientes" min="0" max="100" step="0.01" ><br><br>
   @endcan
   <button type="submit" class="button">Actualizar Gráfico</button>
@@ -313,10 +313,10 @@
 <form id="dataFormVentas">
   <label for="monthVentas">Mes:</label>
   <select id="monthVentas" name="monthVentas"></select><br><br>
-  <label for="performanceVentas">Área de cumplimiento (%):</label>
+  <label for="performanceVentas">Desempeño (%):</label>
   <input type="number" id="performanceVentas" name="performanceVentas" min="0" step="0.01" ><br><br>
   @can('admin.update')
-  <label for="areaVentas"> Desempeño (%):</label>
+  <label for="areaVentas">Área de cumplimiento (%):</label>
   <input type="number" id="areaVentas" name="areaVentas" min="0" step="0.01" ><br><br>
   @endcan
   <button type="submit" class="button">Actualizar Gráfico</button>
