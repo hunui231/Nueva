@@ -50,13 +50,18 @@
 
   <label for="performanceKPI_GIC">Desempeño (%):</label>
   <input type="number" id="performanceKPI_GIC" name="performanceKPI_GIC" min="0" max="100" step="0.01"><br><br>
+  
   @can('admin.update')
   <label for="areaKPI_GIC">Área de cumplimiento (%):</label>
-  <input type="number" id="areaKPI_GIC" name="areaKPI_GIC" min="0" max="100" step="0.01" ><br><br>
-@endcan
+  <input type="number" id="areaKPI_GIC" name="areaKPI_GIC" min="0" max="100" step="0.01"><br><br>
+  @else
+  <input type="hidden" id="areaKPI_GIC" name="areaKPI_GIC" value="">
+  @endcan
+  
   <button type="submit" class="button">Actualizar Gráfico</button>
 </form>
 @endcan
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
@@ -83,14 +88,13 @@
   }
 
   const currentYear = new Date().getFullYear();
-  const dataLabelsKPI_GIC = generateMonthOptions(23, 24); // Genera desde 2023 hasta 2024
-  const dataLabelsKPI_GIC2 = generateMonthOptions(25, 25); // Genera solo 2025
+  const dataLabelsKPI_GIC = generateMonthOptions(23, 24); // 2023-2024
+  const dataLabelsKPI_GIC2 = generateMonthOptions(25, 25); // 2025
 
-  let performanceDataKPI_GIC = Array(24).fill(null); // Datos iniciales para el gráfico 1
-  let areaDataKPI_GIC = Array(24).fill(null); // Datos iniciales para el gráfico 1
-
-  let performanceDataKPI_GIC2 = Array(12).fill(0); // Datos iniciales para el gráfico 2
-  let areaDataKPI_GIC2 = Array(12).fill(0); // Datos iniciales para el gráfico 2
+  let performanceDataKPI_GIC = Array(24).fill(null);
+  let areaDataKPI_GIC = Array(24).fill(null);
+  let performanceDataKPI_GIC2 = Array(12).fill(0);
+  let areaDataKPI_GIC2 = Array(12).fill(0);
 
   // Configuración del gráfico GIC 1
   const kpiChartGIC = new Chart(ctxKPI_GIC, {
@@ -188,125 +192,150 @@
     },
   });
 
-  // Generar las opciones de meses en el formulario
-  const monthSelectKPI_GIC = document.getElementById('monthKPI_GIC');
-  dataLabelsKPI_GIC.concat(dataLabelsKPI_GIC2).forEach((label) => {
-    const option = document.createElement('option');
-    option.value = label;
-    option.textContent = label;
-    monthSelectKPI_GIC.appendChild(option);
-  });
-
-  // Obtener la fecha actual
-  const currentDate = new Date();
-
-  // Formatear el mes abreviado (ej: "Feb")
-  const month = currentDate.toLocaleString('default', { month: 'short' }).toLowerCase();
-
-  // Formatear el año en dos dígitos (ej: "25")
-  const year = currentDate.getFullYear().toString().slice(-2);
-
-  // Crear el formato "MMM-AA" (ej: "Feb-25")
-  const currentMonthYear = `${month}-${year}`;
-
-  // Establecer el valor predeterminado como el mes actual
-  monthSelectKPI_GIC.value = currentMonthYear;
-
-  document.getElementById('dataFormKPI_GIC').addEventListener('submit', (event) => {
-    event.preventDefault();
-
-    // 1. Obtención de valores (forma segura)
-    const month = monthSelectKPI_GIC.value;
-    const performance = document.getElementById('performanceKPI_GIC').value;
-    const area = document.getElementById('areaKPI_GIC').value;
-
-    // 2. Conversión a números (manejando vacíos)
-    const performanceNum = performance === "" ? null : parseFloat(performance);
-    const areaNum = area === "" ? null : parseFloat(area);
-
-    // 3. Validación de año
-    const selectedYear = 2000 + parseInt(month.split('-')[1], 10);
-    if (selectedYear < new Date().getFullYear()) {
-        alert('No se pueden ingresar datos para años anteriores.');
-        return;
+  // Inicialización del formulario
+  const initKPIForm = () => {
+    const form = document.getElementById('dataFormKPI_GIC');
+    if (!form) {
+      console.log('Formulario no disponible para este usuario');
+      return;
     }
 
-    // 4. Envío al servidor
-    axios.post('/proveedores-gic/store', {
-        mes: month,
-        desempeno: performanceNum,
-        area_cumplimiento: areaNum,
-    })
-    .then(response => {
-        if (response.data.success) {
-            // 5. Actualización SOLO del gráfico 2 (sin afectar el 1)
-            const index = dataLabelsKPI_GIC2.indexOf(month);
-            if (index !== -1) {
-                // Actualizamos solo los datos del gráfico 2
-                if (performanceNum !== null) performanceDataKPI_GIC2[index] = performanceNum;
-                if (areaNum !== null) areaDataKPI_GIC2[index] = areaNum;
-                
-                // Actualizamos solo el gráfico 2
-                kpiChartGIC2.update();
-                
-                // Feedback visual
-                event.target.querySelector('button[type="submit"]').textContent = '✓ Actualizado';
-                setTimeout(() => {
-                    event.target.querySelector('button[type="submit"]').textContent = 'Actualizar Gráfico';
-                }, 2000);
-            }
-        } else {
-            console.error('Error en el servidor:', response.data);
-        }
-    })
-    .catch(error => {
-        console.error('Error de conexión:', error);
-    });
-});
-  // Obtener los datos actualizados del servidor
-  function fetchDataKPI_GIC() {
-    axios.get('/proveedores-gic/get-data')
-      .then(response => {
-        const data = response.data;
-        data.forEach(item => {
-          const index = dataLabelsKPI_GIC.indexOf(item.mes);
-          if (index !== -1) {
-            performanceDataKPI_GIC[index] = item.desempeno;
-            areaDataKPI_GIC[index] = item.area_cumplimiento;
-          } else {
-            const index2 = dataLabelsKPI_GIC2.indexOf(item.mes);
-            if (index2 !== -1) {
-              performanceDataKPI_GIC2[index2] = item.desempeno;
-              areaDataKPI_GIC2[index2] = item.area_cumplimiento;
-            }
-          }
-        });
-        kpiChartGIC.update(); // Actualizar el gráfico 1
-        kpiChartGIC2.update(); // Actualizar el gráfico 2
-      })
-      .catch(error => {
-        console.error('Error al obtener los datos:', error.response ? error.response.data : error.message);
+    // Generar opciones de meses
+    const monthSelect = document.getElementById('monthKPI_GIC');
+    if (monthSelect) {
+      dataLabelsKPI_GIC.concat(dataLabelsKPI_GIC2).forEach((label) => {
+        const option = document.createElement('option');
+        option.value = label;
+        option.textContent = label;
+        monthSelect.appendChild(option);
       });
+
+      // Establecer mes actual como valor predeterminado
+      const currentDate = new Date();
+      const month = currentDate.toLocaleString('default', { month: 'short' }).toLowerCase();
+      const year = currentDate.getFullYear().toString().slice(-2);
+      monthSelect.value = `${month}-${year}`;
+    }
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      const monthSelect = document.getElementById('monthKPI_GIC');
+      const performanceInput = document.getElementById('performanceKPI_GIC');
+      const areaInput = document.getElementById('areaKPI_GIC');
+
+      if (!monthSelect || !performanceInput) {
+        console.error('Elementos requeridos no encontrados');
+        return;
+      }
+
+      try {
+        const formData = {
+          mes: monthSelect.value,
+          desempeno: performanceInput.value || null,
+          area_cumplimiento: areaInput ? areaInput.value || null : null
+        };
+
+        // Validación de año
+        const selectedYear = parseInt(formData.mes.split('-')[1], 10) + 2000;
+        if (selectedYear < new Date().getFullYear()) {
+          alert('No se pueden ingresar datos para años anteriores.');
+          return;
+        }
+
+        const response = await axios.post('/proveedores-gic/store', formData);
+
+        if (response.data.success) {
+          updateChartData(formData.mes, formData.desempeno, formData.area_cumplimiento);
+          showSubmitFeedback(event.target);
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Ocurrió un error al procesar la solicitud');
+      }
+    });
+  };
+
+  // Actualizar datos de gráficos
+  function updateChartData(month, performance, area) {
+    const performanceNum = performance ? parseFloat(performance) : null;
+    const areaNum = area ? parseFloat(area) : null;
+
+    // Actualizar gráfico 1 (2023-2024)
+    const index = dataLabelsKPI_GIC.indexOf(month);
+    if (index !== -1) {
+      if (performanceNum !== null) performanceDataKPI_GIC[index] = performanceNum;
+      if (areaNum !== null) areaDataKPI_GIC[index] = areaNum;
+      kpiChartGIC.update();
+    }
+
+    // Actualizar gráfico 2 (2025)
+    const index2 = dataLabelsKPI_GIC2.indexOf(month);
+    if (index2 !== -1) {
+      if (performanceNum !== null) performanceDataKPI_GIC2[index2] = performanceNum;
+      if (areaNum !== null) areaDataKPI_GIC2[index2] = areaNum;
+      kpiChartGIC2.update();
+    }
   }
 
-  // Cargar los datos iniciales al cargar la página
-  fetchDataKPI_GIC();
+  // Feedback visual
+  function showSubmitFeedback(form) {
+    const submitBtn = form.querySelector('button[type="submit"]');
+    const originalText = submitBtn.textContent;
+    
+    submitBtn.textContent = '✓ Actualizado';
+    submitBtn.style.backgroundColor = '#28a745';
+    
+    setTimeout(() => {
+      submitBtn.textContent = originalText;
+      submitBtn.style.backgroundColor = '#28a745';
+    }, 2000);
+  }
+
+  // Obtener datos iniciales del servidor
+  async function fetchDataKPI_GIC() {
+    try {
+      const response = await axios.get('/proveedores-gic/get-data');
+      const data = response.data;
+      
+      data.forEach(item => {
+        const index = dataLabelsKPI_GIC.indexOf(item.mes);
+        if (index !== -1) {
+          performanceDataKPI_GIC[index] = item.desempeno;
+          areaDataKPI_GIC[index] = item.area_cumplimiento;
+        } else {
+          const index2 = dataLabelsKPI_GIC2.indexOf(item.mes);
+          if (index2 !== -1) {
+            performanceDataKPI_GIC2[index2] = item.desempeno;
+            areaDataKPI_GIC2[index2] = item.area_cumplimiento;
+          }
+        }
+      });
+      
+      kpiChartGIC.update();
+      kpiChartGIC2.update();
+    } catch (error) {
+      console.error('Error al obtener datos:', error);
+    }
+  }
+
+  // Inicialización al cargar la página
+  document.addEventListener('DOMContentLoaded', () => {
+    initKPIForm();
+    fetchDataKPI_GIC();
+  });
 
   // Alternar entre gráficos
   let currentChartKPI_GIC = 1;
   document.getElementById('nextChartKPI_GIC').addEventListener('click', () => {
-    if (currentChartKPI_GIC === 1) {
-      document.getElementById('kpiChartGIC').style.display = 'none';
-      document.getElementById('kpiChartGIC2').style.display = 'block';
-      currentChartKPI_GIC = 2;
-    } else {
-      document.getElementById('kpiChartGIC').style.display = 'block';
-      document.getElementById('kpiChartGIC2').style.display = 'none';
-      currentChartKPI_GIC = 1;
-    }
+    toggleCharts();
   });
 
   document.getElementById('prevChartKPI_GIC').addEventListener('click', () => {
+    toggleCharts();
+  });
+
+  function toggleCharts() {
     if (currentChartKPI_GIC === 1) {
       document.getElementById('kpiChartGIC').style.display = 'none';
       document.getElementById('kpiChartGIC2').style.display = 'block';
@@ -316,7 +345,7 @@
       document.getElementById('kpiChartGIC2').style.display = 'none';
       currentChartKPI_GIC = 1;
     }
-  });
+  }
 </script>
 <br><br>
 <meta name="csrf-token" content="{{ csrf_token() }}">

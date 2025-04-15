@@ -31,7 +31,6 @@ class CreateKpi2Tables extends Migration
             $table->timestamps();
         });
 
-        //produccion scrap ci
         Schema::create('producción_scrap_ci', function (Blueprint $table) {
             $table->id();
             $table->string('mes', 50);

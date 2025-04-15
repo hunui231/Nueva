@@ -34,6 +34,8 @@ use App\Http\Controllers\EntregaMaterialesController;
 use App\Http\Controllers\InventarioController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\MantenimientoController;
+use App\Http\Controllers\SatisfaccionClienteController;
+use App\Http\Controllers\DonaldsonController;
 use App\Models\Indicador;
 use Illuminate\Support\Facades\Mail;
 use App\Models\Ticket;
@@ -246,4 +248,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/reset-password/{token}', [ResetPasswordController::class, 'showResetForm'])->name('password.reset');
     Route::post('/reset-password', [ResetPasswordController::class, 'reset'])->name('password.update');
 
+
+    Route::post('/satisfaccion-cliente/store', [SatisfaccionClienteController::class, 'store']);
+    Route::get('/satisfaccion-cliente/get-data', [SatisfaccionClienteController::class, 'getData']);
     
+    Route::post('/donaldson/store', [DonaldsonController::class, 'store'])->name('donaldson.store');
+    Route::get('/donaldson/get-data', [DonaldsonController::class, 'getData'])->name('donaldson.get-data');

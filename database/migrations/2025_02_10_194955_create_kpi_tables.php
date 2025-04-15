@@ -21,7 +21,9 @@ class CreateKpiTables extends Migration
             $table->float('rango2');
             $table->float('rango3');
             $table->float('rango4');
+            $table->string('year', 4)->default('2025');
             $table->timestamps();
+
         });
 
         // Tabla para Cobranza GIC
@@ -33,6 +35,7 @@ class CreateKpiTables extends Migration
             $table->float('rango2');
             $table->float('rango3');
             $table->float('rango4');
+            $table->string('year', 4)->default('2025');
             $table->timestamps();
         });
 

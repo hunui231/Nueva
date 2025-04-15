@@ -1488,4 +1488,277 @@ document.getElementById('formScrapForjas').addEventListener('submit', (event) =>
         });
     })(); // Fin de la encapsulación
 </script>
+<br><br>
+<h2 class="box-title">Cumplimiento al Plan de Producción<br>Maquinados Serie Donaldson</h2>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<meta name="csrf-token" content="{{ csrf_token() }}">
+
+<div class="chart-container">
+    <canvas id="donaldsonChart1"></canvas>
+    <canvas id="donaldsonChart2" style="display: none;"></canvas> <!-- Segundo gráfico oculto -->
+</div>
+
+<div style="text-align: center; margin-top: 10px;">
+  <button id="prevChartDonaldson" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">◀ Anterior</button>
+  <button id="nextChartDonaldson" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">Siguiente ▶</button>
+</div>
+
+@can('taller.update')
+<form id="formDonaldson">
+    <label for="monthDonaldson">Mes:</label>
+    <select id="monthDonaldson" name="monthDonaldson"></select><br><br>
+ 
+    <label for="donaldsonProduccion">Desempeño (%):</label>
+    <input type="number" id="donaldsonProduccion" name="donaldsonProduccion" min="0" max="100" step="0.01" ><br><br>
+    @can('admin.update')
+    <label for="donaldsonCumplimiento">Área de Cumplimiento (%):</label>
+    <input type="number" id="donaldsonCumplimiento" name="donaldsonCumplimiento" min="0" max="100" step="0.01" ><br><br>
+    @endcan
+    <button type="submit" class="button">Actualizar Gráfico</button>
+</form>
+@endcan
+<script>
+    (function () {
+        // Configurar el token CSRF en Axios
+        axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+        // Variables únicas para gráficos y datos
+        const ctxDonaldson1 = document.getElementById('donaldsonChart1').getContext('2d');
+        const ctxDonaldson2 = document.getElementById('donaldsonChart2').getContext('2d');
+
+        // Fechas para el primer gráfico (ene-23 a dic-24)
+        const monthsDonaldson1 = ["ene-23", "feb-23", "mar-23", "abr-23", "may-23", "jun-23", "jul-23", "ago-23", "sep-23", "oct-23", "nov-23", "dic-23",
+                               "ene-24", "feb-24", "mar-24", "abr-24", "may-24", "jun-24", "jul-24", "ago-24", "sep-24", "oct-24", "nov-24", "dic-24"];
+
+        // Fechas para el segundo gráfico (ene-25 a dic-25)
+        const monthsDonaldson2 = ["ene-25", "feb-25", "mar-25", "abr-25", "may-25", "jun-25", "jul-25", "ago-25", "sep-25", "oct-25", "nov-25", "dic-25"];
+
+        // Datos iniciales para ambos gráficos
+        let donaldsonData1 = Array(24).fill(null);
+        let donaldsonData2 = Array(12).fill(0);
+
+        // Configuración del gráfico 1 (2023-2024)
+        const donaldsonChart1 = new Chart(ctxDonaldson1, {
+            type: 'line',
+            data: {
+                labels: monthsDonaldson1,
+                datasets: [
+                    {
+                        label: "Cumplimiento %",
+                        data: donaldsonData1,
+                        borderColor: "#2196F3",  // Cambio a verde para diferenciar
+                        borderWidth: 2,
+                        tension: 0.3,
+                        pointRadius: 4,
+                        pointBackgroundColor: "#2196F3",
+                    },
+                    {
+                        label: "Banda roja",
+                        data: Array(24).fill(90),
+                        backgroundColor: "rgba(255, 0, 0, 0.97)",
+                        borderWidth: 0,
+                        fill: true,
+                        pointRadius: 0
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        min: 0,
+                        max: 110,
+                        ticks: {
+                            callback: value => value + "%"
+                        }
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(tooltipItem) {
+                                return tooltipItem.label + ": " + tooltipItem.raw.toFixed(2) + "%";
+                            }
+                        }
+                    },
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+
+        // Configuración del gráfico 2 (2025)
+        const donaldsonChart2 = new Chart(ctxDonaldson2, {
+            type: 'line',
+            data: {
+                labels: monthsDonaldson2,
+                datasets: [
+                    {
+                        label: "Cumplimiento %",
+                        data: donaldsonData2,
+                        borderColor: "#2196F3",
+                        borderWidth: 2,
+                        tension: 0.3,
+                        pointRadius: 4,
+                        pointBackgroundColor: "#2196F3",
+                    },
+                    {
+                        label: "Banda roja",
+                        data: Array(12).fill(90),
+                        backgroundColor: "rgba(255, 0, 0, 0.97)",
+                        borderWidth: 0,
+                        fill: true,
+                        pointRadius: 0
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        min: 0,
+                        max: 110,
+                        ticks: {
+                            callback: value => value + "%"
+                        }
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(tooltipItem) {
+                                return tooltipItem.label + ": " + tooltipItem.raw.toFixed(2) + "%";
+                            }
+                        }
+                    },
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+
+        // Generar opciones de meses
+        function generateMonthOptions() {
+            const monthSelect = document.getElementById('monthDonaldson');
+            const currentYear = new Date().getFullYear();
+            const currentMonth = new Date().getMonth();
+
+            monthSelect.innerHTML = '';
+
+            for (let year = currentYear; year <= currentYear + 2; year++) {
+                for (let month = 0; month < 12; month++) {
+                    const date = new Date(year, month);
+                    const monthName = date.toLocaleString('default', { month: 'short' });
+                    const option = document.createElement('option');
+                    option.value = `${monthName}-${year.toString().slice(-2)}`;
+                    option.textContent = `${monthName}-${year.toString().slice(-2)}`;
+                    monthSelect.appendChild(option);
+                }
+            }
+        }
+
+        generateMonthOptions();
+
+        // Manejo del formulario
+        document.getElementById('formDonaldson').addEventListener('submit', (event) => {
+            event.preventDefault();
+
+            const month = document.getElementById('monthDonaldson').value;
+            const desempeno = document.getElementById('donaldsonProduccion').value;
+            const areaCumplimientoInput = document.getElementById('donaldsonCumplimiento');
+            const areaCumplimiento = areaCumplimientoInput ? areaCumplimientoInput.value : null;
+
+            const desempenoNum = desempeno === "" ? null : parseFloat(desempeno);
+            const areaCumplimientoNum = areaCumplimiento === null || areaCumplimiento === "" ? null : parseFloat(areaCumplimiento);
+
+            if (desempenoNum === null) {
+                alert('Debe ingresar al menos el valor de Desempeño');
+                return;
+            }
+
+            axios.post('/donaldson/store', {
+                mes: month,
+                desempeno: desempenoNum,
+                area_cumplimiento: areaCumplimientoNum,
+            })
+            .then(response => {
+                if (response.data.success) {
+                    const index1 = monthsDonaldson1.indexOf(month);
+                    const index2 = monthsDonaldson2.indexOf(month);
+                    
+                    if (index1 !== -1) {
+                        donaldsonChart1.data.datasets[0].data[index1] = desempenoNum;
+                        donaldsonChart1.update();
+                    }
+                    
+                    if (index2 !== -1) {
+                        donaldsonChart2.data.datasets[0].data[index2] = desempenoNum;
+                        donaldsonChart2.update();
+                    }
+                    
+                    const btn = event.target.querySelector('button[type="submit"]');
+                    const originalText = btn.textContent;
+                    btn.textContent = '✓';
+                    setTimeout(() => { btn.textContent = originalText; }, 1000);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error.response ? error.response.data : error.message);
+            });
+        });
+
+        // Cargar datos iniciales
+        axios.get('/donaldson/get-data')
+            .then(response => {
+                const data = response.data;
+                data.forEach(item => {
+                    const index1 = monthsDonaldson1.indexOf(item.mes);
+                    const index2 = monthsDonaldson2.indexOf(item.mes);
+                    if (index1 !== -1) {
+                        donaldsonChart1.data.datasets[0].data[index1] = item.desempeno;
+                    }
+                    if (index2 !== -1) {
+                        donaldsonChart2.data.datasets[0].data[index2] = item.desempeno;
+                    }
+                });
+                donaldsonChart1.update();
+                donaldsonChart2.update();
+            })
+            .catch(error => {
+                console.error('Error al obtener los datos:', error.response ? error.response.data : error.message);
+            });
+
+        // Alternar entre gráficos
+        let currentChartDonaldson = 1;
+        document.getElementById('nextChartDonaldson').addEventListener('click', () => {
+            if (currentChartDonaldson === 1) {
+                document.getElementById('donaldsonChart1').style.display = 'none';
+                document.getElementById('donaldsonChart2').style.display = 'block';
+                currentChartDonaldson = 2;
+            } else {
+                document.getElementById('donaldsonChart1').style.display = 'block';
+                document.getElementById('donaldsonChart2').style.display = 'none';
+                currentChartDonaldson = 1;
+            }
+        });
+
+        document.getElementById('prevChartDonaldson').addEventListener('click', () => {
+            if (currentChartDonaldson === 1) {
+                document.getElementById('donaldsonChart1').style.display = 'none';
+                document.getElementById('donaldsonChart2').style.display = 'block';
+                currentChartDonaldson = 2;
+            } else {
+                document.getElementById('donaldsonChart1').style.display = 'block';
+                document.getElementById('donaldsonChart2').style.display = 'none';
+                currentChartDonaldson = 1;
+            }
+        });
+    })();
+</script>
+
 @endsection

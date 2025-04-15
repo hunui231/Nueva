@@ -437,10 +437,9 @@
     }
   });
 
-  // Configurar el token CSRF en Axios
   axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-  // Obtener el mes actual
+  
   const currentDate2 = new Date();
   const currentMonth2 = currentDate2.toLocaleString('default', { month: 'short' }).toLowerCase();
   const currentYear2 = currentDate2.getFullYear().toString().slice(-2);
@@ -451,7 +450,7 @@
   const generateMonthOptions = () => {
     const currentDate = new Date();
     const currentYear = currentDate.getFullYear();
-    const currentMonth = currentDate.getMonth();
+    const currentMonth = currentDate.getMonth();  
 
     for (let year = currentYear; year <= currentYear + 2; year++) {
       for (let month = 0; month < 12; month++) {
@@ -464,7 +463,7 @@
         option.textContent = fullLabel;
 
         if (year === currentYear && month < currentMonth) {
-          option.disabled = false; // Deshabilitar meses pasados
+          option.disabled = false; 
         }
 
         monthSelectVentas.appendChild(option);
@@ -474,7 +473,6 @@
 
   generateMonthOptions();
 
-  // Establecer el mes actual como seleccionado por defecto
   monthSelectVentas.value = currentMonthLabel2;
 
   // Validar y actualizar el gráfico
@@ -588,7 +586,339 @@ axios.get('/ventas/get-data')
     }
   });
 </script>
+<br><br>
+<meta name="csrf-token" content="{{ csrf_token() }}">
 
+<h2 class="box-title">Satisfacción al Cliente</h2>
+<canvas id="graficoSatisfaccion"></canvas>
+<canvas id="graficoSatisfaccion2" style="display: none;"></canvas> 
+
+<div style="text-align: center; margin-top: 10px;">
+  <button id="prevChartSatisfaccion" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">◀ Anterior</button>
+  <button id="nextChartSatisfaccion" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">Siguiente ▶</button>
+</div>
+
+<h2>Actualizar satisfacción al cliente</h2>
+@can('ventas.update')
+<form id="dataFormSatisfaccion">
+  <label for="monthSatisfaccion">Mes:</label>
+  <select id="monthSatisfaccion" name="monthSatisfaccion">
+  </select><br><br>
+  <label for="desempenoSatisfaccion">Nivel de Satisfacción (%):</label>
+  <input type="number" id="desempenoSatisfaccion" name="desempenoSatisfaccion" min="0" max="100" step="0.01"><br><br>
+  @can('admin.update')
+  <label for="areaCumplimientoSatisfaccion">Meta (%):</label>
+  <input type="number" id="areaCumplimientoSatisfaccion" name="areaCumplimientoSatisfaccion" min="0" max="100" step="0.01"><br><br>
+  @endcan
+  <button type="submit" class="button">Actualizar Gráfico</button>
+</form>
+@endcan
+<script>
+  // Configurar el token CSRF en Axios
+  axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+  // Contexto y datos iniciales del gráfico 1
+  const ctxSatisfaccion = document.getElementById('graficoSatisfaccion').getContext('2d');
+  const ctxSatisfaccion2 = document.getElementById('graficoSatisfaccion2').getContext('2d');
+
+  // Función para generar opciones de meses y años
+  function generateMonthOptionss(startYear, endYear) {
+    const months = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
+    let options = [];
+
+    for (let year = startYear; year <= endYear; year++) {
+      months.forEach((month) => {
+        options.push(`${month}-${year.toString().slice(-2)}`);
+      });
+    }
+
+    return options;
+  }
+//
+  const currentYear = new Date().getFullYear();
+  const dataLabelsSatisfaccion = generateMonthOptionss(23, 24); 
+  const dataLabelsSatisfaccion2 = generateMonthOptionss(25, 25); 
+
+  let desempenoDataSatisfaccion = Array(24).fill(0); // Datos iniciales para el gráfico 1
+  let areaCumplimientoDataSatisfaccion = Array(24).fill(90); // Meta inicial para el gráfico 1
+
+  let desempenoDataSatisfaccion2 = Array(12).fill(0); // Datos iniciales para el gráfico 2
+  let areaCumplimientoDataSatisfaccion2 = Array(12).fill(90); // Meta inicial para el gráfico 2
+
+  // Configuración del gráfico 1
+  const graficoSatisfaccion = new Chart(ctxSatisfaccion, {
+    type: 'line', 
+    data: {
+      labels: dataLabelsSatisfaccion,
+      datasets: [
+        {
+          label: "Satisfacción del Cliente",
+          data: desempenoDataSatisfaccion,
+          backgroundColor: 'rgb(61, 149, 221)',
+          borderColor: 'rgb(31, 173, 255)',
+          borderWidth: 1,
+        },
+        {
+          label: "Meta (90%)",
+          data: areaCumplimientoDataSatisfaccion,
+          type: 'line',
+          borderColor: 'red',   
+          borderWidth: 2,
+          pointRadius: 0,
+          spanGaps: true,
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      scales: {
+        y: {
+          beginAtZero: true,
+          max: 120,
+          ticks: {
+            callback: function(value) {
+              return value + "%";
+            },
+          },
+        },
+      },
+      plugins: {
+        legend: {
+          display: false, // Ocultar leyenda
+        },
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              return context.raw + "%";
+            },
+          },
+        },
+      },
+    },
+  });
+
+  const graficoSatisfaccion2 = new Chart(ctxSatisfaccion2, {
+    type: 'line',
+    data: {
+      labels: dataLabelsSatisfaccion2,
+      datasets: [
+        {
+          label: "Satisfacción del Cliente",
+          data: desempenoDataSatisfaccion2,
+          backgroundColor: 'rgba(75, 192, 192, 0.7)',
+          borderColor: 'rgba(75, 192, 192, 1)',
+          borderWidth: 1,
+        },
+        {
+          label: "Meta (90%)",
+          data: areaCumplimientoDataSatisfaccion2,
+          type: 'line',
+          borderColor: 'red',
+          borderWidth: 2,
+          pointRadius: 0,
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      scales: {
+        y: {
+          beginAtZero: true,
+          max: 120,
+          ticks: {
+            callback: function(value) {
+              return value + "%";
+            },
+          },
+        },
+      },
+      plugins: {
+        legend: {
+          display: false, // Ocultar leyenda
+        },
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              return context.raw + "%";
+            },
+          },
+        },
+      },
+    },
+  });
+
+
+  // Generar las opciones de meses en el formulario
+  const monthSelectSatisfaccion = document.getElementById('monthSatisfaccion');
+  dataLabelsSatisfaccion.concat(dataLabelsSatisfaccion2).forEach((label) => {
+    const option = document.createElement('option');
+    option.value = label;
+    option.textContent = label;
+    monthSelectSatisfaccion.appendChild(option);
+  });
+
+  
+  const currentDate = new Date();
+
+  
+  const month = currentDate.toLocaleString('default', { month: 'short' }).toLowerCase();
+
+  const year = currentDate.getFullYear().toString().slice(-2);
+
+  const currentMonthYear = `${month}-${year}`;
+
+  monthSelectSatisfaccion.value = currentMonthYear;
+
+  document.getElementById('dataFormSatisfaccion').addEventListener('submit', async (evento) => {
+    evento.preventDefault();
+
+    try {
+        // 1. Obtener elementos del formulario de manera segura
+        const mesSeleccionado = document.getElementById('monthSatisfaccion')?.value;
+        const desempenoInput = document.getElementById('desempenoSatisfaccion');
+        const areaCumplimientoInput = document.getElementById('areaCumplimientoSatisfaccion'); // Campo condicional
+        
+        // Verificar existencia de elementos críticos
+        if (!mesSeleccionado || !desempenoInput) {
+            throw new Error('Elementos del formulario no encontrados');
+        }
+
+        // 2. Obtener valores con comprobación de nulidad
+        const desempeno = desempenoInput.value;
+        const areaCumplimiento = areaCumplimientoInput ? areaCumplimientoInput.value : null;
+
+        // 3. Convertir y validar datos
+        const desempenoNum = desempeno !== "" ? parseFloat(desempeno) : null;
+        const areaCumplimientoNum = areaCumplimiento !== null && areaCumplimiento !== "" ? parseFloat(areaCumplimiento) : null;
+
+        // Validaciones básicas
+        if (desempenoNum === null || isNaN(desempenoNum)) {
+            throw new Error('El campo Nivel de Satisfacción es obligatorio');
+        }
+
+        if (desempenoNum < 0 || desempenoNum > 100) {
+            throw new Error('El valor de Nivel de Satisfacción debe estar entre 0% y 100%');
+        }
+
+        // Validaciones para el área de cumplimiento (solo si existe el campo)
+        if (areaCumplimientoInput) {
+            if (areaCumplimientoNum === null || isNaN(areaCumplimientoNum)) {
+                throw new Error('El campo Meta es obligatorio');
+            }
+            if (areaCumplimientoNum < 0 || areaCumplimientoNum > 100) {
+                throw new Error('El valor de Meta debe estar entre 0% y 100%');
+            }
+        }
+
+        // 4. Preparar datos para enviar al servidor
+        const datos = {
+            mes: mesSeleccionado,
+            desempeno: desempenoNum
+        };
+
+        // Solo agregar area_cumplimiento si existe el campo
+        if (areaCumplimientoInput) {
+            datos.area_cumplimiento = areaCumplimientoNum;
+        }
+
+        // 5. Enviar datos al servidor
+        const respuesta = await axios.post('/satisfaccion-cliente/store', datos);
+
+        if (!respuesta.data.success) {
+            throw new Error('Error al guardar los datos');
+        }
+
+        // 6. Actualizar ambos gráficos donde corresponda
+        const indice = dataLabelsSatisfaccion.indexOf(mesSeleccionado);
+        const indice2 = dataLabelsSatisfaccion2.indexOf(mesSeleccionado);
+        
+        if (indice !== -1) {
+            desempenoDataSatisfaccion[indice] = desempenoNum;
+            if (areaCumplimientoNum !== null) areaCumplimientoDataSatisfaccion[indice] = areaCumplimientoNum;
+            graficoSatisfaccion.update();
+        }
+        
+        if (indice2 !== -1) {
+            desempenoDataSatisfaccion2[indice2] = desempenoNum;
+            if (areaCumplimientoNum !== null) areaCumplimientoDataSatisfaccion2[indice2] = areaCumplimientoNum;
+            graficoSatisfaccion2.update();
+        }
+
+        // 7. Feedback visual
+        const btn = evento.target.querySelector('button[type="submit"]');
+        if (btn) {
+            const originalText = btn.textContent;
+            btn.textContent = '✓ Actualizado';
+            btn.disabled = true;
+            
+            setTimeout(() => {
+                btn.textContent = originalText;
+                btn.disabled = false;
+            }, 2000);
+        }
+
+    } catch (error) {
+        console.error('Error en el formulario:', error);
+        if (error.message) {
+            alert(error.message);
+        }
+    }
+  });
+
+  function fetchDataSatisfaccion() {
+    axios.get('/satisfaccion-cliente/get-data')
+      .then(response => {
+        const data = response.data;
+        data.forEach(item => {
+          const index = dataLabelsSatisfaccion.indexOf(item.mes);
+          if (index !== -1) {
+            desempenoDataSatisfaccion[index] = item.desempeno;
+            areaCumplimientoDataSatisfaccion[index] = item.area_cumplimiento;
+          } else {
+            const index2 = dataLabelsSatisfaccion2.indexOf(item.mes);
+            if (index2 !== -1) {
+              desempenoDataSatisfaccion2[index2] = item.desempeno;
+              areaCumplimientoDataSatisfaccion2[index2] = item.area_cumplimiento;
+            }
+          }
+        });
+        graficoSatisfaccion.update(); // Actualizar el gráfico 1
+        graficoSatisfaccion2.update(); // Actualizar el gráfico 2
+      })
+      .catch(error => {
+        console.error('Error al obtener los datos:', error.response ? error.response.data : error.message);
+      });
+  }
+
+  // Cargar los datos iniciales al cargar la página
+  fetchDataSatisfaccion();
+
+  // Alternar entre gráficos
+  let currentChartSatisfaccion = 1;
+  document.getElementById('nextChartSatisfaccion').addEventListener('click', () => {
+    if (currentChartSatisfaccion === 1) {
+      document.getElementById('graficoSatisfaccion').style.display = 'none';
+      document.getElementById('graficoSatisfaccion2').style.display = 'block';
+      currentChartSatisfaccion = 2;
+    } else {
+      document.getElementById('graficoSatisfaccion').style.display = 'block';
+      document.getElementById('graficoSatisfaccion2').style.display = 'none';
+      currentChartSatisfaccion = 1;
+    }
+  });
+
+  document.getElementById('prevChartSatisfaccion').addEventListener('click', () => {
+    if (currentChartSatisfaccion === 1) {
+      document.getElementById('graficoSatisfaccion').style.display = 'none';
+      document.getElementById('graficoSatisfaccion2').style.display = 'block';
+      currentChartSatisfaccion = 2;
+    } else {
+      document.getElementById('graficoSatisfaccion').style.display = 'block';
+      document.getElementById('graficoSatisfaccion2').style.display = 'none';
+      currentChartSatisfaccion = 1;
+    }
+  });
+</script>
     <style>
        .button {
     background-color: #4CAF50;
