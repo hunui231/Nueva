@@ -443,7 +443,7 @@
           data: desempenoDataRend2,
           borderColor: '#007bff',
           backgroundColor: '#007bff',
-          fill: true,
+          fill: false,
           tension: 0.3,
           spanGaps: true, 
       
@@ -453,7 +453,7 @@
           data: areaDataRend2,
           borderColor: 'red',
           backgroundColor: 'red',
-          fill: true,
+          fill: false,
           borderWidth: 2,
           tension: 0.1,
           spanGaps: true, 
@@ -565,7 +565,7 @@
         alert('Error de conexión: ' + (error.response?.data?.message || error.message));
     });
 });
-  // Cargar los datos iniciales al cargar la página
+  
   function obtenerDatosRendimiento() {
     axios.get('/rendimiento/get-data')
       .then(respuesta => {
@@ -745,7 +745,7 @@
                     tension: 0.3,
                     pointBackgroundColor: '#007bff',
                     fill: false,
-                    spanGaps: true, // Permitir dibujar líneas incluso si hay gaps
+                    spanGaps: true, 
                 },
                 {
                     label: 'Meta',
@@ -755,7 +755,7 @@
                     tension: 0.1,
                     pointBackgroundColor: '#red',
                     fill: false,
-                    spanGaps: true, // Permitir dibujar líneas incluso si hay gaps
+                    spanGaps: true, 
                 }
             ]
         },
@@ -859,7 +859,7 @@
     .catch(error => {
         console.error('Error al guardar los datos:', error.response ? error.response.data : error.message);
     });
-});
+});  
     // Cargar los datos iniciales al cargar la página
     function obtenerDatosProduccion() {
         axios.get('/produccion/get-data')
@@ -880,7 +880,7 @@
                 });
                 productionChart.update(); // Actualizar el gráfico 1
                 productionChart2.update(); // Actualizar el gráfico 2
-            })
+            }) 
             .catch(error => {
                 console.error('Error al obtener los datos:', error.response ? error.response.data : error.message);
             });
@@ -914,6 +914,182 @@
         }
     });
 </script>
+
+<br><br>
+<meta name="csrf-token" content="{{ csrf_token() }}">
+
+<h2 class="box-title">Auditoría 5S en Producción</h2>
+<canvas id="grafico5S"></canvas>
+
+<!-- Formulario para ingresar datos -->
+<h2>Ingresar Datos - Auditoría 5S</h2>
+@can('produccion.update')
+<form id="dataForm5S">
+  <label for="month5S">Mes:</label>
+  <select id="month5S" name="month5S"></select><br><br>
+  
+  <label for="desempeno5S">Puntaje 5S (%):</label>
+  <input type="number" id="desempeno5S" name="desempeno5S" min="0" max="100" step="0.01"><br><br>
+  
+  <label for="areaCumplimiento5S">Área de Cumplimiento (%):</label>
+  <input type="number" id="areaCumplimiento5S" name="areaCumplimiento5S" min="0" max="100" step="0.01"><br><br>
+  
+  <button type="submit" class="button">Actualizar Gráfico</button>
+</form>
+@endcan
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Configurar el token CSRF en Axios
+  axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+  // Contexto del gráfico
+  const ctx5S = document.getElementById('grafico5S').getContext('2d');
+
+  // Función para generar opciones de meses
+  function generarOpcionesMeses5S(anio) {
+    const meses = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
+    return meses.map(mes => `${mes}-${anio.toString().slice(-2)}`);
+  }
+
+  // Solo datos para 2025
+  const dataLabels5S = generarOpcionesMeses5S(25);
+
+  // Datos iniciales
+  let desempenoData5S = Array(12).fill(0);
+  let areaCumplimientoData5S = Array(12).fill(0);
+
+  // Configuración del gráfico
+  const grafico5S = new Chart(ctx5S, {
+    type: 'line',
+    data: {
+      labels: dataLabels5S,
+      datasets: [
+        {
+          label: "Puntaje 5S",
+          data: desempenoData5S,
+          backgroundColor: 'rgba(0, 157, 254, 0.7)',
+          borderColor: 'rgb(0, 158, 244)',
+          borderWidth: 1,
+          fill: false
+        },
+        {
+          label: "Área de Cumplimiento",
+          data: areaCumplimientoData5S,
+          type: 'line',
+          borderColor: 'rgb(248, 4, 0)',
+          borderWidth: 2,
+          pointRadius: 3,
+          fill: false
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        y: {
+          beginAtZero: true,
+          max: 100,
+          ticks: {
+            callback: function(value) {
+              return value + "%";
+            }
+          }
+        }
+      },
+      plugins: {
+        legend: {
+          position: 'top'
+        },
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              return context.dataset.label + ": " + context.raw + "%";
+            }
+          }
+        }
+      }
+    }
+  });
+
+  // Generar opciones de meses en el formulario
+  const monthSelect5S = document.getElementById('month5S');
+  dataLabels5S.forEach((label) => {
+    const option = document.createElement('option');
+    option.value = label;
+    option.textContent = label;
+    monthSelect5S.appendChild(option);
+  });
+
+  // Establecer mes actual como valor predeterminado
+  const currentDate = new Date();
+  const month = currentDate.toLocaleString('default', { month: 'short' }).toLowerCase();
+  const year = currentDate.getFullYear().toString().slice(-2);
+  monthSelect5S.value = `${month}-${year}`;
+
+  // Manejar envío del formulario
+  document.getElementById('dataForm5S').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const mes = document.getElementById('month5S').value;
+    const desempeno = parseFloat(document.getElementById('desempeno5S').value);
+    const areaCumplimiento = parseFloat(document.getElementById('areaCumplimiento5S').value);
+
+    if (isNaN(desempeno) || isNaN(areaCumplimiento)) {
+      alert('Por favor ingrese valores válidos');
+      return;
+    }
+
+    try {
+      const response = await axios.post('/auditoria-5s/store', {
+        mes: mes,
+        desempeno: desempeno,
+        area_cumplimiento: areaCumplimiento
+      });
+
+      // Actualizar gráfico
+      const index = dataLabels5S.indexOf(mes);
+      if (index !== -1) {
+        desempenoData5S[index] = desempeno;
+        areaCumplimientoData5S[index] = areaCumplimiento;
+        grafico5S.update();
+      }
+
+      // Feedback visual
+      const btn = e.target.querySelector('button[type="submit"]');
+      btn.textContent = '✓ Actualizado';
+      setTimeout(() => btn.textContent = 'Actualizar Gráfico', 2000);
+      
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Error al guardar los datos');
+    }
+  });
+
+  // Cargar datos iniciales
+  async function fetchData5S() {
+    try {
+      const response = await axios.get('/auditoria-5s/get-data');
+      response.data.forEach(item => {
+        const index = dataLabels5S.indexOf(item.mes);
+        if (index !== -1) {
+          desempenoData5S[index] = item.desempeno;
+          areaCumplimientoData5S[index] = item.area_cumplimiento;
+        }
+      });
+      grafico5S.update();
+    } catch (error) {
+      console.error('Error al cargar datos:', error);
+    }
+  }
+
+  fetchData5S();
+});
+</script>
+
+
 
 <style>
        .button {

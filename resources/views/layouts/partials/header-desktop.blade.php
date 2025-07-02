@@ -75,7 +75,7 @@
 }
 
 /* Icono de menú hamburguesa */
-.menu-icon {
+.menu-icon { 
     font-size: 24px;
     cursor: pointer;
     display: flex;

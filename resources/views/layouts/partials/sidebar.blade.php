@@ -87,7 +87,20 @@
                     </a>
                 </li>
                 @endcan
-              
+                @can('sistemas.index')
+                 <li @if($currentPage == 'sistemas') class="active" @endif>
+                    <a href="{{ route('sistemas.index') }}" class="flex items-center p-2 hover:bg-gray-200">
+                        <i class="fas fa-desktop mr-2"></i>Sistemas
+                    </a>
+                </li>
+                @endcan
+              @can('proyectos.index')
+                <li @if($currentPage == 'proyectos') class="active" @endif>
+                     <a href="{{ route('proyectos.index') }}" class="flex items-center p-2 hover:bg-gray-200">
+                        <i class="fas fa-tasks mr-2"></i>Proyectos
+                    </a>
+                </li>
+              @endcan
             </ul>
         </nav>
     </div>

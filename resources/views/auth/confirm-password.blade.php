@@ -7,7 +7,7 @@
         </x-slot>
 
         <div class="mb-4 text-sm text-gray-600">
-            {{ __('This is a secure area of the application. Please confirm your password before continuing.') }}
+            {{ __('Esta es un area segura . Por favor confirma tu contraseña antes de Confirmar.') }}
         </div>
 
         <!-- Validation Errors -->
@@ -15,7 +15,6 @@
 
         <form method="POST" action="{{ route('password.confirm') }}">
             @csrf
-
             <!-- Password -->
             <div>
                 <x-label for="password" :value="__('Password')" />

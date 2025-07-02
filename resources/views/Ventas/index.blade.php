@@ -45,7 +45,7 @@
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
   axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-  
+  //
   const ctxClientes = document.getElementById('clientesChart').getContext('2d');
   const ctxClientes2 = document.getElementById('clientesChart2').getContext('2d');
 
@@ -299,13 +299,13 @@
 </script>
 <br><br>
 <meta name="csrf-token" content="{{ csrf_token() }}">
-<h2 class="box-title">Porcentaje de Ventas</h2>
+<h2 class="box-title">Cumplimiento de las Metas Establecidas de Ventas</h2>
 <canvas id="salesChart"></canvas>
 <canvas id="salesChart2" style="display: none;"></canvas> <!-- Nuevo gráfico oculto inicialmente -->
 
 <div style="text-align: center; margin-top: 10px;">
-  <button id="prevChartVentas" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">◀ Anterior</button>
-  <button id="nextChartVentas" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">Siguiente ▶</button>
+  <button id="prevChartVentas" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">◀ 2024</button>
+  <button id="nextChartVentas" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">2025 ▶</button>
 </div>
 
 <h2>Actualizar Datos de Ventas</h2>
@@ -314,11 +314,9 @@
   <label for="monthVentas">Mes:</label>
   <select id="monthVentas" name="monthVentas"></select><br><br>
   <label for="performanceVentas">Desempeño (%):</label>
-  <input type="number" id="performanceVentas" name="performanceVentas" min="0" step="0.01" ><br><br>
-  @can('admin.update')
+  <input type="number" id="performanceVentas" name="performanceVentas" min="0" step="0.01"><br><br>
   <label for="areaVentas">Área de cumplimiento (%):</label>
-  <input type="number" id="areaVentas" name="areaVentas" min="0" step="0.01" ><br><br>
-  @endcan
+  <input type="number" id="areaVentas" name="areaVentas" min="0" step="0.01"><br><br>
   <button type="submit" class="button">Actualizar Gráfico</button>
 </form>
 @endcan
@@ -328,14 +326,15 @@
   const ctxVentas = document.getElementById('salesChart').getContext('2d');
   const ctxVentas2 = document.getElementById('salesChart2').getContext('2d');
 
-  const months = ['ene-23', 'mar-23', 'may-23', 'jul-23', 'sep-23', 'nov-23', 'ene-24', 'mar-24', 'may-24', 'jul-24', 'sep-24', 'nov-24', 'dic-24'];
+  const months = ['ene-23', 'feb-23', 'mar-23', 'abr-23', 'may-23', 'jun-23', 'jul-23', 'ago-23', 'sep-23', 'oct-23', 'nov-23', 'dic-23', 'ene-24', 'feb-24', 'mar-24', 'abr-24', 'may-24', 'jun-24', 'jul-24', 'ago-24', 'sep-24', 'oct-24', 'nov-24', 'dic-24'];
   const months2 = ['ene-25', 'feb-25', 'mar-25', 'abr-25', 'may-25', 'jun-25', 'jul-25', 'ago-25', 'sep-25', 'oct-25', 'nov-25', 'dic-25'];
 
-  let salesData = [110, 105, 95, 102, 90, 100, 85, 98, 110, 99, 60, 88, 87.33];
-  let referenceData = Array(13).fill(100);
+  // Inicializar datos con ceros o valores por defecto
+  let salesData = Array(months.length).fill(0);
+  let referenceData = Array(months.length).fill(100);
 
-  let salesData2 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-  let referenceData2 = Array(12).fill(0);
+  let salesData2 = Array(months2.length).fill(0);
+  let referenceData2 = Array(months2.length).fill(100);
 
   // Configuración del gráfico 1
   const salesChart = new Chart(ctxVentas, {
@@ -370,7 +369,7 @@
         tooltip: {
           callbacks: {
             label: function(tooltipItem) {
-              return tooltipItem.dataset.label + ': ' + tooltipItem.raw;
+              return tooltipItem.dataset.label + ': ' + tooltipItem.raw + '%';
             }
           }
         }
@@ -420,7 +419,7 @@
         tooltip: {
           callbacks: {
             label: function(tooltipItem) {
-              return tooltipItem.dataset.label + ': ' + tooltipItem.raw;
+              return tooltipItem.dataset.label + ': ' + tooltipItem.raw + '%';
             }
           }
         }
@@ -437,131 +436,148 @@
     }
   });
 
+  // Configurar el token CSRF para Axios
   axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-  
-  const currentDate2 = new Date();
-  const currentMonth2 = currentDate2.toLocaleString('default', { month: 'short' }).toLowerCase();
-  const currentYear2 = currentDate2.getFullYear().toString().slice(-2);
-  const currentMonthLabel2 = `${currentMonth2}-${currentYear2}`;
+  // Obtener la fecha actual para seleccionar el mes por defecto
+  const currentDatet = new Date();
+  const currentMonthe = currentDatet.toLocaleString('default', { month: 'short' }).toLowerCase();
+  const currentYearo = currentDatet.getFullYear().toString().slice(-2);
+  const currentMonthLabel = `${currentMonthe}-${currentYearo}`;
 
   // Generar las opciones de meses en el formulario
   const monthSelectVentas = document.getElementById('monthVentas');
   const generateMonthOptions = () => {
+    monthSelectVentas.innerHTML = ''; // Limpiar opciones existentes
+    
     const currentDate = new Date();
     const currentYear = currentDate.getFullYear();
-    const currentMonth = currentDate.getMonth();  
+    const currentMonth = currentDate.getMonth();
 
-    for (let year = currentYear; year <= currentYear + 2; year++) {
+    // Años a mostrar (desde 2023 hasta 2025)
+    for (let year = 2023; year <= 2025; year++) {
       for (let month = 0; month < 12; month++) {
-        const monthLabel = new Date(year, month).toLocaleString('default', { month: 'short' }).toLowerCase();
-        const yearLabel = year.toString().slice(-2);
-        const fullLabel = `${monthLabel}-${yearLabel}`;
+        // Solo agregar meses pasados o el mes actual
+        if (year < currentYear || (year === currentYear && month <= currentMonth)) {
+          const monthLabel = new Date(year, month).toLocaleString('default', { month: 'short' }).toLowerCase();
+          const yearLabel = year.toString().slice(-2);
+          const fullLabel = `${monthLabel}-${yearLabel}`;
 
-        const option = document.createElement('option');
-        option.value = fullLabel;
-        option.textContent = fullLabel;
-
-        if (year === currentYear && month < currentMonth) {
-          option.disabled = false; 
+          const option = document.createElement('option');
+          option.value = fullLabel;
+          option.textContent = fullLabel;
+          monthSelectVentas.appendChild(option);
         }
-
-        monthSelectVentas.appendChild(option);
       }
     }
   };
 
   generateMonthOptions();
 
-  monthSelectVentas.value = currentMonthLabel2;
+  // Establecer el mes actual como seleccionado por defecto
+  if (months.includes(currentMonthLabel) || months2.includes(currentMonthLabel)) {
+    monthSelectVentas.value = currentMonthLabel;
+  }
 
-  // Validar y actualizar el gráfico
+  // Cargar datos iniciales del servidor
+  function loadInitialData() {
+    axios.get('/ventas/get-data')
+      .then(response => {
+        const data = response.data;
+        
+        // Actualizar datos del primer gráfico
+        data.forEach(item => {
+          const index = months.indexOf(item.mes);
+          if (index !== -1) {
+            salesChart.data.datasets[0].data[index] = item.desempeno || 0;
+            salesChart.data.datasets[1].data[index] = item.area_cumplimiento || 100;
+          }
+        });
+        salesChart.update();
+        
+        // Actualizar datos del segundo gráfico
+        data.forEach(item => {
+          const index = months2.indexOf(item.mes);
+          if (index !== -1) {
+            salesChart2.data.datasets[0].data[index] = item.desempeno || 0;
+            salesChart2.data.datasets[1].data[index] = item.area_cumplimiento || 100;
+          }
+        });
+        salesChart2.update();
+      })
+      .catch(error => {
+        console.error('Error al obtener los datos:', error);
+      });
+  }
+
+  // Cargar datos al iniciar la página
+  loadInitialData();
+
+  // Manejar el envío del formulario
   document.getElementById('dataFormVentas').addEventListener('submit', (event) => {
     event.preventDefault();
 
     const month = monthSelectVentas.value;
-    const performance = document.getElementById('performanceVentas').value;
-    
-    // Manejo seguro del campo restringido
-    const areaInput = document.getElementById('areaVentas');
-    const area = areaInput ? areaInput.value : null;
+    const performance = parseFloat(document.getElementById('performanceVentas').value);
+    const area = parseFloat(document.getElementById('areaVentas').value);
 
-    // Convertir a número (permite null si está vacío o no existe)
-    const performanceNum = performance === "" ? null : parseFloat(performance);
-    const areaNum = area === null || area === "" ? null : parseFloat(area);
-
-    // Validación mínima - solo requiere performance
-    if (performanceNum === null) {
-        alert('Debe ingresar al menos el valor de Área de cumplimiento');
-        return;
+    // Validaciones
+    if (isNaN(performance) || isNaN(area)) {
+      alert('Por favor ingrese valores numéricos válidos');
+      return;
     }
 
-    // Validar que los valores no sean negativos
-    if (performanceNum !== null && performanceNum < 0) {
-        alert('El valor de Área de cumplimiento no puede ser negativo');
-        return;
-    }
-    if (areaNum !== null && areaNum < 0) {
-        alert('El valor de Desempeño no puede ser negativo');
-        return;
+    if (performance < 0 || area < 0) {
+      alert('Los valores no pueden ser negativos');
+      return;
     }
 
+    // Enviar datos al servidor
     axios.post('/ventas/store', {
-        mes: month,
-        desempeno: performanceNum,
-        area_cumplimiento: areaNum,
+      mes: month,
+      desempeno: performance,
+      area_cumplimiento: area,
     })
     .then(response => {
-        if (response.data.success) {
-            // Actualizar ambos gráficos según corresponda
-            const index1 = months.indexOf(month);
-            const index2 = months2.indexOf(month);
-            
-            // Actualizar gráfico 1 (2023-2024)
-            if (index1 !== -1) {
-                if (performanceNum !== null) salesChart.data.datasets[0].data[index1] = performanceNum;
-                if (areaNum !== null) salesChart.data.datasets[1].data[index1] = areaNum;
-                salesChart.update();
-            }
-            
-            // Actualizar gráfico 2 (2025)
-            if (index2 !== -1) {
-                if (performanceNum !== null) salesChart2.data.datasets[0].data[index2] = performanceNum;
-                if (areaNum !== null) salesChart2.data.datasets[1].data[index2] = areaNum;
-                salesChart2.update();
-            }
-            
-            // Feedback visual discreto
-            const btn = event.target.querySelector('button[type="submit"]');
-            const originalText = btn.textContent;
-            btn.textContent = '✓ Actualizado';
-            setTimeout(() => { btn.textContent = originalText; }, 1000);
-        } else {
-            console.error('Error en la respuesta:', response.data);
+      if (response.data.success) {
+        // Actualizar ambos gráficos según corresponda
+        const index1 = months.indexOf(month);
+        const index2 = months2.indexOf(month);
+        
+        if (index1 !== -1) {
+          salesChart.data.datasets[0].data[index1] = performance;
+          salesChart.data.datasets[1].data[index1] = area;
+          salesChart.update();
         }
+        
+        if (index2 !== -1) {
+          salesChart2.data.datasets[0].data[index2] = performance;
+          salesChart2.data.datasets[1].data[index2] = area;
+          salesChart2.update();
+        }
+        
+        // Feedback visual
+        const btn = event.target.querySelector('button[type="submit"]');
+        const originalText = btn.textContent;
+        btn.textContent = '✓ Actualizado';
+        setTimeout(() => { btn.textContent = originalText; }, 2000);
+        
+        // Limpiar campos del formulario
+        document.getElementById('performanceVentas').value = '';
+        document.getElementById('areaVentas').value = '';
+      } else {
+        alert('Error al guardar los datos: ' + (response.data.message || 'Error desconocido'));
+      }
     })
     .catch(error => {
-        console.error('Error:', error.response ? error.response.data : error.message);
+      console.error('Error:', error);
+      alert('Error al guardar los datos. Por favor intente nuevamente.');
     });
-});
-
-axios.get('/ventas/get-data')
-    .then(response => {
-      const data = response.data;
-      data.forEach(item => {
-        const index = months.indexOf(item.mes);
-        if (index !== -1) {
-          salesChart.data.datasets[0].data[index] = item.desempeno;
-        }
-      });
-      salesChart.update();
-    })
-    .catch(error => {
-      console.error('Error al obtener los datos:', error.response ? error.response.data : error.message);
-    });
+  });
 
   // Alternar entre gráficos
   let currentChartVentas = 1;
+  
   document.getElementById('nextChartVentas').addEventListener('click', () => {
     if (currentChartVentas === 1) {
       document.getElementById('salesChart').style.display = 'none';
@@ -800,7 +816,6 @@ axios.get('/ventas/get-data')
             throw new Error('El valor de Nivel de Satisfacción debe estar entre 0% y 100%');
         }
 
-        // Validaciones para el área de cumplimiento (solo si existe el campo)
         if (areaCumplimientoInput) {
             if (areaCumplimientoNum === null || isNaN(areaCumplimientoNum)) {
                 throw new Error('El campo Meta es obligatorio');
@@ -810,7 +825,6 @@ axios.get('/ventas/get-data')
             }
         }
 
-        // 4. Preparar datos para enviar al servidor
         const datos = {
             mes: mesSeleccionado,
             desempeno: desempenoNum

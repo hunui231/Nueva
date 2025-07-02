@@ -29,6 +29,15 @@ class LogisticaProduccion extends Migration
             $table->float('area_cumplimiento');
             $table->timestamps();
         });
+
+        Schema::create('inventario_jlg', function (Blueprint $table) {
+            $table->id();
+            $table->string('mes', 50);
+            $table->float('desempeno');
+            $table->float('area_cumplimiento');
+            $table->timestamps();
+        });
+        
     }
 
     /**
@@ -41,6 +50,7 @@ class LogisticaProduccion extends Migration
 
         Schema::dropIfExists('entrega_materiales');
         Schema::dropIfExists('informacion_inventarios');
+        Schema::dropIfExists('inventario_jlg');
 
     }
 }

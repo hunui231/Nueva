@@ -441,8 +441,7 @@ const incomeChart = new Chart(incomeCtx, {
 
 
 <br>
-<br>
- <style>
+<style>
 .container {
     width: 90%;
     max-width: 1000px;
@@ -508,61 +507,92 @@ tr:nth-child(even) {
 </style>
 
 <div class="container">
-<div class="title-table">SISTEMA DE GESTIÓN DE CALIDAD</div>
-<h2>OBJETIVOS DE CALIDAD</h2>
+<div class="title-table">TABLA DE INDICADORES DE PROCESO DEL SISTEMA DE GESTIÓN DE CALIDAD</div>
+<h2>OBJETIVOS DE CALIDAD 2025</h2>
 <table>
 <thead>
     <tr>
-        <th></th>
-        <th>Objetivo</th>
+        <th>Item</th>
+        <th>Proceso</th>
         <th>Área</th>
-        <th>Detalle</th>
+        <th>Indicador</th>
+        <th>Objetivo</th>
+        <th>UNIT</th>
+        <th>Responsable</th>
     </tr>
 </thead>
 <tbody>
     <tr>
         <td>1</td>
-        <td>Reducir el Porcentaje de Defectivo</td>
+        <td>OPERACIÓN</td>
         <td>Plásticos</td>
-        <td>Scrap Plásticos &lt; 2.5%</td>
-    </tr>
-    <tr>
-        <td></td>
-        <td></td>
-        <td>Metal Mecánica</td>
-        <td>
-            Scrap Donaldson &lt; 2%<br>
-            Scrap Taller &lt; 3%<br>
-            Scrap Forjas &lt; 5%
-        </td>
+        <td>Scrap Plásticos</td>
+        <td>&lt;2.5%</td>
+        <td>％</td>
+        <td>José Gerardo Ortiz</td>
     </tr>
     <tr>
         <td>2</td>
-        <td>Cumplimiento al Plan de Producción</td>
-        <td>Plásticos</td>
-        <td>&gt; 90%</td>
-    </tr>
-    <tr>
-        <td></td>
-        <td></td>
+        <td>OPERACIÓN</td>
         <td>Metal Mecánica</td>
         <td>
-            Ensamble Donaldson &gt; 95%<br>
-            Taller &gt; 95%<br>
-            Maquinados en serie Forjas &gt; 98%
+            Scrap Ensamble Donaldson<br>
+            Scrap Maquinados Donaldson<br>
+            Scrap Taller<br>
+            Scrap Forjas
         </td>
+        <td>
+            &lt;1%<br>
+            &lt;3%<br>
+            &lt;3%<br>
+            &lt;4.5%
+        </td>
+        <td>％</td>
+        <td>Ing. Victor De León</td>
     </tr>
     <tr>
         <td>3</td>
-        <td>Entregas a Tiempo al Cliente</td>
-        <td>Plásticos, Metal Mecánica</td>
-        <td>100%</td>
+        <td>OPERACIÓN</td>
+        <td>Plásticos</td>
+        <td>Cumplimiento al Plan de Producción</td>
+        <td>&gt;98%</td>
+        <td>％</td>
+        <td>José Gerardo Ortiz</td>
     </tr>
     <tr>
         <td>4</td>
-        <td>Evitar Reclamos de Cliente</td>
+        <td>OPERACIÓN</td>
+        <td>Metal Mecánica</td>
+        <td>
+            Ensamble Donaldson<br>
+            Taller<br>
+            Maquinados en Serie Forjas
+        </td>
+        <td>
+            &gt;95%<br>
+            &gt;95%<br>
+            &gt;98%
+        </td>
+        <td>％</td>
+        <td>Ing. Victor De León</td>
+    </tr>
+    <tr>
+        <td>5</td>
+        <td>ADMINISTRACIÓN</td>
         <td>Plásticos, Metal Mecánica</td>
+        <td>Entrega de Materiales a Tiempo</td>
+        <td>100%</td>
+        <td>％</td>
+        <td>Ing. Victor De León</td>
+    </tr>
+    <tr>
+        <td>6</td>
+        <td>ASEGURAMIENTO DE CALIDAD</td>
+        <td>Plásticos, Metal Mecánica</td>
+        <td>Reclamos de Cliente</td>
         <td>0</td>
+        <td>Event</td>
+        <td>Lic. Reina Luna</td>
     </tr>
 </tbody>
 </table>
@@ -573,11 +603,11 @@ Ing. Ricardo Daniel Solís Quiróz
 </div>
 
 <div class="footer">
-Rev. 06<br>
-Fecha: 18.Enero.24
+Codificacion: FDG01<br>
+Revisión: 6<br>
+Fecha: 18.Enero.2025
 </div>
 </div>
- 
 
 @endsection
 

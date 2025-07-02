@@ -60,8 +60,8 @@
 </div>
 
 <div style="text-align: center; margin-top: 10px;">
-  <button id="prevChart" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">◀ Anterior</button>
-  <button id="nextChart" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">Siguiente ▶</button>
+  <button id="prevChart" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">◀ 2024</button>
+  <button id="nextChart" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">2025 ▶</button>
 </div>
 
 @can('taller.update')
@@ -353,8 +353,8 @@
 </div>
 
 <div style="text-align: center; margin-top: 10px;">
-  <button id="prevChartTaller" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">◀ Anterior</button>
-  <button id="nextChartTaller" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">Siguiente ▶</button>
+  <button id="prevChartTaller" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">◀ 2024</button>
+  <button id="nextChartTaller" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">2025 ▶</button>
 </div>
 
 @can('taller.update')
@@ -441,7 +441,7 @@
             scales: {
                 y: {
                     beginAtZero: true,
-                    max: 5, // Ajusta el límite máximo del eje Y
+                    max: 12, // Ajusta el límite máximo del eje Y
                     ticks: {
                         callback: value => value + "%" // Agrega % a los valores del eje Y
                     }
@@ -660,8 +660,8 @@
 </div>
 
 <div style="text-align: center; margin-top: 10px;">
-  <button id="prevChartForjas" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">◀ Anterior</button>
-  <button id="nextChartForjas" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">Siguiente ▶</button>
+  <button id="prevChartForjas" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">◀ 2024</button>
+  <button id="nextChartForjas" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">2025 ▶</button>
 </div>
 
 @can('taller.update')
@@ -993,7 +993,7 @@ document.getElementById('formScrapForjas').addEventListener('submit', (event) =>
         const monthsChart2 = ["ene-25", "feb-25", "mar-25", "abr-25", "may-25", "jun-25", "jul-25", "ago-25", "sep-25", "oct-25", "nov-25", "dic-25"];
 
         let chart1Data = Array(24).fill(null);
-        let chart2Data = Array(12).fill(0);
+        let chart2Data = Array(12).fill(null);
 
         function createChartConfig(labels, data) {
             return {
@@ -1005,17 +1005,21 @@ document.getElementById('formScrapForjas').addEventListener('submit', (event) =>
                             label: "Cumplimiento %",
                             data: data,
                             borderColor: "#007bff",
+                            backgroundColor: "rgba(0, 123, 255, 0.1)",
                             tension: 0.3,
                             pointRadius: 5,
-                            pointBackgroundColor: "#007bff"
+                            pointBackgroundColor: "#007bff",
+                            fill: false
                         },
                         {
                             label: "Banda roja",
                             data: Array(labels.length).fill(95),
-                            backgroundColor: "rgba(255, 0, 0, 0.97)",
-                            borderWidth: 0,
+                            borderColor: "red",
+                            backgroundColor: "red",
+                            borderWidth: 1,
                             fill: true,
-                            pointRadius: 0
+                            pointRadius: 0,
+                            tension: 0
                         }
                     ]
                 },
@@ -1025,6 +1029,7 @@ document.getElementById('formScrapForjas').addEventListener('submit', (event) =>
                     scales: {
                         y: {
                             beginAtZero: false,
+                            min: 0,
                             max: 100,
                             ticks: {
                                 callback: value => value + "%"
@@ -1034,8 +1039,15 @@ document.getElementById('formScrapForjas').addEventListener('submit', (event) =>
                     plugins: {
                         tooltip: {
                             callbacks: {
-                                label: function(tooltipItem) {
-                                    return tooltipItem.label + "; " + tooltipItem.raw.toFixed(2) + "%";
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed.y !== null) {
+                                        label += context.parsed.y.toFixed(2) + '%';
+                                    }
+                                    return label;
                                 }
                             }
                         },
@@ -1050,116 +1062,142 @@ document.getElementById('formScrapForjas').addEventListener('submit', (event) =>
         const chart1 = new Chart(chart1Ctx, createChartConfig(monthsChart1, chart1Data));
         const chart2 = new Chart(chart2Ctx, createChartConfig(monthsChart2, chart2Data));
 
-        function generateMonthOptions() {
-            const monthSelect = document.getElementById('monthSelect');
-            const currentYear = new Date().getFullYear();
-            const currentMonth = new Date().getMonth();
+   function generateMonthOptions() {
+    const monthSelect = document.getElementById('monthSelect');
+    const currentDate = new Date();
+    const currentYear = currentDate.getFullYear();
+    
+    // Obtener el mes actual en formato "ene-23"
+    const currentMonthFormatted = getMonthFormatted(currentDate);
+    
+    monthSelect.innerHTML = ''; // Limpiar opciones anteriores
 
-            monthSelect.innerHTML = ''; // Limpiar opciones anteriores
+    // Generar meses desde el año actual hasta dos años en el futuro
+    for (let year = currentYear; year <= currentYear + 2; year++) {
+        for (let month = 0; month < 12; month++) {
+            const date = new Date(year, month);
+            const monthFormatted = getMonthFormatted(date);
+            
+            const option = document.createElement('option');
+            option.value = monthFormatted;
+            option.textContent = monthFormatted;
+            monthSelect.appendChild(option);
 
-            // Generar meses desde el año actual hasta dos años en el futuro
-            for (let year = currentYear; year <= currentYear + 2; year++) {
-                for (let month = 0; month < 12; month++) {
-                    const date = new Date(year, month);
-                    const monthName = date.toLocaleString('default', { month: 'short' });
-                    const option = document.createElement('option');
-                    option.value = `${monthName}-${year.toString().slice(-2)}`;
-                    option.textContent = `${monthName}-${year.toString().slice(-2)}`;
-                    monthSelect.appendChild(option);
-                }
+            // Seleccionar automáticamente el mes actual
+            if (monthFormatted === currentMonthFormatted) {
+                option.selected = true;
             }
         }
+    }
+}
 
-        generateMonthOptions();
+// Función auxiliar para formatear mes-año (ej: "ene-23")
+function getMonthFormatted(date) {
+    const monthNames = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 
+                        'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+    const month = monthNames[date.getMonth()];
+    const year = date.getFullYear().toString().slice(-2);
+    return `${month}-${year}`;
+}
+
+// Llamar a la función
+generateMonthOptions();
 
         document.getElementById('dataForm').addEventListener('submit', (event) => {
-    event.preventDefault();
+            event.preventDefault();
 
-    const month = document.getElementById('monthSelect').value;
-    const performance = document.getElementById('performanceInput').value;
-    
-    // Manejo seguro del campo restringido
-    const complianceInput = document.getElementById('complianceInput');
-    const compliance = complianceInput ? complianceInput.value : null;
-
-    // Convertir a número (permite null si está vacío o no existe)
-    const performanceNum = performance === "" ? null : parseFloat(performance);
-    const complianceNum = compliance === null || compliance === "" ? null : parseFloat(compliance);
-
-    // Validación mínima - solo requiere performance
-    if (performanceNum === null) {
-        alert('Debe ingresar al menos el valor de Desempeño');
-        return;
-    }
-
-    // Validar rangos
-    if (performanceNum !== null && (performanceNum < 0 || performanceNum > 100)) {
-        alert('El valor de Desempeño debe estar entre 0% y 100%');
-        return;
-    }
-    if (complianceNum !== null && (complianceNum < 0 || complianceNum > 100)) {
-        alert('El valor de Área de Cumplimiento debe estar entre 0% y 100%');
-        return;
-    }
-
-    axios.post('/cumplimiento-taller/store', {
-        mes: month,
-        desempeno: performanceNum,
-        area_cumplimiento: complianceNum,
-    })
-    .then(response => {
-        if (response.data.success) {
-            // Actualizar ambos gráficos según corresponda
-            const index1 = monthsChart1.indexOf(month);
-            const index2 = monthsChart2.indexOf(month);
+            const month = document.getElementById('monthSelect').value;
+            const performance = document.getElementById('performanceInput').value;
             
-            // Actualizar gráfico 1 (2023-2024)
-            if (index1 !== -1) {
-                if (performanceNum !== null) chart1.data.datasets[0].data[index1] = performanceNum;
-                if (complianceNum !== null) chart1.data.datasets[1].data[index1] = complianceNum;
-                chart1.update();
+            // Manejo seguro del campo restringido
+            const complianceInput = document.getElementById('complianceInput');
+            const compliance = complianceInput ? complianceInput.value : null;
+
+            // Convertir a número (permite null si está vacío o no existe)
+            const performanceNum = performance === "" ? null : parseFloat(performance);
+            const complianceNum = compliance === null || compliance === "" ? null : parseFloat(compliance);
+
+            // Validación mínima - solo requiere performance
+            if (performanceNum === null) {
+                alert('Debe ingresar al menos el valor de Desempeño');
+                return;
             }
-            
-            // Actualizar gráfico 2 (2025)
-            if (index2 !== -1) {
-                if (performanceNum !== null) chart2.data.datasets[0].data[index2] = performanceNum;
-                if (complianceNum !== null) chart2.data.datasets[1].data[index2] = complianceNum;
-                chart2.update();
-            }
-            
-            // Feedback visual discreto
-            const btn = event.target.querySelector('button[type="submit"]');
-            const originalText = btn.textContent;
-            btn.textContent = '✓';
-            setTimeout(() => { btn.textContent = originalText; }, 1000);
-        } else {
-            console.error('Error en la respuesta:', response.data);
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error.response ? error.response.data : error.message);
-    });
-});
 
-        axios.get('/cumplimiento-taller/get-data')
+            // Validar rangos
+            if (performanceNum !== null && (performanceNum < 0 || performanceNum > 100)) {
+                alert('El valor de Desempeño debe estar entre 0% y 100%');
+                return;
+            }
+            if (complianceNum !== null && (complianceNum < 0 || complianceNum > 100)) {
+                alert('El valor de Área de Cumplimiento debe estar entre 0% y 100%');
+                return;
+            }
+
+            axios.post('/cumplimiento-taller/store', {
+                mes: month,
+                desempeno: performanceNum,
+                area_cumplimiento: complianceNum,
+            })
             .then(response => {
-                const data = response.data;
-                data.forEach(item => {
-                    if (monthsChart1.includes(item.mes)) {
-                        const index = monthsChart1.indexOf(item.mes);
-                        chart1.data.datasets[0].data[index] = item.desempeno;
-                    } else if (monthsChart2.includes(item.mes)) {
-                        const index = monthsChart2.indexOf(item.mes);
-                        chart2.data.datasets[0].data[index] = item.desempeño;
+                if (response.data.success) {
+                    // Actualizar ambos gráficos según corresponda
+                    const index1 = monthsChart1.indexOf(month);
+                    const index2 = monthsChart2.indexOf(month);
+                    
+                    // Actualizar gráfico 1 (2023-2024)
+                    if (index1 !== -1) {
+                        chart1.data.datasets[0].data[index1] = performanceNum;
+                        chart1.update();
                     }
-                });
-                chart1.update();
-                chart2.update();
+                    
+                    // Actualizar gráfico 2 (2025)
+                    if (index2 !== -1) {
+                        chart2.data.datasets[0].data[index2] = performanceNum;
+                        chart2.update();
+                    }
+                    
+                    // Feedback visual discreto
+                    const btn = event.target.querySelector('button[type="submit"]');
+                    const originalText = btn.textContent;
+                    btn.textContent = '✓';
+                    setTimeout(() => { btn.textContent = originalText; }, 1000);
+                } else {
+                    console.error('Error en la respuesta:', response.data);
+                }
             })
             .catch(error => {
-                console.error('Error al obtener los datos:', error.response ? error.response.data : error.message);
+                console.error('Error:', error.response ? error.response.data : error.message);
+                alert('Error al guardar los datos. Por favor, inténtelo de nuevo.');
             });
+        });
 
+        // Cargar datos iniciales
+        function loadInitialData() {
+            axios.get('/cumplimiento-taller/get-data')
+                .then(response => {
+                    const data = response.data;
+                    data.forEach(item => {
+                        const index1 = monthsChart1.indexOf(item.mes);
+                        const index2 = monthsChart2.indexOf(item.mes);
+                        
+                        if (index1 !== -1) {
+                            chart1.data.datasets[0].data[index1] = item.desempeno;
+                        }
+                        if (index2 !== -1) {
+                            chart2.data.datasets[0].data[index2] = item.desempeno;
+                        }
+                    });
+                    chart1.update();
+                    chart2.update();
+                })
+                .catch(error => {
+                    console.error('Error al obtener los datos:', error.response ? error.response.data : error.message);
+                });
+        }
+
+        loadInitialData();
+
+        // Manejo de navegación entre gráficos
         let activeChart = 1;
         chart1Canvas.style.display = 'block';
         chart2Canvas.style.display = 'none';
@@ -1346,30 +1384,43 @@ document.getElementById('formScrapForjas').addEventListener('submit', (event) =>
             }
         });
 
-        // Función para generar opciones de meses dinámicamente
-        function generateMonthOptions() {
-    const monthSelect = document.getElementById('monthForjasProduccion');
-    const currentYear = new Date().getFullYear();
-    const currentMonth = new Date().getMonth();
+    
+function generateMonthOptions(selectElementId) {
+    const monthSelect = document.getElementById(selectElementId);
+    if (!monthSelect) return; // Si no existe el elemento, salir
+    
+    const currentDate = new Date();
+    const currentYear = currentDate.getFullYear();
+    const currentMonth = currentDate.getMonth();
+    
+    // Array de abreviaturas de meses en minúsculas
+    const monthAbbr = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 
+                       'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
 
     monthSelect.innerHTML = ''; // Limpiar opciones anteriores
 
-    // Generar meses desde el año actual hasta dos años en el futuro
+    // Generar meses desde el año actual hasta 2 años en el futuro
     for (let year = currentYear; year <= currentYear + 2; year++) {
         for (let month = 0; month < 12; month++) {
-            const date = new Date(year, month);
-            const monthName = date.toLocaleString('default', { month: 'short' });
+            const monthName = monthAbbr[month];
+            const yearShort = year.toString().slice(-2);
+            const monthYear = `${monthName}-${yearShort}`;
+            
             const option = document.createElement('option');
-            option.value = `${monthName}-${year.toString().slice(-2)}`;
-            option.textContent = `${monthName}-${year.toString().slice(-2)}`;
+            option.value = monthYear;
+            option.textContent = monthYear;
             monthSelect.appendChild(option);
+
+            // Seleccionar automáticamente el mes actual
+            if (year === currentYear && month === currentMonth) {
+                option.selected = true;
+            }
         }
     }
 }
-        
+generateMonthOptions('monthForjasProduccion');
 
-        // Generar las opciones de meses en el formulario
-        generateMonthOptions();
+    
 
         // Validar y actualizar el gráfico
         document.getElementById('formForjasProduccion').addEventListener('submit', (event) => {
@@ -1409,11 +1460,9 @@ document.getElementById('formScrapForjas').addEventListener('submit', (event) =>
     })
     .then(response => {
         if (response.data.success) {
-            // Actualizar ambos gráficos según corresponda
             const index1 = monthsForjasProduccion1.indexOf(month);
             const index2 = monthsForjasProduccion2.indexOf(month);
             
-            // Actualizar gráfico 1 (2023-2024)
             if (index1 !== -1) {
                 if (desempenoNum !== null) forjasProduccionChart1.data.datasets[0].data[index1] = desempenoNum;
                 if (areaCumplimientoNum !== null) forjasProduccionChart1.data.datasets[1].data[index1] = areaCumplimientoNum;
@@ -1642,29 +1691,44 @@ document.getElementById('formScrapForjas').addEventListener('submit', (event) =>
             }
         });
 
-        // Generar opciones de meses
-        function generateMonthOptions() {
-            const monthSelect = document.getElementById('monthDonaldson');
-            const currentYear = new Date().getFullYear();
-            const currentMonth = new Date().getMonth();
+       // Función para generar opciones de meses en formato "ene-23" (minúsculas)
+function generateMonthOptions(selectElementId) {
+    const monthSelect = document.getElementById(selectElementId);
+    if (!monthSelect) return; // Si no existe el elemento, salir
+    
+    const currentDate = new Date();
+    const currentYear = currentDate.getFullYear();
+    const currentMonth = currentDate.getMonth();
+    
+    // Array de abreviaturas de meses en minúsculas
+    const monthAbbr = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 
+                       'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
 
-            monthSelect.innerHTML = '';
+    monthSelect.innerHTML = ''; // Limpiar opciones anteriores
 
-            for (let year = currentYear; year <= currentYear + 2; year++) {
-                for (let month = 0; month < 12; month++) {
-                    const date = new Date(year, month);
-                    const monthName = date.toLocaleString('default', { month: 'short' });
-                    const option = document.createElement('option');
-                    option.value = `${monthName}-${year.toString().slice(-2)}`;
-                    option.textContent = `${monthName}-${year.toString().slice(-2)}`;
-                    monthSelect.appendChild(option);
-                }
+    // Generar meses desde el año actual hasta 2 años en el futuro
+    for (let year = currentYear; year <= currentYear + 2; year++) {
+        for (let month = 0; month < 12; month++) {
+            const monthName = monthAbbr[month];
+            const yearShort = year.toString().slice(-2);
+            const monthYear = `${monthName}-${yearShort}`;
+            
+            const option = document.createElement('option');
+            option.value = monthYear;
+            option.textContent = monthYear;
+            monthSelect.appendChild(option);
+
+            // Seleccionar automáticamente el mes actual
+            if (year === currentYear && month === currentMonth) {
+                option.selected = true;
             }
         }
+    }
+}
 
-        generateMonthOptions();
+generateMonthOptions('monthDonaldson');
 
-        // Manejo del formulario
+
         document.getElementById('formDonaldson').addEventListener('submit', (event) => {
             event.preventDefault();
 

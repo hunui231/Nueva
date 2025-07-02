@@ -36,6 +36,10 @@ use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\MantenimientoController;
 use App\Http\Controllers\SatisfaccionClienteController;
 use App\Http\Controllers\DonaldsonController;
+use App\Http\Controllers\SistemaController;
+use App\Http\Controllers\ProyectoController;
+use App\Http\Controllers\InventarioJlgController;
+use App\Http\Controllers\Auditoria5SController;
 use App\Models\Indicador;
 use Illuminate\Support\Facades\Mail;
 use App\Models\Ticket;
@@ -254,3 +258,17 @@ Route::middleware(['auth'])->group(function () {
     
     Route::post('/donaldson/store', [DonaldsonController::class, 'store'])->name('donaldson.store');
     Route::get('/donaldson/get-data', [DonaldsonController::class, 'getData'])->name('donaldson.get-data');
+
+
+  Route::get('/sistemas', [SistemaController::class, 'index'])->name('sistemas.index');
+
+  Route::get('/proyectos', [ProyectoController::class, 'index'])->name('proyectos.index');
+
+
+    Route::get('/inventario-jlg', [InventarioJlgController::class, 'index']);
+    Route::post('/inventario-jlg/store', [InventarioJlgController::class, 'store']);
+    Route::get('/inventario-jlg/get-data', [InventarioJlgController::class, 'getData']);
+
+    Route::get('/auditoria-5s', [Auditoria5SController::class, 'index']);
+    Route::post('/auditoria-5s/store', [Auditoria5SController::class, 'store']);
+    Route::get('/auditoria-5s/get-data', [Auditoria5SController::class, 'getData']);

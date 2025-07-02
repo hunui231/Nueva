@@ -269,7 +269,6 @@
       kpiChartGIC.update();
     }
 
-    // Actualizar gráfico 2 (2025)
     const index2 = dataLabelsKPI_GIC2.indexOf(month);
     if (index2 !== -1) {
       if (performanceNum !== null) performanceDataKPI_GIC2[index2] = performanceNum;
@@ -612,8 +611,8 @@
             }
           }
         });
-        comprasChartGIC.update(); // Actualizar el gráfico 1
-        comprasChartGIC2.update(); // Actualizar el gráfico 2
+        comprasChartGIC.update(); // Actualizar el gráfico 
+        comprasChartGIC2.update(); // Actualizar el gráfico
       })
       .catch(error => {
         console.error('Error al obtener los datos:', error.response ? error.response.data : error.message);

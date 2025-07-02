@@ -20,7 +20,10 @@ class CreateProduccionDonaldsonTable extends Migration
             $table->float('area_cumplimiento');
             $table->timestamps();
         });
-    }
+
+}
+   
+    
 
     /**
      * Reverse the migrations.

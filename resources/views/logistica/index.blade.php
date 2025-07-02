@@ -40,8 +40,8 @@
 <canvas id="grafico2" style="display: none;"></canvas> <!-- Nuevo gráfico oculto inicialmente -->
 
 <div style="text-align: center; margin-top: 10px;">
-  <button id="prevChartEntregaMateriales" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">◀ Anterior</button>
-  <button id="nextChartEntregaMateriales" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">Siguiente ▶</button>
+  <button id="prevChartEntregaMateriales" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">◀ 2024</button>
+  <button id="nextChartEntregaMateriales" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">2025 ▶</button>
 </div>
 
 <!-- Formulario para ingresar datos -->
@@ -377,8 +377,8 @@
 <canvas id="inventarioChart2" style="display: none;"></canvas> <!-- Nuevo gráfico oculto inicialmente -->
 
 <div style="text-align: center; margin-top: 10px;">
-  <button id="prevChartInventario" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">◀ Anterior</button>
-  <button id="nextChartInventario" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">Siguiente ▶</button>
+  <button id="prevChartInventario" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">◀ 2024</button>
+  <button id="nextChartInventario" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">2025 ▶</button>
 </div>
 <div id="ultimaActualizacionInventario" style="margin-top: 5px; font-size: 12px;"></div>
 </div>
@@ -454,8 +454,6 @@
           data: areaCumplimientoDataInventario,
           backgroundColor: 'rgba(255, 0, 0, 0.85)', 
           borderWidth: 0,
-
-          
           fill: true,
         },
       ],
@@ -510,8 +508,13 @@
           label: "Área de Cumplimiento",
           data: areaCumplimientoDataInventario2,
           backgroundColor: 'rgba(255, 0, 0, 0.85)', 
-          borderWidth: 0,
-          fill: true,
+           borderColor: 'rgba(255, 0, 0, 0.85)',
+          borderWidth: 2,
+          pointBackgroundColor: 'rgba(255, 0, 0, 0.85)',
+          pointRadius: 4,
+          fill: false,
+            tension: 0.3,
+          spanGaps: true,
         },
       ],
     },
@@ -762,5 +765,203 @@ obtenerDatosInventario();
   });
   
 </script>
+<br><br>
 
+<meta name="csrf-token" content="{{ csrf_token() }}">
+
+<h2 class="box-title">Inventario JLG - Porcentaje de Existencia</h2>
+<canvas id="graficoJLG"></canvas>
+
+<!-- Formulario para ingresar datos -->
+<h2>Ingresar Datos - Inventario JLG</h2>
+@can('logistica.update')
+<form id="dataFormInventarioJLG">
+  <label for="monthInventarioJLG">Mes:</label>
+  <select id="monthInventarioJLG" name="monthInventarioJLG">
+  </select><br><br>
+  <label for="desempenoInventarioJLG">Desempeño (%):</label>
+  <input type="number" id="desempenoInventarioJLG" name="desempenoInventarioJLG" min="0" max="150" step="0.01"><br><br>
+  @can('admin.update')
+  <label for="areaCumplimientoInventarioJLG">Área de cumplimiento (%):</label>
+  <input type="number" id="areaCumplimientoInventarioJLG" name="areaCumplimientoInventarioJLG" min="0" max="150" step="0.01"><br><br>
+  @endcan
+  <button type="submit" class="button">Actualizar Gráfico</button>
+</form>
+@endcan
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Configurar el token CSRF en Axios
+  axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+  // Contexto del gráfico
+  const ctxJLG = document.getElementById('graficoJLG').getContext('2d');
+
+  // Función para generar opciones de meses
+  function generateMonthOptionsJLG(year) {
+    const months = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
+    return months.map(month => `${month}-${year.toString().slice(-2)}`);
+  }
+
+  // Solo datos para 2025
+  const dataLabelsJLG = generateMonthOptionsJLG(25); // 2025
+
+  // Datos iniciales
+  let desempenoDataJLG = Array(12).fill(0);
+  let areaCumplimientoDataJLG = Array(12).fill(100); // Línea de 100%
+
+  // Configuración del gráfico
+  const graficoJLG = new Chart(ctxJLG, {
+    type: 'bar',
+    data: {
+      labels: dataLabelsJLG,
+      datasets: [
+        {
+          label: "Porcentaje de Existencia",
+          data: desempenoDataJLG,
+          backgroundColor: 'rgba(54, 162, 235, 0.7)',
+          borderColor: 'rgba(54, 162, 235, 1)',
+          borderWidth: 1
+        },
+        {
+          label: "Límite Inferior (95%)",
+          data: Array(12).fill(95),
+          type: 'line',
+          borderColor: 'orange',
+          borderWidth: 2,
+          pointRadius: 0,
+          borderDash: [5, 5]
+        },
+        {
+          label: "Ideal (100%)",
+          data: areaCumplimientoDataJLG,
+          type: 'line',
+          borderColor: 'green',
+          borderWidth: 2,
+          pointRadius: 0
+        },
+        {
+          label: "Límite Superior (110%)",
+          data: Array(12).fill(110),
+          type: 'line',
+          borderColor: 'red',
+          borderWidth: 2,
+          pointRadius: 0,
+          borderDash: [5, 5]
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        y: {
+          beginAtZero: false,
+          min: 90,
+          max: 120,
+          ticks: {
+            callback: function(value) {
+              return value + "%";
+            }
+          }
+        }
+      },
+      plugins: {
+        legend: {
+          position: 'top',
+          labels: {
+            boxWidth: 12
+          }
+        },
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              return context.dataset.label + ": " + context.raw + "%";
+            }
+          }
+        }
+      }
+    }
+  });
+
+  // Generar opciones de meses en el formulario (solo 2025)
+  const monthSelectJLG = document.getElementById('monthInventarioJLG');
+  dataLabelsJLG.forEach((label) => {
+    const option = document.createElement('option');
+    option.value = label;
+    option.textContent = label;
+    monthSelectJLG.appendChild(option);
+  });
+
+  // Establecer mes actual como valor predeterminado
+  const currentDate = new Date();
+  const month = currentDate.toLocaleString('default', { month: 'short' }).toLowerCase();
+  const year = currentDate.getFullYear().toString().slice(-2);
+  monthSelectJLG.value = `${month}-${year}`;
+
+  // Manejar envío del formulario
+  document.getElementById('dataFormInventarioJLG').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const mes = document.getElementById('monthInventarioJLG').value;
+    const desempeno = parseFloat(document.getElementById('desempenoInventarioJLG').value);
+    const areaCumplimiento = parseFloat(document.getElementById('areaCumplimientoInventarioJLG').value) || 100;
+
+    if (isNaN(desempeno)) {
+      alert('Por favor ingrese un valor de desempeño válido');
+      return;
+    }
+
+    try {
+      const response = await axios.post('/inventario-jlg/store', {
+        mes: mes,
+        desempeno: desempeno,
+        area_cumplimiento: areaCumplimiento
+      });
+
+      // Actualizar gráfico
+      const index = dataLabelsJLG.indexOf(mes);
+      if (index !== -1) {
+        desempenoDataJLG[index] = desempeno;
+        areaCumplimientoDataJLG[index] = areaCumplimiento;
+        graficoJLG.update();
+      }
+
+      // Feedback visual
+      const btn = e.target.querySelector('button[type="submit"]');
+      const originalText = btn.textContent;
+      btn.textContent = '✓ Actualizado';
+      btn.disabled = true;
+      setTimeout(() => {
+        btn.textContent = originalText;
+        btn.disabled = false;
+      }, 2000);
+      
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Error al guardar los datos: ' + (error.response?.data?.message || error.message));
+    }
+  });
+
+  // Cargar datos iniciales (solo para 2025)
+  async function fetchDataJLG() {
+    try {
+      const response = await axios.get('/inventario-jlg/get-data');
+      response.data.forEach(item => {
+        const index = dataLabelsJLG.indexOf(item.mes);
+        if (index !== -1) {
+          desempenoDataJLG[index] = item.desempeno;
+          areaCumplimientoDataJLG[index] = item.area_cumplimiento;
+        }
+      });
+      graficoJLG.update();
+    } catch (error) {
+      console.error('Error al cargar datos:', error);
+    }
+  }
+
+  fetchDataJLG();
+});
+</script>
 @endsection

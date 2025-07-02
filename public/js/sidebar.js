@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function () {
+sdocument.addEventListener('DOMContentLoaded', function () {
     const sidebar = document.getElementById('sidebar');
     const toggleSidebarButton = document.getElementById('toggleSidebar');
 

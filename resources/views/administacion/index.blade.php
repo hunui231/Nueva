@@ -275,20 +275,7 @@ function initializeGraficoX() {
 // Guardar datos secundarios CI
 async function guardarDatosSecundariosCI(data) {
   try {
-    // Guardar en LocalStorage
-    const storedData = guardarEnLocalStorageCI(data);
-    
-    // Actualizar el gráfico con los nuevos datos
-    graficoXChart.data.labels = storedData.labels;
-    graficoXChart.data.datasets[0].data = storedData.datasets[0].data;
-    graficoXChart.data.datasets[1].data = storedData.datasets[1].data;
-    graficoXChart.data.datasets[2].data = storedData.datasets[2].data;
-    graficoXChart.data.datasets[3].data = storedData.datasets[3].data;
-    graficoXChart.data.datasets[4].data = storedData.datasets[4].data;
-    
-    graficoXChart.update();
-    
-    // También guardar en el backend si es necesario
+    // Primero guardar en el backend
     const response = await fetch('/guardar-ci', {
       method: 'POST',
       headers: {
@@ -299,8 +286,21 @@ async function guardarDatosSecundariosCI(data) {
     });
     
     if (!response.ok) {
-      console.error('Error al guardar en el backend');
+      throw new Error('Error al guardar en el backend');
     }
+    
+    // Si el backend guardó correctamente, entonces actualizar localStorage
+    const storedData = guardarEnLocalStorageCI(data);
+    
+    // Actualizar el gráfico
+    graficoXChart.data.labels = storedData.labels;
+    graficoXChart.data.datasets[0].data = storedData.datasets[0].data;
+    graficoXChart.data.datasets[1].data = storedData.datasets[1].data;
+    graficoXChart.data.datasets[2].data = storedData.datasets[2].data;
+    graficoXChart.data.datasets[3].data = storedData.datasets[3].data;
+    graficoXChart.data.datasets[4].data = storedData.datasets[4].data;
+    
+    graficoXChart.update();
     
     return storedData;
   } catch (error) {
