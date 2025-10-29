@@ -85,5 +85,28 @@ class CobranzaController extends Controller
     return response()->json($datos);
 }
 
+public function guardarGastoPaqueteria(Request $request)
+{
+    $request->validate([
+        'mes' => 'required|string',
+        'desempeno' => 'required|numeric|min:0|max:100',
+        'area_cumplimiento' => 'required|numeric|min:0|max:100',
+    ]);
 
+    // Buscar si ya existe un registro para el mes
+    $gasto = \App\Models\GastoPaqueteria::firstOrNew(['mes' => $request->mes]);
+
+    // Actualizar los datos
+    $gasto->desempeno = $request->desempeno;
+    $gasto->area_cumplimiento = $request->area_cumplimiento;
+    $gasto->save();
+
+    return response()->json(['success' => true, 'message' => 'Datos de gasto por paquetería guardados correctamente.']);
+}
+
+// Obtener datos de Gasto Paqueteria
+public function obtenerGastoPaqueteria() {
+    $datos = DB::table('gasto_paqueteria')->get();
+    return response()->json($datos);
+}
 }

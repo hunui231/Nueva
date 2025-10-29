@@ -72,10 +72,8 @@
     <label for="desempeno1">Desempeño (%):</label>
     <input type="number" id="desempeno1" name="desempeno1" min="0" max="100" step="0.01" required><br><br>
     
-    @can('admin.update')
     <label for="areaCumplimiento1">Área de Cumplimiento (%):</label>
     <input type="number" id="areaCumplimiento1" name="areaCumplimiento1" min="0" max="100" step="0.01"><br><br>
-    @endcan
     
     <button type="submit" class="button">Actualizar Gráfico</button>
 </form>
@@ -363,10 +361,8 @@
     <select id="monthScrapTaller" name="monthScrapTaller"></select><br><br>
     <label for="desempenoTaller">Desempeño (%):</label>
     <input type="number" id="desempenoTaller" name="desempenoTaller" min="0" max="100" step="0.01"><br><br>
-    @can('admin.update')
     <label for="areaCumplimientoTaller">Área de Cumplimiento (%):</label>
     <input type="number" id="areaCumplimientoTaller" name="areaCumplimientoTaller" min="0" max="100" step="0.01"><br><br>
-     @endcan
     <button type="submit" class="button">Actualizar Gráfico</button>
 </form>
 @endcan
@@ -671,10 +667,8 @@
     
     <label for="desempenoForjas">Desempeño (%):</label>
     <input type="number" id="desempenoForjas" name="desempenoForjas" min="0" max="100" step="0.01" ><br><br>
-    @can('admin.update')
     <label for="areaCumplimientoForjas">Área de Cumplimiento (%):</label>
     <input type="number" id="areaCumplimientoForjas" name="areaCumplimientoForjas" min="0" max="100" step="0.01" ><br><br>
-    @endcan
     <button type="submit" class="button">Actualizar Gráfico</button>
 </form>
 @endcan
@@ -969,10 +963,8 @@ document.getElementById('formScrapForjas').addEventListener('submit', (event) =>
     <select id="monthSelect" name="monthSelect"></select><br><br>
     <label for="performanceInput">Desempeño (%):</label>
     <input type="number" id="performanceInput" name="performanceInput" min="0" max="100" step="0.01" ><br><br>
-    @can('admin.update')
     <label for="complianceInput">Área de Cumplimiento (%):</label>
     <input type="number" id="complianceInput" name="complianceInput" min="0" max="100" step="0.01" ><br><br>
-    @endcan
     <button type="submit" class="button">Actualizar Gráfico</button>
 </form>
 @endcan
@@ -1241,10 +1233,8 @@ generateMonthOptions();
  
     <label for="forjasProduccion">Desempeño (%):</label>
     <input type="number" id="forjasProduccion" name="forjasProduccion" min="0" max="100" step="0.01" ><br><br>
-    @can('admin.update')
     <label for="forjasCumplimiento">Área de Cumplimiento (%):</label>
     <input type="number" id="forjasCumplimiento" name="forjasCumplimiento" min="0" max="100" step="0.01" ><br><br>
-    @endcan
     <button type="submit" class="button">Actualizar Gráfico</button>
 </form>
 @endcan
@@ -1560,10 +1550,8 @@ generateMonthOptions('monthForjasProduccion');
  
     <label for="donaldsonProduccion">Desempeño (%):</label>
     <input type="number" id="donaldsonProduccion" name="donaldsonProduccion" min="0" max="100" step="0.01" ><br><br>
-    @can('admin.update')
     <label for="donaldsonCumplimiento">Área de Cumplimiento (%):</label>
     <input type="number" id="donaldsonCumplimiento" name="donaldsonCumplimiento" min="0" max="100" step="0.01" ><br><br>
-    @endcan
     <button type="submit" class="button">Actualizar Gráfico</button>
 </form>
 @endcan

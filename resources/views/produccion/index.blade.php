@@ -37,10 +37,8 @@
 
     <label for="performanceScrap">Desempeño (%):</label>
     <input type="number" id="performanceScrap" name="performanceScrap" min="0" max="100" step="0.01" ><br><br>
-    @can('admin.update')
     <label for="areaScrap">Área de cumplimiento (%):</label>
     <input type="number" id="areaScrap" name="areaScrap" min="0" max="100" step="0.01"><br><br>
-    @endcan
     <button type="submit" class="button">Actualizar Gráfico</button>
 </form>
 @endcan
@@ -339,10 +337,8 @@
 
     <label for="performanceRendimiento">Desempeño (%):</label>
     <input type="number" id="performanceRendimiento" name="performanceRendimiento" min="0" max="100" step="0.01" ><br><br>
-    @can('admin.update')
     <label for="areaRendimiento">Área de cumplimiento (%):</label>
     <input type="number" id="areaRendimiento" name="areaRendimiento" min="0" max="100" step="0.01" ><br><br>
-     @endcan
     <button type="submit" class="button">Actualizar Gráfico</button>
 </form>
 @endcan
@@ -641,10 +637,8 @@
 
     <label for="performanceProduccion">Desempeño (%):</label>
     <input type="number" id="performanceProduccion" name="performanceProduccion" min="0" max="100" step="0.01"><br><br>
-    @can('admin.update')
     <label for="areaProduccion">Área de cumplimiento (%):</label>
     <input type="number" id="areaProduccion" name="areaProduccion" min="0" max="100" step="0.01"><br><br>
-    @endcan
     <button type="submit" class="button">Actualizar Gráfico</button>
 </form>
 @endcan
@@ -948,20 +942,16 @@ document.addEventListener('DOMContentLoaded', function() {
   // Contexto del gráfico
   const ctx5S = document.getElementById('grafico5S').getContext('2d');
 
-  // Función para generar opciones de meses
   function generarOpcionesMeses5S(anio) {
     const meses = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
     return meses.map(mes => `${mes}-${anio.toString().slice(-2)}`);
   }
 
-  // Solo datos para 2025
   const dataLabels5S = generarOpcionesMeses5S(25);
 
-  // Datos iniciales
   let desempenoData5S = Array(12).fill(0);
   let areaCumplimientoData5S = Array(12).fill(0);
 
-  // Configuración del gráfico
   const grafico5S = new Chart(ctx5S, {
     type: 'line',
     data: {
@@ -1057,7 +1047,6 @@ document.addEventListener('DOMContentLoaded', function() {
         grafico5S.update();
       }
 
-      // Feedback visual
       const btn = e.target.querySelector('button[type="submit"]');
       btn.textContent = '✓ Actualizado';
       setTimeout(() => btn.textContent = 'Actualizar Gráfico', 2000);

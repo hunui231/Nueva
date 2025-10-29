@@ -35,10 +35,8 @@
   <select id="monthClientes" name="monthClientes"></select><br><br>
   <label for="performanceClientes">Desempeño (%): </label>
   <input type="number" id="performanceClientes" name="performanceClientes" min="0" max="100" step="0.01" ><br><br>
-  @can('admin.update')
   <label for="areaClientes">Área de cumplimiento (%): </label>
   <input type="number" id="areaClientes" name="areaClientes" min="0" max="100" step="0.01" ><br><br>
-  @endcan
   <button type="submit" class="button">Actualizar Gráfico</button>
 </form>
 @endcan
@@ -622,10 +620,8 @@
   </select><br><br>
   <label for="desempenoSatisfaccion">Nivel de Satisfacción (%):</label>
   <input type="number" id="desempenoSatisfaccion" name="desempenoSatisfaccion" min="0" max="100" step="0.01"><br><br>
-  @can('admin.update')
   <label for="areaCumplimientoSatisfaccion">Meta (%):</label>
   <input type="number" id="areaCumplimientoSatisfaccion" name="areaCumplimientoSatisfaccion" min="0" max="100" step="0.01"><br><br>
-  @endcan
   <button type="submit" class="button">Actualizar Gráfico</button>
 </form>
 @endcan
@@ -700,7 +696,7 @@
       },
       plugins: {
         legend: {
-          display: false, // Ocultar leyenda
+          display: false, 
         },
         tooltip: {
           callbacks: {
@@ -792,7 +788,7 @@
         // 1. Obtener elementos del formulario de manera segura
         const mesSeleccionado = document.getElementById('monthSatisfaccion')?.value;
         const desempenoInput = document.getElementById('desempenoSatisfaccion');
-        const areaCumplimientoInput = document.getElementById('areaCumplimientoSatisfaccion'); // Campo condicional
+        const areaCumplimientoInput = document.getElementById('areaCumplimientoSatisfaccion'); 
         
         // Verificar existencia de elementos críticos
         if (!mesSeleccionado || !desempenoInput) {

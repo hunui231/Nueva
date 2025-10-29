@@ -59,7 +59,7 @@ a:hover {
     text-decoration: none;
     color:rgb(231, 27, 27);
 }
-</style>
+</style>  
 <div class="container">
     <h2>Configuraciones de la Cuenta</h2>
 

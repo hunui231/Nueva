@@ -1206,4 +1206,330 @@ axios.get('/cumplimiento-compras-ic/get-data')
     }
   });
 </script>
+
+<br><br>
+<br><br>
+<h2>Promedio de Gasto por Paquetería</h2>
+<canvas id="gastoPaqueteriaChart"></canvas>
+<canvas id="gastoPaqueteriaChart2" style="display: none;"></canvas>
+
+<div style="text-align: center; margin-top: 10px;">
+  <button id="prevChartGasto" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">◀ Anterior</button>
+  <button id="nextChartGasto" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">Siguiente ▶</button>
+</div>
+
+<h2>Ingresar Datos - Gasto por Paquetería</h2>
+@can('adm.update')
+<form id="dataFormGastoPaqueteria">
+  <label for="monthGastoPaqueteria">Mes:</label>
+  <select id="monthGastoPaqueteria" name="monthGastoPaqueteria"></select><br><br>
+
+  <label for="performanceGastoPaqueteria">Desempeño (%):</label>
+  <input type="number" id="performanceGastoPaqueteria" name="performanceGastoPaqueteria" min="0" max="100" step="0.01"><br><br>
+
+  <label for="areaGastoPaqueteria">Área de cumplimiento (%):</label>
+  <input type="number" id="areaGastoPaqueteria" name="areaGastoPaqueteria" min="0" max="100" step="0.01"><br><br>
+
+  <button type="submit" class="button">Actualizar Gráfico</button>
+</form>
+@endcan
+
+<script>
+function createGradientGasto(ctx, chartArea) {
+    const gradient = ctx.createLinearGradient(0, chartArea.bottom, 0, chartArea.top);
+    gradient.addColorStop(0, 'rgb(233, 16, 16)'); // Rojo oscuro en la parte inferior
+    gradient.addColorStop(1, 'rgb(255, 0, 0)'); // Rojo intenso en la parte superior
+    return gradient;
+}
+
+// Contexto y datos iniciales del gráfico 1 (2023-2024)
+const ctxGastoPaqueteria = document.getElementById('gastoPaqueteriaChart').getContext('2d');
+const ctxGastoPaqueteria2 = document.getElementById('gastoPaqueteriaChart2').getContext('2d');
+
+const dataLabelsGastoPaqueteria = [
+    'ene-23', 'feb-23', 'mar-23', 'abr-23', 'may-23', 'jun-23', 'jul-23', 'ago-23', 'sep-23', 'oct-23', 'nov-23', 'dic-23',
+    'ene-24', 'feb-24', 'mar-24', 'abr-24', 'may-24', 'jun-24', 'jul-24', 'ago-24', 'sep-24', 'oct-24', 'nov-24', 'dic-24'
+];
+
+// Datos de ejemplo basados en tu Excel - puedes ajustarlos
+let performanceDataGastoPaqueteria = [
+    85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96,
+    85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96
+];
+
+let areaDataGastoPaqueteria = [
+    80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80,
+    85, 85, 85, 85, 85, 85, 85, 85, 85, 85, 85, 85
+];
+
+// Datos iniciales del gráfico 2 (2025)
+const dataLabelsGastoPaqueteria2 = [
+    'ene-25', 'feb-25', 'mar-25', 'abr-25', 'may-25', 'jun-25', 'jul-25', 'ago-25', 'sep-25', 'oct-25', 'nov-25', 'dic-25'
+];
+
+let performanceDataGastoPaqueteria2 = [
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+];
+
+let areaDataGastoPaqueteria2 = [
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+];
+
+// Configuración del gráfico 1 (2023-2024)
+const gastoPaqueteriaChart = new Chart(ctxGastoPaqueteria, {
+    type: 'line',
+    data: {
+        labels: dataLabelsGastoPaqueteria,
+        datasets: [
+            {
+                label: 'Desempeño (%)',
+                data: performanceDataGastoPaqueteria,
+                borderColor: '#87CEEB',
+                backgroundColor: 'transparent',
+                tension: 0.2,
+            },
+            {
+                label: 'Área de cumplimiento',
+                data: areaDataGastoPaqueteria,
+                backgroundColor: function(context) {
+                    const chart = context.chart;
+                    const { ctx, chartArea } = chart;
+                    if (!chartArea) return null;
+                    return createGradientGasto(ctx, chartArea);
+                },
+                borderWidth: 0,
+                fill: true,
+            },
+        ],
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: { display: false },
+            tooltip: {
+                callbacks: {
+                    label: function(tooltipItem) {
+                        return tooltipItem.dataset.label + ': ' + tooltipItem.raw.toFixed(2) + '%';
+                    },
+                },
+            },
+        },
+        scales: {
+            y: {
+                min: 60,
+                max: 100,
+                ticks: {
+                    callback: function(value) {
+                        return value + '%';
+                    },
+                },
+            },
+        },
+    },
+});
+
+// Configuración del gráfico 2 (2025)
+const gastoPaqueteriaChart2 = new Chart(ctxGastoPaqueteria2, {
+    type: 'line',
+    data: {
+        labels: dataLabelsGastoPaqueteria2,
+        datasets: [
+            {
+                label: 'Desempeño (%)',
+                data: performanceDataGastoPaqueteria2,
+                borderColor: '#0066cc',
+                backgroundColor: 'transparent',
+                borderWidth: 3,
+                tension: 0.2,
+                pointBackgroundColor: '#0066cc',
+                pointRadius: 5,
+                pointHoverRadius: 7,
+                pointBorderWidth: 2,
+                order: 1
+            },
+            {
+                label: 'Área de cumplimiento',
+                data: areaDataGastoPaqueteria2,
+                backgroundColor: 'rgb(255, 0, 0)',
+                borderWidth: 0,
+                fill: true,
+                order: 2
+            }
+        ]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: { 
+                display: true,
+                position: 'top'
+            },
+            tooltip: {
+                callbacks: {
+                    label: function(tooltipItem) {
+                        return tooltipItem.dataset.label + ': ' + tooltipItem.raw.toFixed(2) + '%';
+                    }
+                }
+            }
+        },
+        scales: {
+            y: {
+                min: 60,
+                max: 100,
+                ticks: {
+                    callback: function(value) {
+                        return value + '%';
+                    }
+                }
+            }
+        }
+    }
+});
+
+// Configurar el token CSRF en Axios
+axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+// Generar las opciones de meses en el formulario
+const monthSelectGastoPaqueteria = document.getElementById('monthGastoPaqueteria');
+const generateMonthOptionsGasto = () => {
+    const currentDate = new Date();
+    const currentYear = currentDate.getFullYear();
+    const currentMonth = currentDate.getMonth();
+
+    for (let year = currentYear; year <= currentYear + 2; year++) {
+        for (let month = 0; month < 12; month++) {
+            const monthLabel = new Date(year, month).toLocaleString('default', { month: 'short' }).toLowerCase();
+            const yearLabel = year.toString().slice(-2);
+            const fullLabel = `${monthLabel}-${yearLabel}`;
+
+            const option = document.createElement('option');
+            option.value = fullLabel;
+            option.textContent = fullLabel;
+
+            if (year === currentYear && month < currentMonth) {
+                option.disabled = false;
+            }
+
+            monthSelectGastoPaqueteria.appendChild(option);
+        }
+    }
+};
+
+generateMonthOptionsGasto();
+
+// Establecer el mes actual como seleccionado por defecto
+const currentDateGasto = new Date();
+const currentMonthGasto = currentDateGasto.toLocaleString('default', { month: 'short' }).toLowerCase();
+const currentYearGasto = currentDateGasto.getFullYear().toString().slice(-2);
+const currentMonthLabelGasto = `${currentMonthGasto}-${currentYearGasto}`;
+monthSelectGastoPaqueteria.value = currentMonthLabelGasto;
+
+// Manejador del formulario
+document.getElementById('dataFormGastoPaqueteria').addEventListener('submit', (event) => {
+    event.preventDefault();
+
+    const month = monthSelectGastoPaqueteria.value;
+    const performance = parseFloat(document.getElementById('performanceGastoPaqueteria').value);
+    const area = parseFloat(document.getElementById('areaGastoPaqueteria').value);
+
+    // Validación
+    if (performance < 0 || performance > 100 || area < 0 || area > 100) {
+        alert('Los valores deben estar entre 0% y 100%.');
+        return;
+    }
+
+    // Determinar qué gráfico está visible
+    const isChart2Visible = document.getElementById('gastoPaqueteriaChart2').style.display !== 'none';
+
+    // Enviar datos al servidor
+    axios.post('/gasto-paqueteria/store', {
+        mes: month,
+        desempeno: performance,
+        area_cumplimiento: area,
+    })
+    .then(response => {
+        if (response.data.success) {
+            // Actualizar el gráfico correspondiente
+            if (isChart2Visible) {
+                const index = dataLabelsGastoPaqueteria2.indexOf(month);
+                if (index !== -1) {
+                    performanceDataGastoPaqueteria2[index] = performance;
+                    areaDataGastoPaqueteria2[index] = area;
+                    gastoPaqueteriaChart2.update();
+                }
+            } else {
+                const index = dataLabelsGastoPaqueteria.indexOf(month);
+                if (index !== -1) {
+                    performanceDataGastoPaqueteria[index] = performance;
+                    areaDataGastoPaqueteria[index] = area;
+                    gastoPaqueteriaChart.update();
+                }
+            }
+            
+            // Feedback visual
+            const submitBtn = event.target.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = '✓ Guardado';
+            setTimeout(() => {
+                submitBtn.textContent = originalText;
+            }, 2000);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+});
+
+// Cargar datos iniciales
+axios.get('/gasto-paqueteria/get-data')
+    .then(response => {
+        const data = response.data;
+        data.forEach(item => {
+            // Actualizar gráfico 1 (2023-2024)
+            const index1 = dataLabelsGastoPaqueteria.indexOf(item.mes);
+            if (index1 !== -1) {
+                performanceDataGastoPaqueteria[index1] = item.desempeno;
+                areaDataGastoPaqueteria[index1] = item.area_cumplimiento;
+            }
+            
+            // Actualizar gráfico 2 (2025)
+            const index2 = dataLabelsGastoPaqueteria2.indexOf(item.mes);
+            if (index2 !== -1) {
+                performanceDataGastoPaqueteria2[index2] = item.desempeno;
+                areaDataGastoPaqueteria2[index2] = item.area_cumplimiento;
+            }
+        });
+        gastoPaqueteriaChart.update();
+        gastoPaqueteriaChart2.update();
+    })
+    .catch(error => {
+        console.error('Error al obtener los datos:', error);
+    });
+
+// Alternar entre gráficos
+let currentChartGasto = 1;
+document.getElementById('nextChartGasto').addEventListener('click', () => {
+    if (currentChartGasto === 1) {
+        document.getElementById('gastoPaqueteriaChart').style.display = 'none';
+        document.getElementById('gastoPaqueteriaChart2').style.display = 'block';
+        currentChartGasto = 2;
+    } else {
+        document.getElementById('gastoPaqueteriaChart').style.display = 'block';
+        document.getElementById('gastoPaqueteriaChart2').style.display = 'none';
+        currentChartGasto = 1;
+    }
+});
+
+document.getElementById('prevChartGasto').addEventListener('click', () => {
+    if (currentChartGasto === 1) {
+        document.getElementById('gastoPaqueteriaChart').style.display = 'none';
+        document.getElementById('gastoPaqueteriaChart2').style.display = 'block';
+        currentChartGasto = 2;
+    } else {
+        document.getElementById('gastoPaqueteriaChart').style.display = 'block';
+        document.getElementById('gastoPaqueteriaChart2').style.display = 'none';
+        currentChartGasto = 1;
+    }
+});
+</script>
 @endsection

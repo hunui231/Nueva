@@ -53,10 +53,8 @@
   </select><br><br>
   <label for="desempenoEntregaMateriales">Área de cumplimiento (%):</label>
   <input type="number" id="desempenoEntregaMateriales" name="desempenoEntregaMateriales" min="0" max="100" step="0.01"><br><br>
-  @can('admin.update')
   <label for="areaCumplimientoEntregaMateriales">Desempeño (%):</label>
   <input type="number" id="areaCumplimientoEntregaMateriales" name="areaCumplimientoEntregaMateriales" min="0" max="100" step="0.01" ><br><br>
-  @endcan
   <button type="submit" class="button">Actualizar Gráfico</button>
 </form>
 @endcan
@@ -243,7 +241,7 @@
         // 3. Convertir y validar datos
         const desempenoNum = desempeno !== "" ? parseFloat(desempeno) : null;
         const areaCumplimientoNum = areaCumplimiento !== null && areaCumplimiento !== "" ? parseFloat(areaCumplimiento) : null;
-
+   
         // Validaciones básicas
         if (desempenoNum === null || isNaN(desempenoNum)) {
             throw new Error('El campo Área de cumplimiento es obligatorio');
@@ -390,10 +388,8 @@
   <select id="monthInventario" name="monthInventario"></select><br><br>
   <label for="desempenoInventario"> Desempeño Inventario (%):</label>
   <input type="number" id="desempenoInventario" name="desempenoInventario" min="0" max="100" step="0.01"><br><br>
-  @can('admin.update')
   <label for="areaCumplimientoInventario">Área de Cumplimiento (%):</label>
   <input type="number" id="areaCumplimientoInventario" name="areaCumplimientoInventario" min="0" max="100" step="0.01" ><br><br>
-  @endcan
   <button type="submit" class="button">Actualizar Gráfico</button>
 </form>
 @endcan
@@ -604,12 +600,10 @@ document.getElementById('dataFormInventario').addEventListener('submit', async (
   evento.preventDefault();
 
   try {
-    // 1. Obtener elementos del formulario de manera segura
     const form = document.getElementById('dataFormInventario');
     const mesSeleccionado = form.querySelector('#monthInventario')?.value;
     const desempenoInput = form.querySelector('#desempenoInventario');
     
-    // Verificar existencia de elementos críticos
     if (!mesSeleccionado || !desempenoInput) {
       throw new Error('Elementos básicos del formulario no encontrados');
     }
@@ -646,7 +640,7 @@ document.getElementById('dataFormInventario').addEventListener('submit', async (
       mes: mesSeleccionado,
       area_cumplimiento: desempenoNum
     };
-
+//yo tambien quiero todo
     if (areaCumplimientoInput && areaCumplimientoNum !== null) {
       datos.desempeno = areaCumplimientoNum;
     }
@@ -769,22 +763,20 @@ obtenerDatosInventario();
 
 <meta name="csrf-token" content="{{ csrf_token() }}">
 
-<h2 class="box-title">Inventario JLG - Porcentaje de Existencia</h2>
+<h2 class="box-title">Inventario JLG - Porcentaje de Existencia (Semanas)</h2>
 <canvas id="graficoJLG"></canvas>
 
 <!-- Formulario para ingresar datos -->
 <h2>Ingresar Datos - Inventario JLG</h2>
 @can('logistica.update')
 <form id="dataFormInventarioJLG">
-  <label for="monthInventarioJLG">Mes:</label>
+  <label for="monthInventarioJLG">Semana:</label>
   <select id="monthInventarioJLG" name="monthInventarioJLG">
-  </select><br><br>
+  </select><br></br>
   <label for="desempenoInventarioJLG">Desempeño (%):</label>
-  <input type="number" id="desempenoInventarioJLG" name="desempenoInventarioJLG" min="0" max="150" step="0.01"><br><br>
-  @can('admin.update')
+  <input type="number" id="desempenoInventarioJLG" name="desempenoInventarioJLG" min="0" max="150" step="0.01"></br></br>
   <label for="areaCumplimientoInventarioJLG">Área de cumplimiento (%):</label>
-  <input type="number" id="areaCumplimientoInventarioJLG" name="areaCumplimientoInventarioJLG" min="0" max="150" step="0.01"><br><br>
-  @endcan
+  <input type="number" id="areaCumplimientoInventarioJLG" name="areaCumplimientoInventarioJLG" min="0" max="150" step="0.01"></br></br>
   <button type="submit" class="button">Actualizar Gráfico</button>
 </form>
 @endcan
@@ -799,18 +791,51 @@ document.addEventListener('DOMContentLoaded', function() {
   // Contexto del gráfico
   const ctxJLG = document.getElementById('graficoJLG').getContext('2d');
 
-  // Función para generar opciones de meses
-  function generateMonthOptionsJLG(year) {
-    const months = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
-    return months.map(month => `${month}-${year.toString().slice(-2)}`);
+  // Función para generar opciones de semanas del año
+  function generateWeekOptions(year) {
+    const weeks = [];
+    const firstDay = new Date(year, 0, 1);
+    const lastDay = new Date(year, 11, 31);
+    
+    let currentDate = new Date(firstDay);
+    let weekNumber = 1;
+    
+    // Ajustar para comenzar desde el primer lunes del año
+    while (currentDate.getDay() !== 1 && currentDate <= lastDay) {
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
+    
+    while (currentDate <= lastDay) {
+      const weekStart = new Date(currentDate);
+      const weekEnd = new Date(currentDate);
+      weekEnd.setDate(weekEnd.getDate() + 6);
+      
+      weeks.push({
+        label: `Sem ${weekNumber} (${formatDate(weekStart)} - ${formatDate(weekEnd)})`,
+        value: `W${weekNumber}-${year.toString().slice(-2)}` // Formato para el backend: W1-25, W2-25, etc.
+      });
+      
+      currentDate.setDate(currentDate.getDate() + 7);
+      weekNumber++;
+    }
+    
+    return weeks;
+  }
+  
+  function formatDate(date) {
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    return `${day}/${month}`;
   }
 
-  // Solo datos para 2025
-  const dataLabelsJLG = generateMonthOptionsJLG(25); // 2025
+  // Generar etiquetas de semanas para el año actual (2025)
+  const weeksData = generateWeekOptions(25);
+  const dataLabelsJLG = weeksData.map(w => w.label);
+  const weekValues = weeksData.map(w => w.value);
 
   // Datos iniciales
-  let desempenoDataJLG = Array(12).fill(0);
-  let areaCumplimientoDataJLG = Array(12).fill(100); // Línea de 100%
+  let desempenoDataJLG = Array(dataLabelsJLG.length).fill(0);
+  let areaCumplimientoDataJLG = Array(dataLabelsJLG.length).fill(100); // Línea de 100%
 
   // Configuración del gráfico
   const graficoJLG = new Chart(ctxJLG, {
@@ -827,7 +852,7 @@ document.addEventListener('DOMContentLoaded', function() {
         },
         {
           label: "Límite Inferior (95%)",
-          data: Array(12).fill(95),
+          data: Array(dataLabelsJLG.length).fill(95),
           type: 'line',
           borderColor: 'orange',
           borderWidth: 2,
@@ -844,7 +869,7 @@ document.addEventListener('DOMContentLoaded', function() {
         },
         {
           label: "Límite Superior (110%)",
-          data: Array(12).fill(110),
+          data: Array(dataLabelsJLG.length).fill(110),
           type: 'line',
           borderColor: 'red',
           borderWidth: 2,
@@ -885,26 +910,32 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
 
-  // Generar opciones de meses en el formulario (solo 2025)
+  // Generar opciones de semanas en el formulario
   const monthSelectJLG = document.getElementById('monthInventarioJLG');
-  dataLabelsJLG.forEach((label) => {
+  weeksData.forEach((week, index) => {
     const option = document.createElement('option');
-    option.value = label;
-    option.textContent = label;
+    option.value = week.value; 
+    option.textContent = week.label; 
     monthSelectJLG.appendChild(option);
   });
 
-  // Establecer mes actual como valor predeterminado
-  const currentDate = new Date();
-  const month = currentDate.toLocaleString('default', { month: 'short' }).toLowerCase();
-  const year = currentDate.getFullYear().toString().slice(-2);
-  monthSelectJLG.value = `${month}-${year}`;
+  // Establecer semana actual como valor predeterminado
+  function getCurrentWeek() {
+    const today = new Date();
+    const firstDayOfYear = new Date(today.getFullYear(), 0, 1);
+    const pastDaysOfYear = (today - firstDayOfYear) / 86400000;
+    return Math.ceil((pastDaysOfYear + firstDayOfYear.getDay() + 1) / 7);
+  }
+  
+  const currentWeek = getCurrentWeek();
+  const currentYearShort = new Date().getFullYear().toString().slice(-2);
+  monthSelectJLG.value = `W${currentWeek}-${currentYearShort}`;
 
-  // Manejar envío del formulario
+  // Manejar envío del formulario (manteniendo los nombres originales)
   document.getElementById('dataFormInventarioJLG').addEventListener('submit', async function(e) {
     e.preventDefault();
     
-    const mes = document.getElementById('monthInventarioJLG').value;
+    const mes = document.getElementById('monthInventarioJLG').value; // Nombre original (pero contendrá W1-25)
     const desempeno = parseFloat(document.getElementById('desempenoInventarioJLG').value);
     const areaCumplimiento = parseFloat(document.getElementById('areaCumplimientoInventarioJLG').value) || 100;
 
@@ -915,20 +946,19 @@ document.addEventListener('DOMContentLoaded', function() {
 
     try {
       const response = await axios.post('/inventario-jlg/store', {
-        mes: mes,
+        mes: mes, // Se envía como W1-25 pero el campo sigue llamándose 'mes'
         desempeno: desempeno,
         area_cumplimiento: areaCumplimiento
       });
 
       // Actualizar gráfico
-      const index = dataLabelsJLG.indexOf(mes);
+      const index = weekValues.indexOf(mes);
       if (index !== -1) {
         desempenoDataJLG[index] = desempeno;
         areaCumplimientoDataJLG[index] = areaCumplimiento;
         graficoJLG.update();
       }
 
-      // Feedback visual
       const btn = e.target.querySelector('button[type="submit"]');
       const originalText = btn.textContent;
       btn.textContent = '✓ Actualizado';
@@ -944,12 +974,12 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
 
-  // Cargar datos iniciales (solo para 2025)
   async function fetchDataJLG() {
     try {
       const response = await axios.get('/inventario-jlg/get-data');
       response.data.forEach(item => {
-        const index = dataLabelsJLG.indexOf(item.mes);
+        // Buscar el índice basado en el valor de la semana (W1-25, etc.)
+        const index = weekValues.indexOf(item.mes);
         if (index !== -1) {
           desempenoDataJLG[index] = item.desempeno;
           areaCumplimientoDataJLG[index] = item.area_cumplimiento;

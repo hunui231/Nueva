@@ -51,12 +51,9 @@
   <label for="performanceKPI_GIC">Desempeño (%):</label>
   <input type="number" id="performanceKPI_GIC" name="performanceKPI_GIC" min="0" max="100" step="0.01"><br><br>
   
-  @can('admin.update')
   <label for="areaKPI_GIC">Área de cumplimiento (%):</label>
   <input type="number" id="areaKPI_GIC" name="areaKPI_GIC" min="0" max="100" step="0.01"><br><br>
-  @else
   <input type="hidden" id="areaKPI_GIC" name="areaKPI_GIC" value="">
-  @endcan
   
   <button type="submit" class="button">Actualizar Gráfico</button>
 </form>
@@ -365,10 +362,8 @@
 
   <label for="performanceCompras_GIC">Desempeño (%):</label>
   <input type="number" id="performanceCompras_GIC" name="performanceCompras_GIC" min="0" max="100" step="0.01"><br><br>
-  @can('admin.update')
   <label for="areaCompras_GIC">Área de cumplimiento (%):</label>
   <input type="number" id="areaCompras_GIC" name="areaCompras_GIC" min="0" max="100" step="0.01"><br><br>
-   @endcan
   <button type="submit" class="button">Actualizar Gráfico</button>
 </form>
 @endcan

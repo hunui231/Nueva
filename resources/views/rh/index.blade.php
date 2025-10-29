@@ -76,10 +76,8 @@
   <select id="monthRotacion" name="monthRotacion"></select><br><br>
   <label for="performanceRotacion">Desempeño (%):</label>
   <input type="number" id="performanceRotacion" name="performanceRotacion" min="0" max="100" step="0.01"><br><br>
-  @can('admin.update')
   <label for="areaRotacion">Área de cumplimiento (%):</label>
   <input type="number" id="areaRotacion" name="areaRotacion" min="0" max="100" step="0.01" ><br><br>
-  @endcan
   <button type="submit" class="button">Actualizar Gráfico</button>
 </form>
 @endcan
@@ -400,10 +398,8 @@
   <select id="monthPermanencia" name="monthPermanencia"></select><br><br>
   <label for="performancePermanencia">Desempeño (%):</label>
   <input type="number" id="performancePermanencia" name="performancePermanencia" min="0" max="100" step="0.01"><br><br>
-  @can('admin.update')
   <label for="areaPermanencia">Área de cumplimiento (%):</label>
   <input type="number" id="areaPermanencia" name="areaPermanencia" min="0" max="100" step="0.01" ><br><br>
-  @endcan
 
   <button type="submit" class="button">Actualizar Gráfico</button>
 </form>
@@ -741,10 +737,8 @@
   <select id="monthRotacionGIC" name="monthRotacionGIC"></select><br><br>
   <label for="performanceRotacionGIC">Desempeño (%):</label>
   <input type="number" id="performanceRotacionGIC" name="performanceRotacionGIC" min="0" max="100" step="0.01"><br><br>
-  @can('admin.update')
   <label for="areaRotacionGIC">Área de cumplimiento (%):</label>
   <input type="number" id="areaRotacionGIC" name="areaRotacionGIC" min="0" max="100" step="0.01" ><br><br>
-  @endcan
   <button type="submit" class="button">Actualizar Gráfico</button>
 </form>
 @endcan
@@ -1078,10 +1072,8 @@
 
   <label for="performancePermanenciaGIC">Desempeño (%):</label>
   <input type="number" id="performancePermanenciaGIC" name="performancePermanenciaGIC" min="0" max="100" step="0.01" ><br><br>
-  @can('admin.update')
   <label for="areaPermanenciaGIC">Área de cumplimiento (%):</label>
   <input type="number" id="areaPermanenciaGIC" name="areaPermanenciaGIC" min="0" max="100" step="0.01" ><br><br>
-  @endcan
   <button type="submit" class="button">Actualizar Gráfico</button>
 </form>
 @endcan

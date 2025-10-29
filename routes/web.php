@@ -272,3 +272,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/auditoria-5s', [Auditoria5SController::class, 'index']);
     Route::post('/auditoria-5s/store', [Auditoria5SController::class, 'store']);
     Route::get('/auditoria-5s/get-data', [Auditoria5SController::class, 'getData']);
+
+   Route::post('/gasto-paqueteria/store', [CobranzaController::class, 'guardarGastoPaqueteria']);
+Route::get('/gasto-paqueteria/get-data', [CobranzaController::class, 'obtenerGastoPaqueteria']);
