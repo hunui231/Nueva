@@ -94,9 +94,9 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/calidad/update', [App\Http\Controllers\CalidadController::class, 'update'])->name('calidad.update');
     Route::post('/calidad/grafico2/update', [App\Http\Controllers\CalidadController::class, 'updateGrafico2'])->name('calidad.grafico2.update');
 
-    Route::get('/cnc', [App\Http\Controllers\CncController::class, 'index'])->name('cnc.index')->middleware('can:cnc.index');
-    Route::post('/cnc/update', [App\Http\Controllers\CncController::class, 'update'])->name('cnc.update');
-    Route::post('/cnc/updateGrafico2',[App\Http\Controllers\CncController::class, 'updateGrafico2'])->name('cnc.grafico2.update');
+    //Route::get('/cnc', [App\Http\Controllers\CncController::class, 'index'])->name('cnc.index')->middleware('can:cnc.index');
+    //Route::post('/cnc/update', [App\Http\Controllers\CncController::class, 'update'])->name('cnc.update');
+    //Route::post('/cnc/updateGrafico2',[App\Http\Controllers\CncController::class, 'updateGrafico2'])->name('cnc.grafico2.update');
 
     Route::get('/tickets', function () {
         $tickets = Ticket::all(); // Obtener todos los tickets
